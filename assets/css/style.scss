@@ -4,6 +4,11 @@
 
 @import "minima/skins/{{ site.minima.skin | default: 'auto' }}", "minima/initialize";
 
+// Ensure smooth transitions
+*{
+  transition: background-color 0.1s ease, color 0.2s ease, fill 0.4s ease;
+}
+
 // Color Variables
 $color-background-light: #f8f4e9;
 $color-text-light: #2b1d19;
@@ -256,9 +261,4 @@ code {
   .menu-icon > svg {
     fill: var(--heading-color);
   }
-}
-
-// Ensure smooth transitions
-* {
-  transition: background-color 0.3s ease, color 0.3s ease, fill 0.3s ease;
 }

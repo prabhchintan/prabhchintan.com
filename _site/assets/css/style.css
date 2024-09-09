@@ -979,6 +979,10 @@ table td {
     width: calc(50% - 30px / 2);
   }
 }
+* {
+  transition: background-color 0.1s ease, color 0.2s ease, fill 0.4s ease;
+}
+
 :root {
   color-scheme: light dark;
   --background-color: #f8f4e9;
@@ -1168,10 +1172,6 @@ code {
 }
 .site-nav .menu-icon > svg {
   fill: var(--heading-color);
-}
-
-* {
-  transition: background-color 0.3s ease, color 0.3s ease, fill 0.3s ease;
 }
 
 /*# sourceMappingURL=style.css.map */

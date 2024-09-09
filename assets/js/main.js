@@ -9,6 +9,7 @@ const THEME_COLOR_DARK = '#1a1410';
  * @param {string} scheme - The color scheme to set ('light' or 'dark')
  */
 function setColorScheme(scheme) {
+  console.log('Setting color scheme:', scheme);
   document.documentElement.setAttribute('data-theme', scheme);
   const themeColor = scheme === DARK_SCHEME ? THEME_COLOR_DARK : THEME_COLOR_LIGHT;
   document.querySelector('meta[name="theme-color"]').setAttribute('content', themeColor);
