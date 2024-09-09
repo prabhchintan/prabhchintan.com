@@ -981,10 +981,10 @@ table td {
 }
 :root {
   --background-color: #f8f4e9;
-  --text-color: #5d4037;
+  --text-color: #2b1d19;
   --heading-color: #5d4037;
-  --link-color: #51311b;
-  --link-hover-color: #8b5736;
+  --link-color: #8b5736;
+  --link-hover-color: #784b2f;
   --dropcap-color: #6b7d5a;
 }
 
