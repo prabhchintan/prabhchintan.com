@@ -27,12 +27,8 @@ function updateColorScheme() {
  * Initialize color scheme functionality
  */
 function initColorScheme() {
-  // Initial setup
   updateColorScheme();
-
-  // Listen for changes in system color scheme preference
-  const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-  prefersDarkScheme.addListener(updateColorScheme);
+  window.matchMedia('(prefers-color-scheme: dark)').addListener(updateColorScheme);
 }
 
 /**
