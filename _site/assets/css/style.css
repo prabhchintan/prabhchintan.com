@@ -980,12 +980,19 @@ table td {
   }
 }
 :root {
+  color-scheme: light dark;
   --background-color: #f8f4e9;
   --text-color: #2b1d19;
   --heading-color: #5d4037;
-  --link-color: #8b5736;
+  --link-color: #83542d;
   --link-hover-color: #784b2f;
   --dropcap-color: #6b7d5a;
+  --code-bg: #e8e3d6;
+  --code-text: #3c3631;
+  --code-border: #d0c8b8;
+  --code-keyword: #5d4e3d;
+  --code-string: #4a5d47;
+  --code-comment: #7d7468;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -996,6 +1003,12 @@ table td {
     --link-color: #8f6e45;
     --link-hover-color: #c19a6b;
     --dropcap-color: #9b6a4f;
+    --code-bg: #1e1b17;
+    --code-text: #b3a89e;
+    --code-border: #2e2a25;
+    --code-keyword: #8f7e6b;
+    --code-string: #6b7d65;
+    --code-comment: #635d55;
   }
 }
 body, .site-header {
@@ -1119,10 +1132,10 @@ h1::first-letter, h2::first-letter, h3::first-letter, h4::first-letter, h5::firs
 pre, code {
   font-family: "Courier Prime", "Courier New", monospace;
   font-size: 0.92em;
-  border: 1px solid #d0c8b8;
+  border: 1px solid var(--code-border);
   border-radius: 3px;
-  background-color: #e8e3d6;
-  color: #3c3631;
+  background-color: var(--code-bg);
+  color: var(--code-text);
 }
 
 pre {
@@ -1136,33 +1149,17 @@ code {
 }
 
 .highlight .k, .highlight .kd, .highlight .kn, .highlight .kp, .highlight .kr, .highlight .kt, .highlight .nb, .highlight .nf {
-  color: #5d4e3d;
+  color: var(--code-keyword);
   font-weight: normal;
 }
 .highlight .s, .highlight .s1, .highlight .s2 {
-  color: #4a5d47;
+  color: var(--code-string);
 }
 .highlight .c, .highlight .c1 {
-  color: #7d7468;
+  color: var(--code-comment);
   font-style: italic;
 }
 
-@media (prefers-color-scheme: dark) {
-  pre, code {
-    background-color: #1e1b17;
-    color: #b3a89e;
-    border-color: #2e2a25;
-  }
-  .highlight .k, .highlight .kd, .highlight .kn, .highlight .kp, .highlight .kr, .highlight .kt, .highlight .nb, .highlight .nf {
-    color: #8f7e6b;
-  }
-  .highlight .s, .highlight .s1, .highlight .s2 {
-    color: #6b7d65;
-  }
-  .highlight .c, .highlight .c1 {
-    color: #635d55;
-  }
-}
 .site-nav {
   background-color: var(--background-color);
 }

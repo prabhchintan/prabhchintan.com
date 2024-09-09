@@ -1,11 +1,11 @@
 {
-    "name": "Randhawa Inc",
-    "short_name": "Randhawa",
-    "description": "Your app description",
+    "name": "Randhawa Inc.",
+    "short_name": "Randhawa Inc.",
+    "description": "Research, Trade, Transport",
     "start_url": "/",
-    "display": "fullscreen",
-    "background_color": "#ffffff",
-    "theme_color": "#000000",
+    "display": "standalone",
+    "background_color": "#f8f4e9",
+    "theme_color": "#1a1410",
     "icons": [
       {
         "src": "/android-chrome-192x192.png",
@@ -37,5 +37,7 @@
         "sizes": "150x150",
         "type": "image/png"
       }
-    ]
+    ],
+    "theme_color_dark": "#1a1410",
+    "background_color_dark": "#1a1410"
   }

@@ -1,7 +1,7 @@
 {
-    "name": "Randhawa Inc",
-    "short_name": "Randhawa",
-    "description": "Your app description",
+    "name": "Randhawa Inc.",
+    "short_name": "Randhawa Inc.",
+    "description": "Research, Trade, Transport",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#f8f4e9",
