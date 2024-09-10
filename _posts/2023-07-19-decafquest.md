@@ -13,7 +13,7 @@ author:
 meta: "An in-depth interview exploring experiences in business leadership, ethical dilemmas, philosophical applications, and personal growth strategies."
 ---
 
-> In this interview, we explore experiences in business leadership, ethical dilemmas, philosophical applications, and personal growth strategies with an insightful industry professional.
+> In this interview, I explore experiences in business leadership, ethical dilemmas, philosophical applications, and personal growth strategies with an insightful industry professional.
 
 ### **Can you share an experience where active listening and open-ended questions helped you understand a complex issue more deeply?**
 
