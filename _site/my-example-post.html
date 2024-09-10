@@ -23,22 +23,33 @@
   <link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Randhawa Inc." />
 
 <!-- Fonts -->
+<!-- Cormorant Garamond for main text and Courier Prime for code or monospace text -->
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Courier+Prime&display=swap" rel="stylesheet">
 
-<!-- Favicons -->
+<!-- Favicons and device-specific icons -->
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#000000">
+<link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+<link rel="icon" type="image/png" sizes="384x384" href="/android-chrome-384x384.png">
 
 <!-- Application metadata -->
-<meta name="apple-mobile-web-app-title" content="Randhawa Inc.">
 <meta name="application-name" content="Randhawa Inc.">
+<meta name="apple-mobile-web-app-title" content="Randhawa Inc.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+<!-- Microsoft Tile -->
+<meta name="msapplication-TileImage" content="/mstile-150x150.png">
 <meta name="msapplication-TileColor" content="#da532c">
 
 <!-- Theme color -->
+<!-- Default theme color -->
 <meta name="theme-color" content="#f8f4e9" id="theme-color-meta">
+<!-- Light mode theme color -->
 <meta name="theme-color" content="#f8f4e9" media="(prefers-color-scheme: light)">
+<!-- Dark mode theme color -->
 <meta name="theme-color" content="#1a1410" media="(prefers-color-scheme: dark)">
 
 <!-- Preload critical assets -->
@@ -46,30 +57,39 @@
 
 <!-- PWA settings -->
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#000000">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="Randhawa Inc">
 
-<!-- PWA icons -->
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
-<link rel="icon" type="image/png" sizes="384x384" href="/android-chrome-384x384.png">
+<!-- Main JavaScript file -->
+<script src="/assets/js/main.js"></script>
 
-<!-- Microsoft Tile -->
-<meta name="msapplication-TileImage" content="/mstile-150x150.png">
-<meta name="msapplication-TileColor" content="#da532c">
-
+<!-- Script to open external links in new tab -->
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     var links = document.links;
     for (var i = 0, linksLength = links.length; i < linksLength; i++) {
-      if (links[i].hostname != window.location.hostname) {
+      if (links[i].hostname !== window.location.hostname) {
         links[i].target = '_blank';
         links[i].rel = 'noopener noreferrer';
       }
     }
   });
+</script>
+
+<!-- Script for smooth color scheme transitions -->
+<script>
+  function applyTransitionClass() {
+    document.body.classList.add('transition-colors');
+  }
+
+  function removeTransitionClass() {
+    document.body.classList.remove('transition-colors');
+  }
+
+  function handlePageLoad() {
+    applyTransitionClass();
+    setTimeout(removeTransitionClass, 300);
+  }
+
+  document.addEventListener('DOMContentLoaded', handlePageLoad);
 </script><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
 
@@ -97,9 +117,10 @@
         <div class="trigger"><a class="page-link" href="/about">About</a><a class="page-link" href="/thanks">Thanks</a><a class="page-link" href="/shop">Shop</a></div>
       </nav></div>
 </header>
-<main class="page-content" aria-label="Content">
-      <div class="wrapper">
-        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+<div class="content-wrapper">
+      <main class="page-content" aria-label="Content">
+        <div class="wrapper">
+          <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
   <header class="post-header">
     <h1 class="post-title p-name" itemprop="name headline">My Example Post</h1>
@@ -115,8 +136,9 @@
 
   </div><a class="u-url" href="/my-example-post" hidden></a>
 </article>
-      </div>
-    </main><footer class="site-footer h-card">
+        </div>
+      </main>
+    </div><footer class="site-footer h-card">
   <data class="u-url" href="/"></data>
 
   <div class="wrapper">
