@@ -73,9 +73,5 @@ minima:
 # Use post title to create website slug
 permalink: /:title
 
-slug:
-  mode: latin
-  lowercase: true
-
 include:
   - service-worker.js
