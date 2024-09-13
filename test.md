@@ -1,7 +1,8 @@
 ---
 layout: page
-title: Duz it wurk?
+title: Duz it Wurk?
+nav_title: Test
 permalink: /test
 ---
 
-Well does it?
+Well duz it?
