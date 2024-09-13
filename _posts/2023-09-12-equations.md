@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "Equations in Math and Physics"
-page_title: "Equations: Poetry of the Universe"
+title: "Poetry of the Universe"
+page_title: "Equations in Math and Physics"
 categories:
   - science
   - physics
