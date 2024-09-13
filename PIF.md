@@ -2,7 +2,7 @@
 layout: page
 title: Presidential Innovation Fellow
 nav_title: PIF
-permalink: /PIF
+permalink: /pif
 hidden: true
 excluded: true
 ---
