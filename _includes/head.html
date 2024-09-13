@@ -4,20 +4,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   {%- seo title=false -%}
   <title>
-    {%- if page.page_title -%}
+    {% if page.page_title %}
       {{ page.page_title | escape }}
-    {%- elsif page.title -%}
+    {% elsif page.title %}
       {{ page.title | escape }}
-    {%- else -%}
+    {% else %}
       {{ site.title | escape }}
-    {%- endif -%}
-    {%- if paginator and paginator.page > 1 -%}
+    {% endif %}
+    {% if paginator and paginator.page > 1 %}
       - Page {{ paginator.page }}
-    {%- endif -%}
-    {%- unless page.url == "/" -%}
+    {% endif %}
+    {% unless page.url == "/" %}
       | {{ site.title | escape }}
-    {%- endunless -%}
+    {% endunless %}
   </title>
+  
   <link rel="stylesheet" href="{{ "/assets/css/style.css" | relative_url }}">
   {%- feed_meta -%}
   {%- if jekyll.environment == 'production' and site.google_analytics -%}
