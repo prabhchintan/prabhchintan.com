@@ -14,7 +14,7 @@ layout: home
       controls 
       preload="metadata"
       poster="{{ site.baseurl }}/assets/images/2022-12-25-dar-el-bacha-museum.jpeg">
-      <source src="{{ site.baseurl }}/assets/videos/2023-04-09-morocco.mp4" type="video/mp4">
+      <source src="{{ site.baseurl }}/assets/videos/2022-12-25-dar-el-bacha-museum.mp4" type="video/mp4">
       Your browser does not support the video tag.
     </video>
   </div>
