@@ -1,8 +1,8 @@
 ---
 layout: page
-title: Does it wurk?
-nav_title: LOLOLOL
+title: OKOKOK
+nav_title: Test
 permalink: /test
 ---
 
-HAHAHAHAHA does it even work haha.
+Thanks to you eh?

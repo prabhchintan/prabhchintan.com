@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Artifacts from the Future
+title: Artifacts from the Future 
 nav_title: Shop
 permalink: /shop
 ---
