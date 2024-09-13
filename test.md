@@ -1,10 +1,8 @@
 ---
 layout: page
-title: "Duz it Wurk?"
-nav_title: Test
+title: Does it wurk?
+nav_title: LOLOLOL
 permalink: /test
-hidden: true
-exclude_from_nav: true
 ---
 
-Well duz it?
+HAHAHAHAHA does it even work haha.
