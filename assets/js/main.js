@@ -53,3 +53,16 @@ initColorScheme();
 
 // Register service worker
 registerServiceWorker();
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.body.classList.add('mathjax-loading');
+  
+  if (typeof MathJax !== 'undefined') {
+    MathJax.Hub.Queue(function() {
+      document.body.classList.remove('mathjax-loading');
+      document.body.classList.add('mathjax-loaded');
+    });
+  } else {
+    document.body.classList.remove('mathjax-loading');
+  }
+});
