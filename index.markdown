@@ -26,5 +26,5 @@ layout: home
   }
 </style>
 <p style="font-size: 0.8em; font-style; text-align: center;">
-  Dar El Bacha Museum, Marrakech, Morocco, December 2025
+  Dar El Bacha Museum, Marrakech, Morocco, December 2022
 </p>
