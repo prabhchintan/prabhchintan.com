@@ -1,4 +1,4 @@
-title: Randhawa Inc.
+title: ੴ
 author:
   name: ਪ੍ਰਭਚਿੰਤਨਰੰਧਾਵਾ
   email: prab@hey.com
@@ -26,7 +26,6 @@ plugins:
 # If you want to link only specific pages in your header, use this and add the path to the pages
 # in order as they should show up.
 header_pages:
-  - ੴ.md
   - about.md
   - thanks.md
   - shop.md
