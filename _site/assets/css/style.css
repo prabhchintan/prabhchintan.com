@@ -1030,6 +1030,8 @@ body, .site-header {
   font-size: 19px;
   border-top: none;
   border-bottom: none;
+  position: relative;
+  z-index: 10;
 }
 
 h1, h2, h3 {
@@ -1174,12 +1176,14 @@ code {
 
 .site-nav {
   background-color: var(--background-color);
+  z-index: 11;
 }
 .site-nav .page-link {
   color: var(--text-color);
 }
 .site-nav .menu-icon > svg {
   fill: var(--heading-color);
+  z-index: 12;
 }
 
 .video-container {
@@ -1188,6 +1192,7 @@ code {
   height: 0;
   overflow: hidden;
   max-width: 100%;
+  z-index: 1;
 }
 .video-container iframe {
   position: absolute;
