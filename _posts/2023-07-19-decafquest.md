@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "Book Interview: Philosophy for Business Professionals"
-page_title: "DecafQuest: A Philosophy Business"
+title: "Philosophy for Business Professionals"
+page_title: "DecafQuest: A Philosophy Business Book Interview"
 categories:
   - business
   - philosophy
