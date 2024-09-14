@@ -1225,19 +1225,25 @@ footer a:hover, footer a:visited:hover {
 }
 .site-footer .khanda-symbol {
   font-size: 20px;
-  display: inline-block;
-  line-height: 1;
+  line-height: 0;
 }
-.site-footer .cc-license {
-  display: inline-block;
+.site-footer .flag-symbol {
+  font-size: 19px;
+  line-height: 0;
 }
 .site-footer .cc-license img {
-  height: 22px !important;
-  margin-left: 3px;
-  vertical-align: text-bottom;
+  height: 19px !important;
 }
 .site-footer .gurmukhi-link {
   text-decoration: none;
+}
+.site-footer a, .site-footer a:visited {
+  color: var(--link-color);
+  text-decoration: none;
+}
+.site-footer a:hover, .site-footer a:visited:hover {
+  color: var(--link-hover-color);
+  text-decoration: underline;
 }
 
 /*# sourceMappingURL=style.css.map */

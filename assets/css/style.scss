@@ -319,21 +319,31 @@ footer {
 
   .khanda-symbol {
     font-size: 20px;
-    display: inline-block;
-    line-height: 1;
+    line-height: 0;
+  }
+
+  .flag-symbol {
+    font-size: 19px;
+    line-height: 0;
   }
 
   .cc-license {
-    display: inline-block;
-
     img {
-      height: 22px !important;
-      margin-left: 3px;
-      vertical-align: text-bottom;
+      height: 19px !important;
     }
   }
 
   .gurmukhi-link {
     text-decoration: none;
+  }
+
+  a, a:visited {
+    color: var(--link-color);
+    text-decoration: none;
+    
+    &:hover {
+      color: var(--link-hover-color);
+      text-decoration: underline;
+    }
   }
 }
