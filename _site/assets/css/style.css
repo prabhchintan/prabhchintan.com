@@ -1210,4 +1210,34 @@ body:not(.mathjax-loaded) .has-math {
   visibility: hidden;
 }
 
+footer a, footer a:visited {
+  color: var(--link-color);
+  text-decoration: none;
+}
+footer a:hover, footer a:visited:hover {
+  color: var(--link-hover-color);
+  text-decoration: underline;
+}
+
+.site-footer .center-text {
+  text-align: center;
+  margin-top: 10px;
+}
+.site-footer .khanda-symbol {
+  font-size: 20px;
+  display: inline-block;
+  line-height: 1;
+}
+.site-footer .cc-license {
+  display: inline-block;
+}
+.site-footer .cc-license img {
+  height: 22px !important;
+  margin-left: 3px;
+  vertical-align: text-bottom;
+}
+.site-footer .gurmukhi-link {
+  text-decoration: none;
+}
+
 /*# sourceMappingURL=style.css.map */

@@ -296,3 +296,44 @@ body {
     }
   }
 }
+
+// Same colors for footer links after being visited
+footer {
+  a, a:visited {
+    color: var(--link-color);
+    text-decoration: none;
+    
+    &:hover {
+      color: var(--link-hover-color);
+      text-decoration: underline;
+    }
+  }
+}
+
+// Footer Styles
+.site-footer {
+  .center-text {
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  .khanda-symbol {
+    font-size: 20px;
+    display: inline-block;
+    line-height: 1;
+  }
+
+  .cc-license {
+    display: inline-block;
+
+    img {
+      height: 22px !important;
+      margin-left: 3px;
+      vertical-align: text-bottom;
+    }
+  }
+
+  .gurmukhi-link {
+    text-decoration: none;
+  }
+}
