@@ -795,6 +795,15 @@ a:hover {
   text-decoration: underline;
 }
 
+.post-list a:visited, .post-content a:visited {
+  color: var(--link-hover-color) !important;
+  transition: none !important;
+}
+
+*:visited {
+  transition: none !important;
+}
+
 .home .post-list-heading,
 .home .post-list li > a,
 .home .post-link {
@@ -1059,9 +1068,25 @@ body[data-theme=dark] .site-title,
 body[data-theme=dark] .site-title:visited {
   color: var(--text-color) !important;
 }
-html[data-theme=dark] a:visited,
-body[data-theme=dark] a:visited {
-  color: var(--link-color) !important;
+html[data-theme=dark] .site-nav .page-link,
+body[data-theme=dark] .site-nav .page-link {
+  color: var(--text-color) !important;
+}
+html[data-theme=dark] .post-list a, html[data-theme=dark] .post-content a,
+body[data-theme=dark] .post-list a,
+body[data-theme=dark] .post-content a {
+  color: var(--link-color);
+}
+html[data-theme=dark] .post-list a:visited, html[data-theme=dark] .post-content a:visited,
+body[data-theme=dark] .post-list a:visited,
+body[data-theme=dark] .post-content a:visited {
+  color: var(--link-hover-color) !important;
+}
+html[data-theme=dark] .site-nav a.page-link:visited,
+html[data-theme=dark] .site-footer a:visited,
+body[data-theme=dark] .site-nav a.page-link:visited,
+body[data-theme=dark] .site-footer a:visited {
+  color: var(--text-color) !important;
 }
 
 html[data-theme=light],
@@ -1096,9 +1121,25 @@ body[data-theme=light] .site-title,
 body[data-theme=light] .site-title:visited {
   color: var(--text-color) !important;
 }
-html[data-theme=light] a:visited,
-body[data-theme=light] a:visited {
-  color: var(--link-color) !important;
+html[data-theme=light] .site-nav .page-link,
+body[data-theme=light] .site-nav .page-link {
+  color: var(--text-color) !important;
+}
+html[data-theme=light] .post-list a, html[data-theme=light] .post-content a,
+body[data-theme=light] .post-list a,
+body[data-theme=light] .post-content a {
+  color: var(--link-color);
+}
+html[data-theme=light] .post-list a:visited, html[data-theme=light] .post-content a:visited,
+body[data-theme=light] .post-list a:visited,
+body[data-theme=light] .post-content a:visited {
+  color: var(--link-hover-color) !important;
+}
+html[data-theme=light] .site-nav a.page-link:visited,
+html[data-theme=light] .site-footer a:visited,
+body[data-theme=light] .site-nav a.page-link:visited,
+body[data-theme=light] .site-footer a:visited {
+  color: var(--text-color) !important;
 }
 
 @media screen and (max-width: 600px) {

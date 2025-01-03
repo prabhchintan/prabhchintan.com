@@ -90,6 +90,20 @@ a {
   }
 }
 
+.post-list, .post-content {
+  a {
+    &:visited {
+      color: var(--link-hover-color) !important;
+      transition: none !important;
+    }
+  }
+}
+
+// Disable transitions for visited links
+*:visited {
+  transition: none !important;
+}
+
 // Home page styles
 .home {
   .post-list-heading,
@@ -405,12 +419,30 @@ body[data-theme="dark"] {
   color-scheme: dark !important;
 
   & {
+    // Site title and nav links
     .site-title, .site-title:visited {
       color: var(--text-color) !important;
     }
     
-    a:visited {
-      color: var(--link-color) !important;
+    .site-nav .page-link {
+      color: var(--text-color) !important;
+    }
+
+    // Post links with more specific selectors
+    .post-list, .post-content {
+      a {
+        color: var(--link-color);
+      }
+      
+      a:visited {
+        color: var(--link-hover-color) !important;
+      }
+    }
+
+    // Override for nav and footer
+    .site-nav a.page-link:visited,
+    .site-footer a:visited {
+      color: var(--text-color) !important;
     }
   }
 }
@@ -448,12 +480,30 @@ body[data-theme="light"] {
   color-scheme: light !important;
 
   & {
+    // Site title and nav links
     .site-title, .site-title:visited {
       color: var(--text-color) !important;
     }
     
-    a:visited {
-      color: var(--link-color) !important;
+    .site-nav .page-link {
+      color: var(--text-color) !important;
+    }
+
+    // Post links with more specific selectors
+    .post-list, .post-content {
+      a {
+        color: var(--link-color);
+      }
+      
+      a:visited {
+        color: var(--link-hover-color) !important;
+      }
+    }
+
+    // Override for nav and footer
+    .site-nav a.page-link:visited,
+    .site-footer a:visited {
+      color: var(--text-color) !important;
     }
   }
 }
