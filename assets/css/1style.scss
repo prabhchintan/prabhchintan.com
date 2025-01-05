@@ -2,32 +2,36 @@
 # Only the main Sass file needs front matter (the dashes are enough)
 ---
 
-// 1. IMPORTS
 @import "minima/skins/{{ site.minima.skin | default: 'auto' }}", "minima/initialize";
 
-// 2. GLOBAL TRANSITIONS
-* {
+// Ensure smooth transitions
+*{
   transition: background-color 0.2s ease, color 0.2s ease, fill 0.4s ease;
 }
 
-// 3. COLOR VARIABLES
-// Light Theme Colors
+// Color Variables
 $color-background-light: #f8f4e9;
 $color-text-light: #1c1310;
-$color-heading-light: #5e3a1d;
-$color-link-light: #7f5230;
-$color-link-hover-light: #ae7d5e;
+$color-heading-light: #6c411e;
+$color-link-light: #754a28;
+$color-link-hover-light: #784b2f;
 $color-dropcap-light: #6b7d5a;
 
-// Dark Theme Colors
 $color-background-dark: #1a1410;
 $color-text-dark: #e0d8c9;
 $color-heading-dark: #d7c8b6;
-$color-link-dark: #bf9c71;
-$color-link-hover-dark: #936e42;
+$color-link-dark: #8f6e45;
+$color-link-hover-dark: #c19a6b;
 $color-dropcap-dark: #9b6a4f;
 
-// Code Colors - Light
+// Typography
+$font-family-main: 'Cormorant Garamond', serif;
+$font-size-base: 19px;
+$font-weight-normal: 600;
+$font-weight-bold: 1000;
+$font-weight-headline: 1000;
+
+// Code styling
 $color-code-bg: #e8e3d6;
 $color-code-text: #3c3631;
 $color-code-border: #d0c8b8;
@@ -35,7 +39,6 @@ $color-code-keyword: #5d4e3d;
 $color-code-string: #4a5d47;
 $color-code-comment: #7d7468;
 
-// Code Colors - Dark
 $color-code-bg-dark: #1e1b17;
 $color-code-text-dark: #b3a89e;
 $color-code-border-dark: #2e2a25;
@@ -43,15 +46,9 @@ $color-code-keyword-dark: #8f7e6b;
 $color-code-string-dark: #6b7d65;
 $color-code-comment-dark: #635d55;
 
-// 4. TYPOGRAPHY VARIABLES
-$font-family-main: 'Cormorant Garamond', serif;
-$font-size-base: 19px;
-$font-weight-normal: 600;
-$font-weight-bold: 1000;
-$font-weight-headline: 1000;
-
-// 5. ROOT VARIABLES
+// Root variables
 :root {
+ // color-scheme: light dark; // Enable automatic color scheme switching
   --background-color: #{$color-background-light};
   --text-color: #{$color-text-light};
   --heading-color: #{$color-heading-light};
@@ -66,7 +63,7 @@ $font-weight-headline: 1000;
   --code-comment: #{$color-code-comment};
 }
 
-// 6. BASE STYLES
+// Base styles
 body, .site-header {
   font-family: $font-family-main;
   background-color: var(--background-color);
@@ -78,40 +75,11 @@ body, .site-header {
   z-index: 10;
 }
 
-.site-nav {
-  background-color: var(--background-color);
-  z-index: 11;
-  
-  .page-link {
-    color: var(--text-color);
-  }
-  
-  .menu-icon > svg {
-    fill: var(--heading-color);
-    z-index: 12;
-  }
-}
-
-// 7. TYPOGRAPHY
 h1, h2, h3 {
   color: var(--heading-color);
   font-weight: $font-weight-headline;
 }
 
-strong, b {
-  font-weight: $font-weight-bold;
-}
-
-em {
-  font-style: italic;
-  font-weight: 500;
-}
-
-.small-caps {
-  font-variant: small-caps;
-}
-
-// 8. LINK STYLES
 a {
   color: var(--link-color);
   text-decoration: none;
@@ -122,7 +90,6 @@ a {
   }
 }
 
-// Post link styles
 .post-list, .post-content {
   a {
     &:visited {
@@ -137,8 +104,7 @@ a {
   transition: none !important;
 }
 
-// 9. COMPONENT STYLES
-// Home page
+// Home page styles
 .home {
   .post-list-heading,
   .post-list li > a,
@@ -172,7 +138,7 @@ article.post {
   padding-bottom: 0;
 }
 
-// Blockquote
+// Blockquote style
 blockquote {
   font-family: $font-family-main;
   font-size: 20px;
@@ -183,26 +149,30 @@ blockquote {
   margin: 30px 0;
 }
 
-// Footer
+// Footer style
 footer {
   font-family: $font-family-main;
   font-size: 14px;
   color: #666;
   padding: 10px 0;
   text-align: center;
-  
-  a, a:visited {
-    color: var(--link-color);
-    text-decoration: none;
-    
-    &:hover {
-      color: var(--link-hover-color);
-      text-decoration: underline;
-    }
-  }
 }
 
-// 10. DROPCAP STYLES
+// Typography utilities
+.small-caps {
+  font-variant: small-caps;
+}
+
+strong, b {
+  font-weight: $font-weight-bold;
+}
+
+em {
+  font-style: italic;
+  font-weight: 500;
+}
+
+// Drop cap styles
 @font-face {
   font-family: 'FleurCornerCaps';
   src: url('/assets/fonts/FleurCornerCaps.woff2') format('woff2');
@@ -233,7 +203,18 @@ footer {
   }
 }
 
-// 11. CODE STYLING
+// Prevent drop cap styling on specific elements
+h1, h2, h3, h4, h5, h6,
+.post-header p, .page-header p,
+.post-meta, .page-meta {
+  &::first-letter {
+    font-size: inherit;
+    float: none;
+    margin-right: 0;
+  }
+}
+
+// Code styling
 pre, code {
   font-family: 'Courier Prime', 'Courier New', monospace;
   font-size: 0.92em;
@@ -253,7 +234,7 @@ code {
   padding: 2px 4px;
 }
 
-// Syntax highlighting
+// Syntax highlighting adjustments
 .highlight {
   .k, .kd, .kn, .kp, .kr, .kt, .nb, .nf {
     color: var(--code-keyword);
@@ -268,11 +249,143 @@ code {
   }
 }
 
-// 12. THEME-SPECIFIC STYLES
-// Dark theme
+// Navigation styles
+.site-nav {
+  background-color: var(--background-color);
+  z-index: 11;
+  
+  .page-link {
+    color: var(--text-color);
+  }
+  
+  .menu-icon > svg {
+    fill: var(--heading-color);
+    z-index: 12;
+  }
+}
+
+// Responsive video container
+.video-container {
+  position: relative;
+  padding-bottom: 56.25%; // 16:9 aspect ratio
+  height: 0;
+  overflow: hidden;
+  max-width: 100%;
+  z-index: 1; // Add this line
+
+  iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// Hide Math while loading page
+.mathjax_process {
+  visibility: hidden;
+}
+body {
+  &:not(.mathjax-loaded) {
+    .has-math {
+      visibility: hidden;
+    }
+  }
+}
+
+// Same colors for footer links after being visited
+footer {
+  a, a:visited {
+    color: var(--link-color);
+    text-decoration: none;
+    
+    &:hover {
+      color: var(--link-hover-color);
+      text-decoration: underline;
+    }
+  }
+}
+
+// Footer Styles
+.site-footer {
+  .center-text {
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  .khanda-symbol {
+    font-size: 19px;
+    line-height: 0;
+  }
+
+  .flag-symbol {
+    font-size: 15px;
+    line-height: 0;
+  }
+
+  a {
+    color: var(--link-hover-color) !important;  // Changed to use hover color by default
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+    
+    &:visited {
+      color: var(--link-hover-color) !important;  // Ensure visited matches
+    }
+  }
+}
+
+// ... keep all existing code until the theme toggle section ...
+
+// Theme toggle styles (add at the bottom)
+.theme-toggle {
+  background: none !important;
+  border: none !important;
+  padding: 0.5rem;
+  margin-left: 0px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-color);
+  
+  // Remove any default button styling
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  
+  &:hover {
+    opacity: 0.8;
+  }
+  
+  &:focus {
+    outline: none;
+  }
+  
+  .theme-toggle-icon {
+    font-size: 1.1rem;
+    line-height: 1;
+    
+    @media screen and (max-width: 600px) {
+      .theme-toggle {
+        position: absolute;
+        right: 3.5rem;
+        top: 0.6rem;
+      }
+    }
+  }
+}
+
+// Responsive adjustments for theme toggle
+
+
+// Add data-theme attributes to override media query
 html[data-theme="dark"],
 body[data-theme="dark"] {
-  // Variables
+  // Original dark theme variables
   --background-color: #{$color-background-dark} !important;
   --text-color: #{$color-text-dark} !important;
   --heading-color: #{$color-heading-dark} !important;
@@ -298,17 +411,42 @@ body[data-theme="dark"] {
   --minima-table-header-border: #{$color-code-border-dark} !important;
   --minima-table-border-color: #{$color-code-border-dark} !important;
 
+  // Force colors and background
   background-color: var(--background-color) !important;
   color-scheme: dark !important;
-  .site-nav .menu-icon svg path {
-    fill: var(--text-color) !important;
+
+  & {
+    // Site title and nav links
+    .site-title, .site-title:visited {
+      color: var(--text-color) !important;
+    }
+    
+    .site-nav .page-link {
+      color: var(--text-color) !important;
+    }
+
+    // Post links with more specific selectors
+    .post-list, .post-content {
+      a {
+        color: var(--link-color);
+      }
+      
+      a:visited {
+        color: var(--link-hover-color) !important;
+      }
+    }
+
+    // Override for nav and footer
+    .site-nav a.page-link:visited,
+    .site-footer a:visited {
+      color: var(--text-color) !important;
+    }
   }
 }
 
-// Light theme
 html[data-theme="light"],
 body[data-theme="light"] {
-  // Variables
+  // Original light theme variables
   --background-color: #{$color-background-light} !important;
   --text-color: #{$color-text-light} !important;
   --heading-color: #{$color-heading-light} !important;
@@ -334,74 +472,67 @@ body[data-theme="light"] {
   --minima-table-header-border: #{$color-code-border} !important;
   --minima-table-border-color: #{$color-code-border} !important;
 
+  // Force colors and background
   background-color: var(--background-color) !important;
   color-scheme: light !important;
-}
 
-// 13. RESPONSIVE STYLES
-.theme-toggle {
-  background: none !important;
-  border: none !important;
-  padding: 0.5rem;
-  margin-left: 20px;
-  margin-top: -7px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-color);
-  
-  // Remove any default button styling
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  
-  &:hover {
-    opacity: 0.8;
-  }
-  
-  &:focus {
-    outline: none;
-  }
-  
-  .theme-toggle-icon {
-    font-size: 1.1rem;
-    line-height: 1;
+  & {
+    // Site title and nav links
+    .site-title, .site-title:visited {
+      color: var(--text-color) !important;
+    }
+    
+    .site-nav .page-link {
+      color: var(--text-color) !important;
+    }
+
+    // Post links with more specific selectors
+    .post-list, .post-content {
+      a {
+        color: var(--link-color);
+      }
+      
+      a:visited {
+        color: var(--link-hover-color) !important;
+      }
+    }
+
+    // Override for nav and footer
+    .site-nav a.page-link:visited,
+    .site-footer a:visited {
+      color: var(--text-color) !important;
+    }
   }
 }
 
-// Separate media query for mobile styles
+// Responsive adjustments for theme toggle
 @media screen and (max-width: 600px) {
+  .site-nav {
+    .nav-trigger:checked ~ .trigger {
+      padding-top: 46px;  // Add padding to push content below the theme toggle
+    }
+  }
+
   .theme-toggle {
     position: absolute;
-    right: 3.5rem;
-    top: 0.6rem;
-  }
-}
-
-// Footer Styles
-.site-footer {
-  .center-text {
-    text-align: center;
-    margin-top: 10px;
-  }
-
-  .khanda-symbol {
-    font-size: 19px;
-    line-height: 0;
-  }
-
-  .flag-symbol {
-    font-size: 15px;
-    line-height: 0;
-  }
-
-  a, a:visited {  // Changed to target both normal and visited states
-    color: var(--link-hover-color) !important;  // Always use hover color
-    text-decoration: none;
+    right: 0;
+    top: 46px;
+    padding: 0;
+    margin: 0;
+    height: 46px;
+    width: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--background-color) !important;
+    z-index: 2;  // Ensure it's above other content but below the menu
     
-    &:hover {
-      text-decoration: underline;
+    .theme-toggle-icon {
+      font-size: 1.4rem;
+      line-height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
   }
 }
