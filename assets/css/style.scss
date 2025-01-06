@@ -86,9 +86,12 @@ body, .site-header {
     color: var(--text-color);
   }
   
-  .menu-icon > svg {
-    fill: var(--heading-color);
-    z-index: 12;
+  .menu-icon {
+    z-index: 13;
+    
+    > svg {
+      fill: var(--heading-color);
+    }
   }
 }
 
@@ -300,8 +303,13 @@ body[data-theme="dark"] {
 
   background-color: var(--background-color) !important;
   color-scheme: dark !important;
-  .site-nav .menu-icon svg path {
-    fill: var(--text-color) !important;
+
+  .site-title svg path {
+    fill: #{$color-text-dark} !important;
+  }
+
+  .site-nav .menu-icon > svg path {
+    fill: #{$color-text-dark} !important;
   }
 }
 
@@ -336,6 +344,26 @@ body[data-theme="light"] {
 
   background-color: var(--background-color) !important;
   color-scheme: light !important;
+
+  .site-title svg path {
+    fill: #{$color-text-light} !important;
+  }
+
+  .site-nav .menu-icon > svg path {
+    fill: #{$color-text-light} !important;
+  }
+}
+
+// Footer links (within section 12)
+.site-footer {
+  a, a:visited {
+    color: var(--link-hover-color) !important;
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
 
 // 13. RESPONSIVE STYLES
@@ -343,26 +371,15 @@ body[data-theme="light"] {
   background: none !important;
   border: none !important;
   padding: 0.5rem;
-  margin-left: 20px;
-  margin-top: -7px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   color: var(--text-color);
   
-  // Remove any default button styling
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  
-  &:hover {
-    opacity: 0.8;
-  }
-  
-  &:focus {
-    outline: none;
-  }
   
   .theme-toggle-icon {
     font-size: 1.1rem;
@@ -370,15 +387,82 @@ body[data-theme="light"] {
   }
 }
 
-// Separate media query for mobile styles
-@media screen and (max-width: 600px) {
-  .theme-toggle {
-    position: absolute;
-    right: 3.5rem;
-    top: 0.6rem;
+// Mobile styles
+// Site nav base styles
+.site-nav {
+  background-color: var(--background-color);
+  z-index: 11;
+  
+  .page-link {
+    color: var(--text-color);
+  }
+  
+  .menu-icon {
+    z-index: 13;
+    
+    > svg {
+      fill: var(--heading-color);
+    }
+  }
+
+  .trigger {
+    z-index: 12;  // Add this to ensure menu content stays above theme toggle
   }
 }
 
+// Theme toggle base styles
+.theme-toggle {
+  background: none !important;
+  border: none !important;
+  padding: 0.5rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-color);
+  
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  
+  .theme-toggle-icon {
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+}
+
+// Mobile styles
+@media screen and (max-width: 600px) {
+  .theme-toggle {
+    position: absolute;
+    right: 3rem;    // Position it left of the hamburger
+    top: 1px;         // Align with hamburger
+    z-index: 1;       // Keep it below everything
+  }
+  
+  // Hide theme toggle when menu is open
+  .site-nav .nav-trigger:checked ~ .trigger + .theme-toggle {
+    display: none;
+  }
+}
+
+// Desktop styles
+@media screen and (min-width: 601px) {
+  .theme-toggle {
+    position: relative;
+    right: 0;          // Reset right positioning
+    top: 0;            // Reset top positioning
+    margin-left: .7rem;
+    margin-top: -0.01rem; // Add space between the last nav link and the toggle
+    z-index: 1;        // Ensure it stays on top
+  }
+  
+  .site-nav {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; // Align items to the right
+  }
+}
 // Footer Styles
 .site-footer {
   .center-text {
