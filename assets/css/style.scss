@@ -15,7 +15,7 @@
 $color-background-light: #f8f4e9;
 $color-text-light: #1c1310;
 $color-heading-light: #5e3a1d;
-$color-link-light: #4b2200;
+$color-link-light: #512602;
 $color-link-hover-light: #bf9a83;
 $color-dropcap-light: #6b7d5a;
 
@@ -304,7 +304,7 @@ body[data-theme="dark"] {
   background-color: var(--background-color) !important;
   color-scheme: dark !important;
 
-  .site-title {
+    .site-title {
     color: var(--text-color) !important;  // For text content (ੴ)
   }
 
