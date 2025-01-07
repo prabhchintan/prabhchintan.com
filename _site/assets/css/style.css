@@ -971,6 +971,10 @@ body[data-theme=dark] {
   background-color: var(--background-color) !important;
   color-scheme: dark !important;
 }
+html[data-theme=dark] .site-title,
+body[data-theme=dark] .site-title {
+  color: var(--text-color) !important;
+}
 html[data-theme=dark] .site-title svg path,
 body[data-theme=dark] .site-title svg path {
   fill: #e0d8c9 !important;

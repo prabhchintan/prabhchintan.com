@@ -84,4 +84,5 @@ DEPENDENCIES
   jekyll (= 4.3.4)
   minima!
 
-BUND
+BUNDLED WITH
+   2.5.18

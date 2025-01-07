@@ -304,6 +304,10 @@ body[data-theme="dark"] {
   background-color: var(--background-color) !important;
   color-scheme: dark !important;
 
+  .site-title {
+    color: var(--text-color) !important;  // For text content (ੴ)
+  }
+
   .site-title svg path {
     fill: #{$color-text-dark} !important;
   }
