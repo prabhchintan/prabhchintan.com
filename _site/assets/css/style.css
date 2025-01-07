@@ -752,7 +752,7 @@ table td {
   }
 }
 :root {
-  --t-duration: 0.3s;
+  --t-duration: 0.2s;
   --t-easing: ease;
 }
 
@@ -760,11 +760,11 @@ html:not(.no-transition) * {
   transition: color var(--t-duration) var(--t-easing), background-color var(--t-duration) var(--t-easing), border-color var(--t-duration) var(--t-easing);
 }
 html[data-theme=light] * {
-  opacity: 0.99;
+  opacity: 1;
   transition: color var(--t-duration) var(--t-easing), background-color var(--t-duration) var(--t-easing), border-color var(--t-duration) var(--t-easing), opacity var(--t-duration) var(--t-easing);
 }
 html[data-theme=dark] * {
-  opacity: 0.99;
+  opacity: 1;
   transition: color var(--t-duration) var(--t-easing), background-color var(--t-duration) var(--t-easing), border-color var(--t-duration) var(--t-easing), opacity var(--t-duration) var(--t-easing);
 }
 

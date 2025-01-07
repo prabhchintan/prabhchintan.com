@@ -7,7 +7,7 @@
 
 // 2. GLOBAL TRANSITIONS
 :root {
-  --t-duration: 0.3s;
+  --t-duration: 0.2s;
   --t-easing: ease;
 }
 
@@ -22,7 +22,7 @@ html {
 
   // Dark to Light specific
   &[data-theme="light"] * {
-    opacity: 0.99; // Prevent complete disappearance
+    opacity: 1; // Prevent complete disappearance
     transition: 
       color var(--t-duration) var(--t-easing),
       background-color var(--t-duration) var(--t-easing),
@@ -32,7 +32,7 @@ html {
 
   // Light to Dark specific
   &[data-theme="dark"] * {
-    opacity: 0.99; // Prevent complete disappearance
+    opacity: 1; // Prevent complete disappearance
     transition: 
       color var(--t-duration) var(--t-easing),
       background-color var(--t-duration) var(--t-easing),

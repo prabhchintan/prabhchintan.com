@@ -62,21 +62,29 @@
       const metaThemeColor = document.querySelector('meta[name="theme-color"]');
       metaThemeColor.setAttribute('content', isDark ? '#1a1410' : '#f8f4e9');
     }
-
+  
     // Update on theme change
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (mutation.attributeName === 'data-theme') {
           updateThemeColor();
+          // Add this new code to force a repaint of the footer
+          const footer = document.querySelector('.site-footer');
+          if (footer) {
+            footer.style.transform = 'translateZ(0)';
+            requestAnimationFrame(() => {
+              footer.style.transform = '';
+            });
+          }
         }
       });
     });
-
+  
     observer.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ['data-theme']
     });
-
+  
     // Initial update
     updateThemeColor();
   </script>
