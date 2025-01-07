@@ -759,7 +759,7 @@ table td {
   --background-color: #f8f4e9;
   --text-color: #1c1310;
   --heading-color: #5e3a1d;
-  --link-color: #4b2200;
+  --link-color: #663106;
   --link-hover-color: #bf9a83;
   --dropcap-color: #6b7d5a;
   --code-bg: #e8e3d6;
@@ -995,7 +995,7 @@ body[data-theme=light] {
   --background-color: #f8f4e9 !important;
   --text-color: #1c1310 !important;
   --heading-color: #5e3a1d !important;
-  --link-color: #4b2200 !important;
+  --link-color: #663106 !important;
   --link-hover-color: #bf9a83 !important;
   --dropcap-color: #6b7d5a !important;
   --code-bg: #e8e3d6 !important;
@@ -1006,7 +1006,7 @@ body[data-theme=light] {
   --code-comment: #7d7468 !important;
   --minima-text-color: #1c1310 !important;
   --minima-background-color: #f8f4e9 !important;
-  --minima-link-base-color: #4b2200 !important;
+  --minima-link-base-color: #663106 !important;
   --minima-link-hover-color: #bf9a83 !important;
   --minima-border-color-01: #d0c8b8 !important;
   --minima-table-text-color: #1c1310 !important;
