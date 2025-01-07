@@ -759,8 +759,8 @@ table td {
   --background-color: #f8f4e9;
   --text-color: #1c1310;
   --heading-color: #5e3a1d;
-  --link-color: #7f5230;
-  --link-hover-color: #ae7d5e;
+  --link-color: #4b2200;
+  --link-hover-color: #bf9a83;
   --dropcap-color: #6b7d5a;
   --code-bg: #e8e3d6;
   --code-text: #3c3631;
@@ -949,8 +949,8 @@ body[data-theme=dark] {
   --background-color: #1a1410 !important;
   --text-color: #e0d8c9 !important;
   --heading-color: #d7c8b6 !important;
-  --link-color: #bf9c71 !important;
-  --link-hover-color: #936e42 !important;
+  --link-color: #d0a168 !important;
+  --link-hover-color: #694e2d !important;
   --dropcap-color: #9b6a4f !important;
   --code-bg: #1e1b17 !important;
   --code-text: #b3a89e !important;
@@ -960,8 +960,8 @@ body[data-theme=dark] {
   --code-comment: #635d55 !important;
   --minima-text-color: #e0d8c9 !important;
   --minima-background-color: #1a1410 !important;
-  --minima-link-base-color: #bf9c71 !important;
-  --minima-link-hover-color: #936e42 !important;
+  --minima-link-base-color: #d0a168 !important;
+  --minima-link-hover-color: #694e2d !important;
   --minima-border-color-01: #2e2a25 !important;
   --minima-table-text-color: #e0d8c9 !important;
   --minima-table-zebra-color: #110d0a !important;
@@ -979,14 +979,20 @@ html[data-theme=dark] .site-nav .menu-icon > svg path,
 body[data-theme=dark] .site-nav .menu-icon > svg path {
   fill: #e0d8c9 !important;
 }
+@media (prefers-color-scheme: dark) {
+  html[data-theme=dark] + script + meta[name=theme-color],
+  body[data-theme=dark] + script + meta[name=theme-color] {
+    content: "#1a1410";
+  }
+}
 
 html[data-theme=light],
 body[data-theme=light] {
   --background-color: #f8f4e9 !important;
   --text-color: #1c1310 !important;
   --heading-color: #5e3a1d !important;
-  --link-color: #7f5230 !important;
-  --link-hover-color: #ae7d5e !important;
+  --link-color: #4b2200 !important;
+  --link-hover-color: #bf9a83 !important;
   --dropcap-color: #6b7d5a !important;
   --code-bg: #e8e3d6 !important;
   --code-text: #3c3631 !important;
@@ -996,8 +1002,8 @@ body[data-theme=light] {
   --code-comment: #7d7468 !important;
   --minima-text-color: #1c1310 !important;
   --minima-background-color: #f8f4e9 !important;
-  --minima-link-base-color: #7f5230 !important;
-  --minima-link-hover-color: #ae7d5e !important;
+  --minima-link-base-color: #4b2200 !important;
+  --minima-link-hover-color: #bf9a83 !important;
   --minima-border-color-01: #d0c8b8 !important;
   --minima-table-text-color: #1c1310 !important;
   --minima-table-zebra-color: #f4eedd !important;
@@ -1015,13 +1021,11 @@ html[data-theme=light] .site-nav .menu-icon > svg path,
 body[data-theme=light] .site-nav .menu-icon > svg path {
   fill: #1c1310 !important;
 }
-
-.site-footer a, .site-footer a:visited {
-  color: var(--link-hover-color) !important;
-  text-decoration: none;
-}
-.site-footer a:hover, .site-footer a:visited:hover {
-  text-decoration: underline;
+@media (prefers-color-scheme: light) {
+  html[data-theme=light] + script + meta[name=theme-color],
+  body[data-theme=light] + script + meta[name=theme-color] {
+    content: "#f8f4e9";
+  }
 }
 
 .theme-toggle {

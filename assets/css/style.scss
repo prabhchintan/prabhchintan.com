@@ -15,16 +15,16 @@
 $color-background-light: #f8f4e9;
 $color-text-light: #1c1310;
 $color-heading-light: #5e3a1d;
-$color-link-light: #7f5230;
-$color-link-hover-light: #ae7d5e;
+$color-link-light: #4b2200;
+$color-link-hover-light: #bf9a83;
 $color-dropcap-light: #6b7d5a;
 
 // Dark Theme Colors
 $color-background-dark: #1a1410;
 $color-text-dark: #e0d8c9;
 $color-heading-dark: #d7c8b6;
-$color-link-dark: #bf9c71;
-$color-link-hover-dark: #936e42;
+$color-link-dark: #d0a168;
+$color-link-hover-dark: #694e2d;
 $color-dropcap-dark: #9b6a4f;
 
 // Code Colors - Light
@@ -311,6 +311,13 @@ body[data-theme="dark"] {
   .site-nav .menu-icon > svg path {
     fill: #{$color-text-dark} !important;
   }
+
+  // Move media query to the end
+  @media (prefers-color-scheme: dark) {
+    & + script + meta[name="theme-color"] {
+      content: "#{$color-background-dark}";
+    }
+  }
 }
 
 // Light theme
@@ -352,16 +359,11 @@ body[data-theme="light"] {
   .site-nav .menu-icon > svg path {
     fill: #{$color-text-light} !important;
   }
-}
 
-// Footer links (within section 12)
-.site-footer {
-  a, a:visited {
-    color: var(--link-hover-color) !important;
-    text-decoration: none;
-    
-    &:hover {
-      text-decoration: underline;
+  // Move media query to the end
+  @media (prefers-color-scheme: light) {
+    & + script + meta[name="theme-color"] {
+      content: "#{$color-background-light}";
     }
   }
 }

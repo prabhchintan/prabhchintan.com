@@ -2,9 +2,9 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#1a1410" media="(prefers-color-scheme: dark)">
-  <meta name="theme-color" content="#f8f4e9" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
   {%- seo title=false -%}
   <title>
     {% if page.page_title %}
@@ -29,4 +29,29 @@
   {%- endif -%}
 
   {%- include custom-head.html -%}
+
+  <script>
+    function updateThemeColor() {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+      metaThemeColor.setAttribute('content', isDark ? '#1a1410' : '#f8f4e9');
+    }
+
+    // Update on theme change
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'data-theme') {
+          updateThemeColor();
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme']
+    });
+
+    // Initial update
+    updateThemeColor();
+  </script>
 </head>

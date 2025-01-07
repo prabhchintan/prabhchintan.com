@@ -3,8 +3,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#1a1410" media="(prefers-color-scheme: dark)">
-  <meta name="theme-color" content="#f8f4e9" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><!-- Begin Jekyll SEO tag v2.8.0 -->
 <meta name="generator" content="Jekyll v4.3.4" />
 <meta property="og:title" content="Artifacts from the Future" />
@@ -116,7 +115,31 @@
   };
   </script>
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script></head><body><header class="site-header">
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script><script>
+    function updateThemeColor() {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+      metaThemeColor.setAttribute('content', isDark ? '#1a1410' : '#f8f4e9');
+    }
+
+    // Update on theme change
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'data-theme') {
+          updateThemeColor();
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme']
+    });
+
+    // Initial update
+    updateThemeColor();
+  </script>
+</head><body><header class="site-header">
   <div class="wrapper"><a class="site-title" rel="author" href="/">ੴ</a><nav class="site-nav">
         <input type="checkbox" id="nav-trigger" class="nav-trigger" />
         <label for="nav-trigger">
