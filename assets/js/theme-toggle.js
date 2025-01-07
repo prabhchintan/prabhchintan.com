@@ -1,52 +1,68 @@
 class ThemeManager {
-    constructor() {
-      this.themeToggle = document.getElementById('theme-toggle');
-      this.themeToggleIcon = this.themeToggle.querySelector('.theme-toggle-icon');
-      this.mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      
-      console.log('ThemeManager initialized'); // Debug log
-      this.initialize();
+  constructor() {
+    this.themeToggle = document.getElementById('theme-toggle');
+    this.themeToggleIcon = this.themeToggle.querySelector('.theme-toggle-icon');
+    this.mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    
+    // Apply theme immediately before DOM content loads
+    const savedTheme = localStorage.getItem('theme');
+    const preferredTheme = savedTheme || (this.mediaQuery.matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', preferredTheme);
+    
+    // Add no-transition class immediately
+    document.documentElement.classList.add('no-transition');
+    
+    this.initialize();
+    
+    // Remove no-transition class after a brief delay
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.documentElement.classList.remove('no-transition');
+      }, 1);
+    });
+  }
+
+  initialize() {
+    const savedTheme = localStorage.getItem('theme');
+    const preferredTheme = savedTheme || (this.mediaQuery.matches ? 'dark' : 'light');
+    this.setTheme(preferredTheme, false);
+
+    this.themeToggle.addEventListener('click', (e) => {
+      e.preventDefault(); // Prevent default button behavior
+      this.toggleTheme();
+    });
+
+    this.mediaQuery.addEventListener('change', (e) => {
+      if (!localStorage.getItem('theme')) {
+        this.setTheme(e.matches ? 'dark' : 'light', true);
+      }
+    });
+
+    this.themeToggle.style.visibility = 'visible';
+  }
+
+  setTheme(theme, animate = true) {
+    if (!animate) {
+      document.documentElement.classList.add('no-transition');
     }
-  
-    initialize() {
-      const savedTheme = localStorage.getItem('theme');
-      const preferredTheme = savedTheme || (this.mediaQuery.matches ? 'dark' : 'light');
-      console.log('Initial theme:', preferredTheme); // Debug log
-      this.setTheme(preferredTheme, false);
-  
-      this.themeToggle.addEventListener('click', () => this.toggleTheme());
-      this.mediaQuery.addEventListener('change', (e) => {
-        if (!localStorage.getItem('theme')) {
-          this.setTheme(e.matches ? 'dark' : 'light', true);
-        }
-      });
-  
-      this.themeToggle.style.visibility = 'visible';
-    }
-  
-    setTheme(theme, animate = true) {
-      console.log('Setting theme to:', theme); // Debug log
-      document.documentElement.setAttribute('data-theme', theme);
-      localStorage.setItem('theme', theme);
-      this.themeToggleIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
-      
-      // Force a repaint to ensure theme changes are applied
-      document.body.style.display = 'none';
-      document.body.offsetHeight; // Trigger reflow
-      document.body.style.display = '';
-    }
-  
-    toggleTheme() {
-      const currentTheme = document.documentElement.getAttribute('data-theme');
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      console.log('Toggling theme from', currentTheme, 'to', newTheme); // Debug log
-      this.setTheme(newTheme);
+    
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+    this.themeToggleIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+    
+    if (!animate) {
+      // Force a reflow before removing the class
+      document.documentElement.offsetHeight;
+      document.documentElement.classList.remove('no-transition');
     }
   }
-  
-  // Initialize theme manager
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => new ThemeManager());
-  } else {
-    new ThemeManager();
+
+  toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    this.setTheme(newTheme, true);
   }
+}
+
+// Initialize theme manager immediately
+new ThemeManager();

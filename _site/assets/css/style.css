@@ -751,11 +751,37 @@ table td {
     width: calc(50% - 30px / 2);
   }
 }
-* {
-  transition: background-color 0.2s ease, color 0.2s ease, fill 0.4s ease;
+:root {
+  --t-duration: 0.3s;
+  --t-easing: ease;
+}
+
+html:not(.no-transition) * {
+  transition: color var(--t-duration) var(--t-easing), background-color var(--t-duration) var(--t-easing), border-color var(--t-duration) var(--t-easing);
+}
+html[data-theme=light] * {
+  opacity: 0.99;
+  transition: color var(--t-duration) var(--t-easing), background-color var(--t-duration) var(--t-easing), border-color var(--t-duration) var(--t-easing), opacity var(--t-duration) var(--t-easing);
+}
+html[data-theme=dark] * {
+  opacity: 0.99;
+  transition: color var(--t-duration) var(--t-easing), background-color var(--t-duration) var(--t-easing), border-color var(--t-duration) var(--t-easing), opacity var(--t-duration) var(--t-easing);
+}
+
+.site-header,
+.site-nav,
+.menu-icon,
+.theme-toggle,
+.site-title,
+.trigger {
+  transition: none !important;
+  animation: none !important;
+  transform: none !important;
+  opacity: 1 !important;
 }
 
 :root {
+  --background-color-rgb: 248, 244, 233;
   --background-color: #f8f4e9;
   --text-color: #1c1310;
   --heading-color: #5e3a1d;
@@ -779,6 +805,23 @@ body, .site-header {
   border-bottom: none;
   position: relative;
   z-index: 10;
+}
+
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 0.2rem 0;
+  min-height: 45px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background-color: rgba(var(--background-color-rgb), 0.85);
+}
+
+body {
+  padding-top: 60px;
 }
 
 .site-nav {
@@ -946,6 +989,7 @@ code {
 
 html[data-theme=dark],
 body[data-theme=dark] {
+  --background-color-rgb: 26, 20, 16;
   --background-color: #1a1410 !important;
   --text-color: #e0d8c9 !important;
   --heading-color: #d7c8b6 !important;
@@ -992,6 +1036,7 @@ body[data-theme=dark] .site-nav .menu-icon > svg path {
 
 html[data-theme=light],
 body[data-theme=light] {
+  --background-color-rgb: 248, 244, 233;
   --background-color: #f8f4e9 !important;
   --text-color: #1c1310 !important;
   --heading-color: #5e3a1d !important;
@@ -1087,13 +1132,23 @@ body[data-theme=light] .site-nav .menu-icon > svg path {
 
 @media screen and (max-width: 600px) {
   .theme-toggle {
-    position: absolute;
-    right: 3rem;
-    top: 1px;
-    z-index: 1;
+    position: fixed;
+    right: 4rem;
+    top: 0.7rem;
+    z-index: 1001;
   }
   .site-nav .nav-trigger:checked ~ .trigger + .theme-toggle {
     display: none;
+  }
+  .site-nav {
+    position: fixed;
+    top: 9px;
+    right: 15px;
+    background-color: var(--background-color);
+    z-index: 1001;
+  }
+  .site-nav .trigger {
+    z-index: 12;
   }
 }
 @media screen and (min-width: 601px) {
@@ -1129,6 +1184,21 @@ body[data-theme=light] .site-nav .menu-icon > svg path {
 }
 .site-footer a:hover, .site-footer a:visited:hover {
   text-decoration: underline;
+}
+
+.video-container {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  height: 0;
+  overflow: hidden;
+  max-width: 100%;
+}
+.video-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 /*# sourceMappingURL=style.css.map */

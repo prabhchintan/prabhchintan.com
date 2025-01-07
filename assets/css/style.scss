@@ -6,8 +6,52 @@
 @import "minima/skins/{{ site.minima.skin | default: 'auto' }}", "minima/initialize";
 
 // 2. GLOBAL TRANSITIONS
-* {
-  transition: background-color 0.2s ease, color 0.2s ease, fill 0.4s ease;
+:root {
+  --t-duration: 0.3s;
+  --t-easing: ease;
+}
+
+html {
+  // Base transition
+  &:not(.no-transition) * {
+    transition: 
+      color var(--t-duration) var(--t-easing),
+      background-color var(--t-duration) var(--t-easing),
+      border-color var(--t-duration) var(--t-easing);
+  }
+
+  // Dark to Light specific
+  &[data-theme="light"] * {
+    opacity: 0.99; // Prevent complete disappearance
+    transition: 
+      color var(--t-duration) var(--t-easing),
+      background-color var(--t-duration) var(--t-easing),
+      border-color var(--t-duration) var(--t-easing),
+      opacity var(--t-duration) var(--t-easing);
+  }
+
+  // Light to Dark specific
+  &[data-theme="dark"] * {
+    opacity: 0.99; // Prevent complete disappearance
+    transition: 
+      color var(--t-duration) var(--t-easing),
+      background-color var(--t-duration) var(--t-easing),
+      border-color var(--t-duration) var(--t-easing),
+      opacity var(--t-duration) var(--t-easing);
+  }
+}
+
+// Keep header elements stable
+.site-header,
+.site-nav,
+.menu-icon,
+.theme-toggle,
+.site-title,
+.trigger {
+  transition: none !important;
+  animation: none !important;
+  transform: none !important;
+  opacity: 1 !important;
 }
 
 // 3. COLOR VARIABLES
@@ -18,6 +62,8 @@ $color-heading-light: #5e3a1d;
 $color-link-light: #663106;
 $color-link-hover-light: #bf9a83;
 $color-dropcap-light: #6b7d5a;
+$color-background-light-rgb: 248, 244, 233; // RGB values for #f8f4e9
+$color-background-dark-rgb: 26, 20, 16;     // RGB values for #1a1410
 
 // Dark Theme Colors
 $color-background-dark: #1a1410;
@@ -52,6 +98,7 @@ $font-weight-headline: 1000;
 
 // 5. ROOT VARIABLES
 :root {
+  --background-color-rgb: #{$color-background-light-rgb};
   --background-color: #{$color-background-light};
   --text-color: #{$color-text-light};
   --heading-color: #{$color-heading-light};
@@ -76,6 +123,25 @@ body, .site-header {
   border-bottom: none;
   position: relative;
   z-index: 10;
+}
+
+// Add new styles for sticky header
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 0.2rem 0;
+  min-height: 45px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background-color: rgba(var(--background-color-rgb), 0.85);
+}
+
+// Add padding to body to prevent content from hiding behind fixed header
+body {
+  padding-top: 60px; // Adjust this value based on your header height
 }
 
 .site-nav {
@@ -276,6 +342,7 @@ code {
 html[data-theme="dark"],
 body[data-theme="dark"] {
   // Variables
+  --background-color-rgb: #{$color-background-dark-rgb};
   --background-color: #{$color-background-dark} !important;
   --text-color: #{$color-text-dark} !important;
   --heading-color: #{$color-heading-dark} !important;
@@ -328,6 +395,7 @@ body[data-theme="dark"] {
 html[data-theme="light"],
 body[data-theme="light"] {
   // Variables
+  --background-color-rgb: #{$color-background-light-rgb};
   --background-color: #{$color-background-light} !important;
   --text-color: #{$color-text-light} !important;
   --heading-color: #{$color-heading-light} !important;
@@ -440,15 +508,27 @@ body[data-theme="light"] {
 // Mobile styles
 @media screen and (max-width: 600px) {
   .theme-toggle {
-    position: absolute;
-    right: 3rem;    // Position it left of the hamburger
-    top: 1px;         // Align with hamburger
-    z-index: 1;       // Keep it below everything
+    position: fixed;          // Change from absolute to fixed
+    right: 4rem;             // Position it left of the hamburger
+    top: 0.7rem;                // Align with hamburger
+    z-index: 1001;           // Ensure it stays above the header
   }
   
   // Hide theme toggle when menu is open
   .site-nav .nav-trigger:checked ~ .trigger + .theme-toggle {
     display: none;
+  }
+
+  .site-nav {
+    position: fixed;         // Change from absolute to fixed
+    top: 9px;               // Keep original positioning
+    right: $spacing-unit * .5;
+    background-color: var(--background-color);
+    z-index: 1001;          // Match theme-toggle z-index
+    
+    .trigger {
+      z-index: 12;          // Keep existing z-index hierarchy
+    }
   }
 }
 
@@ -469,6 +549,7 @@ body[data-theme="light"] {
     justify-content: flex-end; // Align items to the right
   }
 }
+
 // Footer Styles
 .site-footer {
   .center-text {
@@ -493,5 +574,22 @@ body[data-theme="light"] {
     &:hover {
       text-decoration: underline;
     }
+  }
+}
+
+// Video container styles
+.video-container {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  height: 0;
+  overflow: hidden;
+  max-width: 100%;
+  
+  iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
   }
 }

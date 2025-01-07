@@ -1,5 +1,31 @@
 <!DOCTYPE html>
 <html lang="en"><head>
+  <!-- Initial background setup - must be first -->
+  <script>
+    (function() {
+      // Always start with hidden content - slow fade for page load
+      document.documentElement.style.opacity = '0';
+      document.documentElement.style.transition = 'opacity 2.5s ease'; // seconds to page load or refresh
+      
+      // Set initial theme
+      document.documentElement.classList.add('no-transition');
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+      
+      // Fade in content smoothly
+      window.addEventListener('DOMContentLoaded', () => {
+        requestAnimationFrame(() => {
+          document.documentElement.style.opacity = '1';
+          setTimeout(() => {
+            document.documentElement.classList.remove('no-transition');
+          }, 1000); // Match the 1s fade duration
+        });
+      });
+    })();
+  </script>
+
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">

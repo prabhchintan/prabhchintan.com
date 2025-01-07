@@ -752,7 +752,7 @@ table td {
   }
 }
 * {
-  transition: background-color 0.2s ease, color 0.2s ease, fill 0.4s ease;
+  transition: background-color 0.1s ease, color 0.3s ease, fill 0.3s ease;
 }
 
 :root {
