@@ -78,3 +78,5 @@ permalink: /:title
 
 include:
   - service-worker.js
+
+repository: https://github.com/prabhchintan/prabhchintan.github.io.git
