@@ -31,11 +31,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><!-- Begin Jekyll SEO tag v2.8.0 -->
-<meta name="generator" content="Jekyll v4.3.4" />
+<meta name="generator" content="Jekyll v3.10.0" />
 <meta property="og:title" content="WIP: On Modeling Oil" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Designing a Dynamic Oil Consumption and Distribution Model Using Mathematica" />
-<meta property="og:description" content="Designing a Dynamic Oil Consumption and Distribution Model Using Mathematica" />
+<meta name="description" content="Introduction" />
+<meta property="og:description" content="Introduction" />
 <link rel="canonical" href="http://localhost:4000/oil" />
 <meta property="og:url" content="http://localhost:4000/oil" />
 <meta property="og:site_name" content="ੴ" />
@@ -44,7 +44,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="WIP: On Modeling Oil" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2025-01-24T00:00:00-06:00","datePublished":"2025-01-24T00:00:00-06:00","description":"Designing a Dynamic Oil Consumption and Distribution Model Using Mathematica","headline":"WIP: On Modeling Oil","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/oil"},"url":"http://localhost:4000/oil"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2025-01-24T00:00:00-06:00","datePublished":"2025-01-24T00:00:00-06:00","description":"Introduction","headline":"WIP: On Modeling Oil","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/oil"},"url":"http://localhost:4000/oil"}</script>
 <!-- End Jekyll SEO tag -->
 <title>
     
@@ -206,161 +206,307 @@
   </header>
 
   <div class="post-content e-content" itemprop="articleBody">
-    <h3 id="designing-a-dynamic-oil-consumption-and-distribution-model-using-mathematica">Designing a Dynamic Oil Consumption and Distribution Model Using Mathematica</h3>
+    <h2 id="introduction">Introduction</h2>
 
-<h4 id="overview">Overview</h4>
-<p>This project focuses on creating a multi-layered, dynamic model for oil consumption and distribution using Mathematica and the Wolfram Language. The aim is to represent Earth’s oil reserves (or analogous resources) as a central reservoir connected to a hierarchical network of cylindrical storage tanks through pipelines. These tanks simulate distribution hubs at various levels of granularity, ultimately enabling users to explore and visualize the flow of resources within this system. The model is designed to capture real-world complexities such as asymmetric connections, dynamic flow mechanics, and hierarchical dependencies, while being rooted in the latest scientific and philosophical paradigms.</p>
+<p>In the face of ever-increasing global demand for energy, understanding how resources (oil, gas, water, etc.) flow through distribution networks is critical. This blog post presents a <strong>detailed, step-by-step</strong> approach to modeling the distribution of oil from central reserves to various regional and local storage hubs in <em>Wolfram Mathematica</em>. The model reflects hierarchical systems with potential feedback loops, pipeline constraints, friction, and demand mechanisms.</p>
 
-<p>The project is beginner-friendly yet deeply scientific, ensuring that users of all technical abilities can understand and extend it. By leveraging Mathematica, we ensure the model is epistemologically rigorous, scientifically accurate, and equipped for computational exploration and visualization.</p>
+<p>By <strong>integrating theoretical, computational, and philosophical underpinnings</strong>, we create a refined framework that goes beyond simplistic representations of Earth’s reserves. This post improves upon an earlier outline, rectifying oversimplified assumptions and providing a more epistemologically sound, falsifiable modeling structure.</p>
 
 <hr />
 
-<h3 id="problem-statement">Problem Statement</h3>
-<p>The primary goal is to model the hierarchical distribution of oil (or analogous resources like water, gas, or even data) from a central source (Earth’s reserves) through interconnected storage hubs. These hubs represent layers of distribution:</p>
+<h2 id="1-motivations-and-goals">1. Motivations and Goals</h2>
 
 <ol>
-  <li><strong>Central Sphere</strong>: Represents Earth’s total reserves.</li>
-  <li><strong>First Layer of Cylinders</strong>: Major regional distribution hubs connected to the central sphere.</li>
-  <li><strong>Second Layer of Cylinders</strong>: Smaller regional hubs drawing from the first layer.</li>
-  <li><strong>Third Layer of Cylinders</strong>: Local distribution points connected to the second layer.</li>
+  <li><strong>Realism</strong>
+    <ul>
+      <li>Capture the complexity of <strong>multiple reservoirs</strong> (or at least acknowledge the possibility) rather than treating Earth as a single, uniform sphere.</li>
+      <li>Use <strong>graph theory</strong> to represent real-world, possibly <strong>asymmetric</strong> pipeline networks.</li>
+    </ul>
+  </li>
+  <li><strong>Technical Rigor</strong>
+    <ul>
+      <li>Incorporate <strong>capacity constraints</strong>, <strong>frictional losses</strong>, and <strong>demand</strong> dynamics.</li>
+      <li>Allow <strong>discrete or continuous</strong> simulations that can be validated and falsified.</li>
+    </ul>
+  </li>
+  <li><strong>Philosophical Grounding</strong>
+    <ul>
+      <li>Embrace <strong>Popper’s falsifiability</strong> by permitting comparison with real-world data.</li>
+      <li>Maintain <strong>transparency</strong> in simplifying assumptions to understand where the model might fail or need refinement.</li>
+    </ul>
+  </li>
 </ol>
 
-<p>The network is <strong>asymmetrical</strong>, meaning the connections between nodes (tanks) are irregular and resemble road networks rather than uniform grids. The flow of oil (or gas) between nodes is governed by rules such as pressure gradients, demand dynamics, or pipeline capacities.</p>
+<p>Overall, this post aims to provide both <strong>conceptual clarity</strong> and <strong>practical Mathematica code</strong> that you can tailor to your specific research or educational needs.</p>
 
-<p>The model will allow for dynamic simulations and visualizations to:</p>
+<hr />
+
+<h2 id="2-high-level-model-overview">2. High-Level Model Overview</h2>
+
+<p>Below is a concise breakdown of the revised model structure:</p>
+
+<ol>
+  <li><strong>Reservoirs</strong>
+    <ul>
+      <li>One or more large reservoirs (e.g., “Earth Main” and “Secondary”) representing significant resource stores.</li>
+      <li>Each reservoir is parameterized by <strong>capacity</strong> (or volume), <strong>current volume</strong>, and <strong>pressure</strong>.</li>
+    </ul>
+  </li>
+  <li><strong>Distribution Nodes</strong> (Tanks)
+    <ul>
+      <li>Conceptualized in layers (major hubs, sub-regional hubs, local tanks), but <strong>with possible feedback</strong> loops (not strictly top-down).</li>
+      <li>Each node has properties such as <strong>Capacity</strong>, <strong>Volume</strong>, <strong>Demand</strong>, and <strong>Pressure</strong>.</li>
+    </ul>
+  </li>
+  <li><strong>Pipelines (Edges)</strong>
+    <ul>
+      <li>Represented by a graph structure in Mathematica, with <strong>MaxFlow</strong> capacity, <strong>Resistance</strong> (friction or other limitations), and optional length/diameter.</li>
+      <li>Flow is governed by <strong>pressure difference</strong> and <strong>resistance</strong> constraints, capped at a maximum flow rate.</li>
+    </ul>
+  </li>
+  <li><strong>Flow Equations</strong>
+    <ul>
+      <li><strong>Discrete-time</strong> or <strong>continuous ODE</strong> approach.</li>
+      <li>Accounting for <strong>inflow</strong>, <strong>outflow</strong>, <strong>demand</strong>, and potential losses.</li>
+    </ul>
+  </li>
+</ol>
+
+<hr />
+
+<h2 id="3-philosophical-and-epistemological-considerations">3. Philosophical and Epistemological Considerations</h2>
+
+<h3 id="31-falsifiability-and-validation">3.1 Falsifiability and Validation</h3>
+
 <ul>
-  <li>Analyze resource distribution patterns.</li>
-  <li>Test the impact of disruptions (e.g., pipeline failures).</li>
-  <li>Optimize flow efficiency and storage capacities.</li>
+  <li><strong>Falsifiable Predictions</strong>: The model’s flow rates and storage volumes can be compared to real data (where available). Significant discrepancies indicate a need to refine assumptions (e.g., friction constants, demand patterns).</li>
+  <li><strong>Transparency in Abstractions</strong>: We explicitly state our simplified assumptions (e.g., ignoring elevation changes, compressibility, or regional geological complexities). This openness allows others to see how the model might break down and to propose enhancements.</li>
 </ul>
 
-<hr />
+<h3 id="32-iterative-refinement">3.2 Iterative Refinement</h3>
 
-<h3 id="key-assumptions-and-axioms">Key Assumptions and Axioms</h3>
-<h4 id="axioms">Axioms:</h4>
+<ul>
+  <li><strong>Popperian Feedback Loop</strong>: Begin with a simpler representation (few tanks, uniform friction) and refine based on new data or theoretical insights.</li>
+  <li><strong>Open-Ended Extensions</strong>: Add more layers, incorporate real pipeline geospatial data, or link to external systems (e.g., electricity or production rates) as the model matures.</li>
+</ul>
+
+<h2 id="4-implementation-in-mathematica">4. Implementation in Mathematica</h2>
+
+<p>Below is a <strong>sample code structure</strong> illustrating how to set up nodes, edges, and flow dynamics. It starts with simplified assumptions and can be extended to more sophisticated behaviors.</p>
+
+<h3 id="41-define-node-tank-and-reservoir-data">4.1 Define Node (Tank) and Reservoir Data</h3>
+
+<pre><code class="language-wolfram">(* Each node stores capacity, current volume, base pressure, demand, and coordinates for visualization *)
+nodeData = &lt;|
+  "Central" -&gt; &lt;|
+    "Capacity" -&gt; Infinity,
+    "Volume"   -&gt; 1000,       (* Arbitrary initial volume in 'Central' reservoir *)
+    "Pressure" -&gt; 5,          (* Base pressure, for demonstration *)
+    "Demand"   -&gt; 0,
+    "Coordinates" -&gt; {0, 0, 0} (* 3D location, if needed for visualization *)
+  |&gt;,
+  "TankA"   -&gt; &lt;|
+    "Capacity" -&gt; 300,
+    "Volume"   -&gt; 0,
+    "Pressure" -&gt; 0,
+    "Demand"   -&gt; 10,         (* Demand units per time step *)
+    "Coordinates" -&gt; {2, 0, 0}
+  |&gt;,
+  "TankB"   -&gt; &lt;|
+    "Capacity" -&gt; 200,
+    "Volume"   -&gt; 0,
+    "Pressure" -&gt; 0,
+    "Demand"   -&gt; 5,
+    "Coordinates" -&gt; {4, 1, 0}
+  |&gt;
+|&gt;;
+</code></pre>
+
+<h3 id="42-define-pipeline-edge-data">4.2 Define Pipeline (Edge) Data</h3>
+
+<pre><code class="language-wolfram">(* Each pipeline has a maximum flow capacity and a resistance value *)
+edgeData = &lt;|
+  {"Central", "TankA"} -&gt; &lt;|"MaxFlow" -&gt; 10, "Resistance" -&gt; 1|&gt;,
+  {"TankA",   "TankB"} -&gt; &lt;|"MaxFlow" -&gt; 5,  "Resistance" -&gt; 2|&gt;
+|&gt;;
+</code></pre>
+
+<p>Note: In practical scenarios, you may store distances, diameters, or friction coefficients (like Darcy–Weisbach) and compute an effective resistance.</p>
+
+<h3 id="43-flow-equation-discrete-time">4.3 Flow Equation (Discrete Time)</h3>
+
+<pre><code class="language-wolfram">(* A simple function that computes flow from node i to node j *)
+flowFunction[vI_, vJ_, capI_, capJ_, r_, maxFlow_] :=
+  Module[{pI, pJ, potentialFlow},
+    (* Example: Pressure is a function of fill fraction.
+       basePressure = 1, scaled by volume/capacity. *)
+    pI = 1 + (vI / capI);
+    pJ = 1 + (vJ / capJ);
+    
+    (* Flow ~ (P_i - P_j)/Resistance, clamped by maxFlow and &gt;= 0 *)
+    potentialFlow = (pI - pJ)/r;
+    Return[Clip[potentialFlow, {0, maxFlow}]];
+  ];
+
+timeStep = 0.1;  (* Simulation time step *)
+
+(* Update volumes for all nodes based on pipeline flow and demand *)
+updateVolumes[nodeData_, edgeData_] :=
+  Module[{newData = nodeData},
+    (* For each edge, compute flow and update volumes *)
+    Do[
+      With[{i = e[[1, 1]], j = e[[1, 2]], props = e[[2]]},
+        (* Retrieve volumes and capacities *)
+        vI   = newData[i, "Volume"];
+        vJ   = newData[j, "Volume"];
+        capI = newData[i, "Capacity"];
+        capJ = newData[j, "Capacity"];
+        r    = props["Resistance"];
+        mf   = props["MaxFlow"];
+        
+        (* Calculate flow from i -&gt; j *)
+        q = flowFunction[vI, vJ, capI, capJ, r, mf];
+        
+        (* Update volumes after flow in this time step *)
+        newData[i, "Volume"] = vI - q * timeStep;
+        newData[j, "Volume"] = vJ + q * timeStep;
+      ],
+      {e, Normal[edgeData]}
+    ];
+    
+    (* Subtract demands from each node *)
+    Do[
+      newData[n, "Volume"] = Max[newData[n, "Volume"] - newData[n, "Demand"] * timeStep, 0],
+      {n, Keys[newData]}
+    ];
+    
+    Return[newData];
+  ];
+</code></pre>
+
+<h3 id="44-running-the-simulation">4.4 Running the Simulation</h3>
+
+<pre><code class="language-wolfram">simulationSteps = 100;
+
+dataOverTime = NestList[updateVolumes[#, edgeData] &amp;, nodeData, simulationSteps];
+
+(* Inspect final results *)
+finalData = dataOverTime[[-1]];
+finalData
+</code></pre>
+
+<p>After running this, you’ll see how the Central reservoir volume decreases while TankA and TankB fill up in proportion to their demands and pipeline constraints.</p>
+
+<h2 id="5-visualization">5. Visualization</h2>
+
+<h3 id="51-2d-or-3d-graph-plot">5.1 2D or 3D Graph Plot</h3>
+
+<p>To visualize the network topology (not necessarily the 3D geometry):</p>
+
+<pre><code class="language-wolfram">nodesList = Keys[nodeData];
+edgesList = Keys[edgeData];
+
+(* Create a Graph object using edge weights = Resistances *)
+networkGraph = Graph[
+  nodesList,
+  DirectedEdge @@@ edgesList,
+  EdgeWeight -&gt; (edgeData[#]["Resistance"] &amp; /@ edgesList),
+  VertexCoordinates -&gt; (nodeData[#]["Coordinates"] &amp; /@ nodesList),
+  VertexLabels -&gt; "Name",
+  EdgeLabels -&gt; "EdgeWeight"
+];
+
+GraphPlot[networkGraph]
+</code></pre>
+
+<h3 id="52-3d-geometry-optional">5.2 3D Geometry (Optional)</h3>
+
+<p>For a more 3D representation, you can map each node to a Cylinder or Sphere based on node volume, coordinate, etc. For instance:</p>
+
+<pre><code class="language-wolfram">With[{n = nodeData["TankA"]},
+  Graphics3D[{
+    Cylinder[{
+      {n["Coordinates"][[1]], n["Coordinates"][[2]], 0},
+      {n["Coordinates"][[1]], n["Coordinates"][[2]], n["Volume"]/n["Capacity"]}
+    }, 0.5]
+  }, BoxRatios -&gt; {1, 1, 1}]
+]
+</code></pre>
+
+<p>You can then extend this approach to display all tanks, color them by volume fraction, and draw edges as tubes or lines between coordinates.</p>
+
+<h2 id="6-extensions-and-enhancements">6. Extensions and Enhancements</h2>
+
 <ol>
-  <li><strong>Conservation of Mass</strong>: The total volume of oil within the system is conserved unless explicitly modeled losses (e.g., leaks or evaporation) are introduced.</li>
-  <li><strong>Hierarchical Flow</strong>: Oil flows from higher layers (central sphere or first-layer cylinders) to lower layers (second and third layers) based on defined rules.</li>
-  <li><strong>Asymmetric Connectivity</strong>: The network of pipelines and tanks does not follow a uniform pattern but is instead irregular, mimicking real-world infrastructure.</li>
-  <li><strong>Dynamic Flow</strong>: The flow of oil is time-dependent and governed by parameters such as pressure differences, demand, and pipeline capacities.</li>
+  <li><strong>Continuous-Time ODEs</strong>
+    <ul>
+      <li>Replace the discrete update function with a system of differential equations solvable by <code class="language-plaintext highlighter-rouge">NDSolve</code> for smooth time evolution.</li>
+      <li>This approach allows you to capture more nuanced behaviors between time steps, especially when dealing with rapidly changing demands or pipeline conditions.</li>
+    </ul>
+  </li>
+  <li><strong>Advanced Flow Equations</strong>
+    <ul>
+      <li>Incorporate more detailed fluid dynamics (e.g., <strong>Darcy–Weisbach</strong> or <strong>Hagen–Poiseuille</strong> for laminar flow) to model frictional and viscous losses more accurately.</li>
+      <li>Include <strong>partial compressibility</strong> if handling gases or multiphase fluids, adjusting pressure-flow relationships accordingly.</li>
+    </ul>
+  </li>
+  <li><strong>Disruptions and Failures</strong>
+    <ul>
+      <li><strong>Pipeline Failure</strong>: Dynamically set <code class="language-plaintext highlighter-rouge">MaxFlow</code> to 0 for a specific edge during a failure interval to simulate a breakdown.</li>
+      <li><strong>Storage Failure</strong>: Reduce a tank’s capacity to zero (or divert its volume to a “lost” reservoir) if compromised.</li>
+    </ul>
+  </li>
+  <li><strong>Demand Fluctuations</strong>
+    <ul>
+      <li>Introduce <strong>time-varying demands</strong> to reflect daily or seasonal consumption patterns.</li>
+      <li>Tie demand fluctuations to external factors (e.g., temperature, economic cycles, or geopolitical events) for more realistic scenarios.</li>
+    </ul>
+  </li>
+  <li><strong>Validation with Real Data</strong>
+    <ul>
+      <li>Compare simulated flow rates and volumes to <strong>empirical measurements</strong> from existing pipelines.</li>
+      <li>Fit model parameters (e.g., friction, capacity) to ensure the model’s outputs closely match observed data.</li>
+    </ul>
+  </li>
 </ol>
 
-<h4 id="assumptions">Assumptions:</h4>
-<ol>
-  <li><strong>Volume Distribution</strong>: Each layer has finite storage capacities, which can be parameterized.</li>
-  <li><strong>Flow Mechanics</strong>: Flow is assumed to be driven by pressure differences, analogous to Bernoulli’s principle, or by custom rules.</li>
-  <li><strong>Lossless Flow</strong>: Initially, the model assumes no loss of oil during transport, but this can be extended to include frictional losses or leaks.</li>
-  <li><strong>Temporal Granularity</strong>: Simulations occur over discrete time steps, allowing for dynamic visualization.</li>
-  <li><strong>Scalability</strong>: The number of tanks and connections can be adjusted to simulate systems of varying complexity.</li>
-</ol>
+<hr />
+
+<h2 id="7-conclusion">7. Conclusion</h2>
+
+<p>This <strong>enhanced, rigorous model</strong> offers a robust foundation for analyzing resource flow and distribution within Mathematica. By introducing <strong>capacity constraints</strong>, <strong>pressure-based flows</strong>, <strong>pipeline resistances</strong>, and <strong>demand</strong> dynamics with potential feedback loops, the design stands on <strong>scientifically and philosophically sound</strong> principles.</p>
+
+<p>It is also <strong>falsifiable</strong> in the Popperian sense, as discrepancies between the model and real-world data drive further refinements. Consequently, researchers and enthusiasts can continually update and extend the framework—whether by adding advanced fluid dynamics, refining friction parameters, or incorporating real-time disruptions.</p>
+
+<p>Whether you’re a <em>beginner exploring computational modeling</em> or an <em>expert developing real-world solutions</em>, this <strong>Mathematica-based system</strong> provides a flexible, transparent, and philosophically grounded starting point.</p>
 
 <hr />
 
-<h3 id="implementation-plan">Implementation Plan</h3>
+<h2 id="further-reading">Further Reading</h2>
 
-<h4 id="step-1-define-the-system-geometry">Step 1: Define the System Geometry</h4>
 <ul>
   <li>
-    <p><strong>Central Sphere</strong>: Model the Earth’s reserves as a sphere with a specified volume.</p>
-
-    <div class="language-wolfram highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">centralSphere</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Sphere</span><span class="p">[{</span><span class="m">0</span><span class="o">,</span><span class="w"> </span><span class="m">0</span><span class="o">,</span><span class="w"> </span><span class="m">0</span><span class="p">}</span><span class="o">,</span><span class="w"> </span><span class="nv">radius</span><span class="p">]</span><span class="o">;</span><span class="w">
-</span><span class="nv">centralVolume</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">4</span><span class="o">/</span><span class="m">3</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">Pi</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nv">radius</span><span class="o">^</span><span class="m">3</span><span class="o">;</span><span class="w">
-</span></code></pre></div>    </div>
+    <p><a href="https://reference.wolfram.com/language/"><strong>Wolfram Language Documentation</strong></a><br />
+Explore advanced topics in <strong>graph theory</strong>, <strong>visualization</strong>, and <strong>numerical differential equations</strong>.</p>
   </li>
   <li>
-    <p><strong>Cylindrical Tanks</strong>: Represent each layer’s tanks as cylinders with defined dimensions and capacities.</p>
-
-    <div class="language-wolfram highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">cylinder</span><span class="p">[</span><span class="nv">radius</span><span class="o">_,</span><span class="w"> </span><span class="nv">height</span><span class="o">_</span><span class="p">]</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">Cylinder</span><span class="p">[{{</span><span class="m">0</span><span class="o">,</span><span class="w"> </span><span class="m">0</span><span class="o">,</span><span class="w"> </span><span class="m">0</span><span class="p">}</span><span class="o">,</span><span class="w"> </span><span class="p">{</span><span class="m">0</span><span class="o">,</span><span class="w"> </span><span class="m">0</span><span class="o">,</span><span class="w"> </span><span class="nv">height</span><span class="p">}}</span><span class="o">,</span><span class="w"> </span><span class="nv">radius</span><span class="p">]</span><span class="o">;</span><span class="w">
-</span></code></pre></div>    </div>
+    <p><a href="https://plato.stanford.edu/entries/popper/"><strong>Popper’s Philosophy of Science</strong></a><br />
+Delve deeper into <strong>falsifiability</strong> and how scientific models evolve in light of new evidence.</p>
   </li>
-</ul>
-
-<h4 id="step-2-establish-asymmetric-connections">Step 2: Establish Asymmetric Connections</h4>
-<ul>
   <li>
-    <p>Use a graph-based approach to define irregular connections between nodes (tanks).</p>
-
-    <div class="language-wolfram highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">graph</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Graph</span><span class="p">[{</span><span class="s">"Central"</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="s">"Tank1"</span><span class="o">,</span><span class="w"> </span><span class="s">"Tank1"</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="s">"Tank2"</span><span class="o">,</span><span class="w"> </span><span class="s">"Tank2"</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="s">"Tank3"</span><span class="p">}</span><span class="o">,</span><span class="w">
-  </span><span class="nb">EdgeWeight</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="m">10</span><span class="o">,</span><span class="w"> </span><span class="m">5</span><span class="o">,</span><span class="w"> </span><span class="m">2</span><span class="p">}</span><span class="o">,</span><span class="w">
-  </span><span class="nb">VertexCoordinates</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="s">"Central"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="m">0</span><span class="o">,</span><span class="w"> </span><span class="m">0</span><span class="p">}</span><span class="o">,</span><span class="w"> </span><span class="s">"Tank1"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="m">1</span><span class="o">,</span><span class="w"> </span><span class="m">0</span><span class="p">}</span><span class="o">,</span><span class="w"> </span><span class="s">"Tank2"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="m">2</span><span class="o">,</span><span class="w"> </span><span class="m">1</span><span class="p">}</span><span class="o">,</span><span class="w"> </span><span class="s">"Tank3"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="m">3</span><span class="o">,</span><span class="w"> </span><span class="m">1.5</span><span class="p">}}]</span><span class="o">;</span><span class="w">
-</span></code></pre></div>    </div>
+    <p><a href="http://www.barabasilab.com/"><strong>Network Science Resources</strong></a><br />
+Learn how <strong>complex real-world networks</strong> are modeled, visualized, and analyzed.</p>
   </li>
 </ul>
-
-<h4 id="step-3-model-flow-dynamics">Step 3: Model Flow Dynamics</h4>
-<ul>
-  <li>Define flow equations based on pressure differences or custom rules.
-    <div class="language-wolfram highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">flowRate</span><span class="p">[</span><span class="nv">p1</span><span class="o">_,</span><span class="w"> </span><span class="nv">p2</span><span class="o">_,</span><span class="w"> </span><span class="nv">resistance</span><span class="o">_</span><span class="p">]</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">(</span><span class="nv">p1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nv">p2</span><span class="p">)</span><span class="o">/</span><span class="nv">resistance</span><span class="o">;</span><span class="w">
-</span></code></pre></div>    </div>
-  </li>
-  <li>Create a time-dependent function for resource transfer.
-    <div class="language-wolfram highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">resourceFlow</span><span class="p">[</span><span class="nv">t</span><span class="o">_,</span><span class="w"> </span><span class="nv">from</span><span class="o">_,</span><span class="w"> </span><span class="nv">to</span><span class="o">_,</span><span class="w"> </span><span class="nv">rate</span><span class="o">_</span><span class="p">]</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="bp">Module</span><span class="p">[{}</span><span class="o">,</span><span class="w"> </span><span class="c">(* Implement flow dynamics *)</span><span class="p">]</span><span class="o">;</span><span class="w">
-</span></code></pre></div>    </div>
-  </li>
-</ul>
-
-<h4 id="step-4-add-hierarchical-layers">Step 4: Add Hierarchical Layers</h4>
-<ul>
-  <li>Extend the network to include second and third layers of tanks.
-    <div class="language-wolfram highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">generateTanks</span><span class="p">[</span><span class="nv">layer</span><span class="o">_,</span><span class="w"> </span><span class="nv">num</span><span class="o">_</span><span class="p">]</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">Table</span><span class="p">[</span><span class="nv">cylinder</span><span class="p">[</span><span class="m">1</span><span class="o">,</span><span class="w"> </span><span class="m">5</span><span class="p">]</span><span class="o">,</span><span class="w"> </span><span class="p">{</span><span class="nv">i</span><span class="o">,</span><span class="w"> </span><span class="m">1</span><span class="o">,</span><span class="w"> </span><span class="nv">num</span><span class="p">}]</span><span class="o">;</span><span class="w">
-</span></code></pre></div>    </div>
-  </li>
-</ul>
-
-<h4 id="step-5-visualize-the-system">Step 5: Visualize the System</h4>
-<ul>
-  <li>Use Mathematica’s <code class="language-plaintext highlighter-rouge">Graphics3D</code> and <code class="language-plaintext highlighter-rouge">Dynamic</code> functions to visualize the sphere, cylinders, and flow dynamics.
-    <div class="language-wolfram highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">Graphics3D</span><span class="p">[{</span><span class="nb">Style</span><span class="p">[</span><span class="nv">centralSphere</span><span class="o">,</span><span class="w"> </span><span class="nb">Blue</span><span class="p">]</span><span class="o">,</span><span class="w"> </span><span class="nb">Style</span><span class="p">[</span><span class="nv">cylinder</span><span class="p">[</span><span class="m">1</span><span class="o">,</span><span class="w"> </span><span class="m">5</span><span class="p">]</span><span class="o">,</span><span class="w"> </span><span class="nb">Red</span><span class="p">]}]</span><span class="w">
-</span></code></pre></div>    </div>
-  </li>
-</ul>
-
-<h4 id="step-6-simulate-scenarios">Step 6: Simulate Scenarios</h4>
-<ul>
-  <li>Test the model under various scenarios, such as:
-    <ul>
-      <li>Increased demand at specific nodes.</li>
-      <li>Pipeline failures.</li>
-      <li>Variable storage capacities.</li>
-    </ul>
-  </li>
-</ul>
-
-<hr />
-
-<h3 id="scientific-and-philosophical-foundations">Scientific and Philosophical Foundations</h3>
-<ol>
-  <li><strong>Epistemology of Modeling</strong>:
-    <ul>
-      <li>The model’s hierarchical structure mirrors real-world resource distribution systems, ensuring alignment with empirical observations.</li>
-      <li>The dynamic approach aligns with Popper’s philosophy of falsifiability—users can test hypotheses and iterate based on outcomes.</li>
-    </ul>
-  </li>
-  <li><strong>Scientific Paradigms</strong>:
-    <ul>
-      <li>Conservation laws and flow equations are rooted in classical mechanics and fluid dynamics.</li>
-      <li>The use of graph theory for asymmetric connections reflects cutting-edge network science.</li>
-    </ul>
-  </li>
-  <li><strong>Visualization as Insight</strong>:
-    <ul>
-      <li>Drawing parallels with Wolfram’s computational philosophy, visualization is integral to understanding the system’s behavior.</li>
-    </ul>
-  </li>
-</ol>
-
-<hr />
-
-<h3 id="deliverables">Deliverables</h3>
-<ol>
-  <li>A fully functional Mathematica notebook implementing the model.</li>
-  <li>Visualizations showing dynamic flow dynamics across layers.</li>
-  <li>Scenario-based simulations for testing real-world analogs.</li>
-</ol>
-
-<p>This project bridges the gap between abstract modeling and real-world application, creating a scientifically robust and philosophically grounded framework for resource distribution analysis.</p>
 
   </div><a class="u-url" href="/oil" hidden></a>
+  <script src="https://utteranc.es/client.js"
+  repo="prabhchintan/prabhchintan.github.io"
+  issue-term="pathname"
+  theme="gruvbox-dark"
+  crossorigin="anonymous"
+  async>
+  </script>
 </article>
         </div>
       </main>
