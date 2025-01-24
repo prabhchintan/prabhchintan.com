@@ -68,7 +68,7 @@ minima:
   #  - { platform: stackoverflow,  user_url: "https://stackoverflow.com/users/1234567/jekyll" }
   #  - { platform: telegram,       user_url: "https://t.me/jekyll" }
     - { platform: youtube,        user_url: "https://www.youtube.com/@prab" }
-    - { platform: rss,            user_url: "https://randhawa.inc/feed.xml" }
+    - { platform: rss,            user_url: "https://xn--pcce.com/feed.xml" }
 
 # Use post title to create website slug
 permalink: /:title
