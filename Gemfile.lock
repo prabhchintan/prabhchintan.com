@@ -45,6 +45,8 @@ GEM
       logger
     faraday-net_http (3.4.0)
       net-http (>= 0.5.0)
+    faraday-retry (2.2.1)
+      faraday (~> 2.0)
     ffi (1.17.1-aarch64-linux-gnu)
     ffi (1.17.1-aarch64-linux-musl)
     ffi (1.17.1-arm-linux-gnu)
@@ -302,6 +304,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
+  faraday-retry
   github-pages
   http_parser.rb (~> 0.6.0)
   tzinfo (~> 1.2)
