@@ -1,15 +1,6 @@
 source "https://rubygems.org"
 
-# Use specific version of github-pages gem
-gem "github-pages", "~> 231", group: :jekyll_plugins
-
-group :jekyll_plugins do
-  gem "jekyll-remote-theme"
-  gem "jekyll-seo-tag"
-  gem "jekyll-feed"
-  gem "jekyll-paginate"
-  gem "jekyll-sitemap"
-end
+gem "github-pages", group: :jekyll_plugins
 
 # Windows and JRuby does not include zoneinfo files
 platforms :mingw, :x64_mingw, :mswin, :jruby do
@@ -22,6 +13,3 @@ gem "wdm", "~> 0.1.1", :platforms => [:mingw, :x64_mingw, :mswin]
 
 # Lock `http_parser.rb` gem to `v0.6.x` on JRuby builds
 gem "http_parser.rb", "~> 0.6.0", :platforms => [:jruby]
-
-# Lock webrick to specific version
-gem "webrick", "~> 1.8"
