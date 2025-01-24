@@ -1,8 +1,7 @@
-# frozen_string_literal: true
-
 source "https://rubygems.org"
 
-gem "github-pages", group: :jekyll_plugins
+# Use specific version of github-pages gem
+gem "github-pages", "~> 231", group: :jekyll_plugins
 
 group :jekyll_plugins do
   gem "jekyll-remote-theme"
@@ -14,7 +13,7 @@ end
 
 # Windows and JRuby does not include zoneinfo files
 platforms :mingw, :x64_mingw, :mswin, :jruby do
-  gem "tzinfo", ">= 1.2.10"
+  gem "tzinfo", "~> 1.2"
   gem "tzinfo-data"
 end
 
@@ -23,3 +22,6 @@ gem "wdm", "~> 0.1.1", :platforms => [:mingw, :x64_mingw, :mswin]
 
 # Lock `http_parser.rb` gem to `v0.6.x` on JRuby builds
 gem "http_parser.rb", "~> 0.6.0", :platforms => [:jruby]
+
+# Lock webrick to specific version
+gem "webrick", "~> 1.8"
