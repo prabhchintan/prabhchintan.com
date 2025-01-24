@@ -78,5 +78,3 @@ permalink: /:title
 
 include:
   - service-worker.js
-
-repos
