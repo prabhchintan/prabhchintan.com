@@ -8,7 +8,7 @@ permalink: /shop
 For now, I have nothing to sell you. Meanwhile, an ATM is available below.
 
 <iframe
-  src="https://app.uniswap.org/#/swap?exactField=input&exactAmount=10&inputCurrency=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48&theme=system"
+  src="https://app.uniswap.org/#/swap?exactField=input&exactAmount=10&inputCurrency=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
   height="660px"
   width="100%"
   style="
@@ -19,4 +19,5 @@ For now, I have nothing to sell you. Meanwhile, an ATM is available below.
     border-radius: 10px;
     max-width: 960px;
     min-width: 300px;
+    color-scheme: light dark;
   "></iframe>
