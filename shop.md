@@ -19,5 +19,4 @@ For now, I have nothing to sell you. Meanwhile, an ATM is available below.
     border-radius: 10px;
     max-width: 960px;
     min-width: 300px;
-    color-scheme: light dark;
   "></iframe>
