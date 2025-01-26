@@ -79,4 +79,11 @@ permalink: /:title
 include:
   - service-worker.js
 
-repos
+repository: prabhchintan/prabhchintan.github.io.git
+
+defaults:
+  -
+    scope:
+      path: ""
+    values:
+      image: /assets/images/og-image.jpg
