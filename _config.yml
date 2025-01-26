@@ -79,4 +79,4 @@ permalink: /:title
 include:
   - service-worker.js
 
-repository: prabhchintan/prabhchintan.github.io.git
+repos
