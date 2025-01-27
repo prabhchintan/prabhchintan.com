@@ -105,11 +105,3 @@
 <meta property="og:url" content="https://prabhchintan.com{{ page.url | replace:'index.html','' }}">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Prabhchintan">
-
-{% if page.layout != 'none' %}
-<script>
-  if (window.location.hostname === "prabhchintan.com") {
-    window.history.replaceState(null, document.title, "https://੧੩.com" + window.location.pathname + window.location.search);
-  }
-</script>
-{% endif %}
