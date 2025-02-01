@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <!-- Initial background setup - must be first -->
+  <script>
+    (function() {
+      // Always start with hidden content - slow fade for page load
+      document.documentElement.style.opacity = '0';
+      document.documentElement.style.transition = 'opacity 2.5s ease'; // seconds to page load or refresh
+      
+      // Set initial theme
+      document.documentElement.classList.add('no-transition');
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+      
+      // Fade in content smoothly
+      window.addEventListener('DOMContentLoaded', () => {
+        requestAnimationFrame(() => {
+          document.documentElement.style.opacity = '1';
+          setTimeout(() => {
+            document.documentElement.classList.remove('no-transition');
+          }, 1000); // Match the 1s fade duration
+        });
+      });
+    })();
+  </script>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Data Science: A Brief History" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Here is an overview of data science, tracing its evolution from early statistical methods to the cutting-edge, interdisciplinary field it is today. Each section highlights key developments that have shaped data science, providing insights into its historical roots and contemporary practices. While each topic could warrant its own in-depth exploration, this collection offers a foundational understanding of data science’s multifaceted nature and its growing importance in our data-driven world." />
+<meta property="og:description" content="Here is an overview of data science, tracing its evolution from early statistical methods to the cutting-edge, interdisciplinary field it is today. Each section highlights key developments that have shaped data science, providing insights into its historical roots and contemporary practices. While each topic could warrant its own in-depth exploration, this collection offers a foundational understanding of data science’s multifaceted nature and its growing importance in our data-driven world." />
+<link rel="canonical" href="http://localhost:4000/ds/" />
+<meta property="og:url" content="http://localhost:4000/ds/" />
+<meta property="og:site_name" content="ੴ" />
+<meta property="og:image" content="http://localhost:4000/assets/images/og-image.jpg" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-09-20T00:00:00-05:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="http://localhost:4000/assets/images/og-image.jpg" />
+<meta property="twitter:title" content="Data Science: A Brief History" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2021-09-20T00:00:00-05:00","datePublished":"2021-09-20T00:00:00-05:00","description":"Here is an overview of data science, tracing its evolution from early statistical methods to the cutting-edge, interdisciplinary field it is today. Each section highlights key developments that have shaped data science, providing insights into its historical roots and contemporary practices. While each topic could warrant its own in-depth exploration, this collection offers a foundational understanding of data science’s multifaceted nature and its growing importance in our data-driven world.","headline":"Data Science: A Brief History","image":"http://localhost:4000/assets/images/og-image.jpg","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/ds/"},"url":"http://localhost:4000/ds/"}</script>
+<!-- End Jekyll SEO tag -->
+<title>
+    
+      A Sciene for Data?
+    
+    
+    
+      | ੴ
+    
+  </title>
+  
+  <link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="ੴ" />
+
+<!-- Fonts -->
+<!-- Cormorant Garamond for main text and Courier Prime for code or monospace text -->
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Courier+Prime&display=swap" rel="stylesheet">
+
+<!-- Favicons and device-specific icons -->
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#000000">
+<link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+<link rel="icon" type="image/png" sizes="384x384" href="/android-chrome-384x384.png">
+
+<!-- Application metadata -->
+<meta name="application-name" content="Randhawa Inc.">
+<meta name="apple-mobile-web-app-title" content="Randhawa Inc.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+<!-- Microsoft Tile -->
+<meta name="msapplication-TileImage" content="/mstile-150x150.png">
+<meta name="msapplication-TileColor" content="#da532c">
+
+<!-- Theme color -->
+<!-- Default theme color -->
+<meta name="theme-color" content="#f8f4e9" id="theme-color-meta">
+<!-- Light mode theme color -->
+<meta name="theme-color" content="#f8f4e9" media="(prefers-color-scheme: light)">
+<!-- Dark mode theme color -->
+<meta name="theme-color" content="#1a1410" media="(prefers-color-scheme: dark)">
+
+<!-- Preload critical assets -->
+<link rel="preload" href="/assets/fonts/FleurCornerCaps.woff2" as="font" type="font/woff2" crossorigin>
+
+<!-- PWA settings -->
+<link rel="manifest" href="/manifest.json">
+
+<!-- Main JavaScript file -->
+<script src="/assets/js/main.js"></script>
+
+<!-- Script to open external links in new tab -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var links = document.links;
+    for (var i = 0, linksLength = links.length; i < linksLength; i++) {
+      if (links[i].hostname !== window.location.hostname) {
+        links[i].target = '_blank';
+        links[i].rel = 'noopener noreferrer';
+      }
+    }
+  });
+</script>
+
+<!-- Script for smooth color scheme transitions -->
+<script>
+  function applyTransitionClass() {
+    document.body.classList.add('transition-colors');
+  }
+
+  function removeTransitionClass() {
+    document.body.classList.remove('transition-colors');
+  }
+
+  function handlePageLoad() {
+    applyTransitionClass();
+    setTimeout(removeTransitionClass, 300);
+  }
+
+  document.addEventListener('DOMContentLoaded', handlePageLoad);
+</script>
+
+<!-- MathJax -->
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      processEscapes: true,
+      processEnvironments: true
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+    }
+  };
+  </script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<!-- Open Graph tags -->
+<meta property="og:title" content="Data Science: A Brief History">
+<meta property="og:description" content="Here is an overview of data science, tracing its evolution from early statistical methods to the cutting-edge, interdisciplinary field it is today. Each sect...">
+<meta property="og:image" content="https://prabhchintan.com/assets/images/og-image.jpg">
+<meta property="og:image:secure_url" content="https://prabhchintan.com/assets/images/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<!-- Add a smaller version for better compatibility -->
+<meta property="og:image" content="https://prabhchintan.com/assets/images/og-image-small.jpg">
+<meta property="og:image:secure_url" content="https://prabhchintan.com/assets/images/og-image-small.jpg">
+<meta property="og:image:width" content="600">
+<meta property="og:image:height" content="315">
+<meta property="og:url" content="https://prabhchintan.com/ds/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Prabhchintan"><script>
+    function updateThemeColor() {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+      metaThemeColor.setAttribute('content', isDark ? '#1a1410' : '#f8f4e9');
+    }
+  
+    // Update on theme change
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'data-theme') {
+          updateThemeColor();
+          // Add this new code to force a repaint of the footer
+          const footer = document.querySelector('.site-footer');
+          if (footer) {
+            footer.style.transform = 'translateZ(0)';
+            requestAnimationFrame(() => {
+              footer.style.transform = '';
+            });
+          }
+        }
+      });
+    });
+  
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme']
+    });
+  
+    // Initial update
+    updateThemeColor();
+  </script>
+</head><body><header class="site-header">
+  <div class="wrapper"><a class="site-title" rel="author" href="/">ੴ</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/shop">Shop</a><a class="page-link" href="/about">About</a><a class="page-link" href="/thanks">Thanks</a></div>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+          <span class="theme-toggle-icon">🌙</span>
+        </button>
+      </nav></div>
+</header><div class="content-wrapper">
+      <main class="page-content" aria-label="Content">
+        <div class="wrapper">
+          <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">A Sciene for Data?</h1>
+    <p class="post-meta"><time class="dt-published" datetime="2021-09-20T00:00:00-05:00" itemprop="datePublished">
+        Sep 20, 2021
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">ਪ੍ਰਭਚਿੰਤਨਰੰਧਾਵਾ | Prab Randhawa</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>Here is an overview of data science, tracing its evolution from early statistical methods to the cutting-edge, interdisciplinary field it is today. Each section highlights key developments that have shaped data science, providing insights into its historical roots and contemporary practices. While each topic could warrant its own in-depth exploration, this collection offers a foundational understanding of data science’s multifaceted nature and its growing importance in our data-driven world.</p>
+
+<h3 id="1-early-foundations-in-statistics-and-computing-1800s-1950s">1. Early Foundations in Statistics and Computing (1800s-1950s)</h3>
+
+<ul>
+  <li>1812: Laplace introduces the concept of probabilistic inference</li>
+  <li>1843: Ada Lovelace writes the first computer program for the Analytical Engine</li>
+  <li>1936: Alan Turing introduces the concept of the Turing machine</li>
+  <li>1944: John von Neumann develops the stored-program computer architecture</li>
+</ul>
+
+<h3 id="2-emergence-of-computational-statistics-1960s-1970s">2. Emergence of Computational Statistics (1960s-1970s)</h3>
+
+<ul>
+  <li>1962: John W. Tukey publishes “The Future of Data Analysis,” advocating for a blend of statistics and computing</li>
+  <li>1965: Cooley and Tukey publish the Fast Fourier Transform algorithm</li>
+  <li>1972: Nelder and Wedderburn introduce Generalized Linear Models</li>
+  <li>1977: The International Association for Statistical Computing (IASC) is founded</li>
+</ul>
+
+<h3 id="3-rise-of-machine-learning-and-ai-1980s-1990s">3. Rise of Machine Learning and AI (1980s-1990s)</h3>
+
+<ul>
+  <li>1981: IBM introduces the Personal Computer, democratizing computing</li>
+  <li>1986: Rumelhart, Hinton, and Williams publish on backpropagation for neural networks</li>
+  <li>1989: Tim Berners-Lee proposes the World Wide Web</li>
+  <li>1995: Random Forests algorithm is introduced by Tin Kam Ho</li>
+  <li>1997: IBM’s Deep Blue defeats world chess champion Garry Kasparov</li>
+</ul>
+
+<h3 id="4-big-data-revolution-2000s">4. Big Data Revolution (2000s)</h3>
+
+<ul>
+  <li>2001: Doug Laney articulates the 3 V’s of Big Data: Volume, Velocity, and Variety</li>
+  <li>2003: Google publishes the paper on the Google File System</li>
+  <li>2004: MapReduce programming model is introduced by Google</li>
+  <li>2006: Hadoop, an open-source implementation of MapReduce, is released</li>
+  <li>2009: Netflix announces the $1 million Netflix Prize for collaborative filtering</li>
+</ul>
+
+<h3 id="5-data-science-emerges-as-a-discipline-2010s">5. Data Science Emerges as a Discipline (2010s)</h3>
+
+<ul>
+  <li>2010: The term “Data Scientist” gains popularity</li>
+  <li>2011: IBM Watson wins Jeopardy!, showcasing advanced NLP capabilities</li>
+  <li>2012: Harvard Business Review declares Data Scientist as “The Sexiest Job of the 21st Century”</li>
+  <li>2014: The TensorFlow machine learning library is developed by Google</li>
+  <li>2016: AlphaGo defeats world champion Go player Lee Sedol</li>
+</ul>
+
+<h3 id="6-ai-and-deep-learning-revolution-late-2010s-present">6. AI and Deep Learning Revolution (Late 2010s-Present)</h3>
+
+<ul>
+  <li>2017: Google introduces the Transformer architecture, revolutionizing NLP</li>
+  <li>2018: BERT is released, setting new benchmarks in language understanding</li>
+  <li>2020: GPT-3 demonstrates impressive language generation capabilities</li>
+  <li>2022: ChatGPT launch marks a new era in conversational AI</li>
+  <li>2023: Generative AI tools like DALL-E and Midjourney gain widespread attention</li>
+</ul>
+
+<h3 id="7-core-components-of-modern-data-science">7. Core Components of Modern Data Science</h3>
+
+<ul>
+  <li>Statistical Analysis: Hypothesis testing, Regression analysis, Bayesian methods</li>
+  <li>Machine Learning: Supervised and unsupervised learning, Reinforcement learning</li>
+  <li>Big Data Technologies: Distributed computing, NoSQL databases</li>
+  <li>Data Visualization: Exploratory data analysis, Interactive dashboards</li>
+  <li>Domain Expertise: Applying data science to specific industries or problems</li>
+</ul>
+
+<h3 id="8-key-methodologies-in-data-science">8. Key Methodologies in Data Science</h3>
+
+<ul>
+  <li>Cross-Industry Standard Process for Data Mining (CRISP-DM)</li>
+  <li>Agile Data Science: Adapting agile methodologies to data projects</li>
+  <li>Reproducible Research: Ensuring transparency and replicability in data analysis</li>
+  <li>Ethical Data Science: Addressing bias, privacy, and fairness in data-driven decisions</li>
+</ul>
+
+<h3 id="9-tools-and-technologies-shaping-data-science">9. Tools and Technologies Shaping Data Science</h3>
+
+<ul>
+  <li>Programming Languages: Python, R, SQL</li>
+  <li>Big Data Platforms: Hadoop, Spark, Flink</li>
+  <li>Machine Learning Libraries: scikit-learn, TensorFlow, PyTorch</li>
+  <li>Data Visualization Tools: Tableau, D3.js, Matplotlib</li>
+  <li>Cloud Platforms: AWS, Google Cloud, Azure</li>
+</ul>
+
+<h3 id="10-the-future-of-data-science">10. The Future of Data Science</h3>
+
+<ul>
+  <li>Edge Computing and IoT Analytics</li>
+  <li>Quantum Computing for Data Science</li>
+  <li>Automated Machine Learning (AutoML)</li>
+  <li>Ethical AI and Responsible Data Science</li>
+  <li>Interdisciplinary Applications: From healthcare to climate science</li>
+</ul>
+
+<p>Data science continues to evolve rapidly, driven by technological advancements, increasing data volumes, and growing demand across industries. As the field progresses, data scientists must stay adaptable, continuously learning and refining their skills to meet new challenges and opportunities in our increasingly data-driven world.</p>
+
+<p>For further exploration of data science concepts and practices, consider the following resources:</p>
+
+<ol>
+  <li>“The Elements of Statistical Learning” by Hastie, Tibshirani, and Friedman</li>
+  <li>“Python for Data Analysis” by Wes McKinney</li>
+  <li>“Deep Learning” by Goodfellow, Bengio, and Courville</li>
+  <li>“Data Science for Business” by Foster Provost and Tom Fawcett</li>
+  <li>“Doing Data Science” by Cathy O’Neil and Rachel Schutt</li>
+  <li>Coursera’s Data Science Specialization by Johns Hopkins University</li>
+  <li>Fast.ai’s Practical Deep Learning for Coders course</li>
+  <li>Kaggle’s data science competitions and datasets</li>
+  <li>The Data Science subreddit (r/datascience)</li>
+  <li>“Data Skeptic” podcast by Kyle Polich</li>
+</ol>
+
+  </div><a class="u-url" href="/ds/" hidden></a>
+  <script src="https://utteranc.es/client.js"
+  repo="prabhchintan/prabhchintan.github.io"
+  issue-term="pathname"
+  theme="gruvbox-dark"
+  crossorigin="anonymous"
+  async>
+  </script>
+</article>
+        </div>
+      </main>
+    </div><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <!-- Social Links Section -->
+    <div class="social-links"><ul class="social-media-list"><li>
+  <a rel="me" href="https://github.com/prabhchintan/prabhchintan.github.io" target="_blank" title="github">
+    <svg class="svg-icon grey">
+      <use xlink:href="/assets/minima-social-icons.svg#github"></use>
+    </svg>
+  </a>
+</li>
+<li>
+  <a rel="me" href="https://www.linkedin.com/in/prabhchintan" target="_blank" title="linkedin">
+    <svg class="svg-icon grey">
+      <use xlink:href="/assets/minima-social-icons.svg#linkedin"></use>
+    </svg>
+  </a>
+</li>
+<li>
+  <a rel="me" href="https://x.com/prabhchintan" target="_blank" title="x">
+    <svg class="svg-icon grey">
+      <use xlink:href="/assets/minima-social-icons.svg#x"></use>
+    </svg>
+  </a>
+</li>
+<li>
+  <a rel="me" href="https://www.instagram.com/prabhchintan" target="_blank" title="instagram">
+    <svg class="svg-icon grey">
+      <use xlink:href="/assets/minima-social-icons.svg#instagram"></use>
+    </svg>
+  </a>
+</li>
+<li>
+  <a rel="me" href="https://www.youtube.com/@prab" target="_blank" title="youtube">
+    <svg class="svg-icon grey">
+      <use xlink:href="/assets/minima-social-icons.svg#youtube"></use>
+    </svg>
+  </a>
+</li>
+<li>
+  <a href="https://prabhchintan.com/feed.xml" target="_blank" title="rss">
+    <svg class="svg-icon grey">
+      <use xlink:href="/assets/minima-social-icons.svg#rss"></use>
+    </svg>
+  </a>
+</li>
+</ul>
+</div><p></p>
+
+    <!-- Main Footer Content -->
+    <div class="center-text">
+      <!-- Symbolic Links -->
+      <div class="symbolic-links">
+        <a href="https://www.sikhitothemax.org/ang?ang=1&source=G"><span class="khanda-symbol">☬</span></a>&nbsp;|&nbsp;
+        <a href="https://www.archives.gov/founding-docs/constitution-transcript"><span class="flag-symbol">🇺🇸</span></a>&nbsp;&nbsp;|&nbsp;
+        <a href="mailto:prab@hey.com">✉️</a>&nbsp;&nbsp;|&nbsp;<a href="tel:+18323844877">📱</a><br>
+      </div>
+        <!-- Site Information -->
+        © Randhawa Inc. | Last updated: 2/1/25<br>
+        309 Coffeen Ave Suite 13286, Sheridan, Wyoming 82801<br>
+
+        <!-- Gurmukhi Text Link -->
+        <a href="https://www.sikhitothemax.org/ang?ang=1&source=G" class="gurmukhi-link">
+          ੴਸਤਿਨਾਮੁਕਰਤਾਪੁਰਖੁਨਿਰਭਉਨਿਰਵੈਰੁਅਕਾਲਮੂਰਤਿਅਜੂਨੀਸੈਭੰਗੁਰਪ੍ਰਸਾਦਿ॥
+        </a>
+    </div>
+  </div>
+</footer><script src="/assets/js/main.js" defer></script>
+    <script src="/assets/js/theme-toggle.js" defer></script>
+  </body>
+
+</html>

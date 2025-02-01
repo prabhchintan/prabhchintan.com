@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <!-- Initial background setup - must be first -->
+  <script>
+    (function() {
+      // Always start with hidden content - slow fade for page load
+      document.documentElement.style.opacity = '0';
+      document.documentElement.style.transition = 'opacity 2.5s ease'; // seconds to page load or refresh
+      
+      // Set initial theme
+      document.documentElement.classList.add('no-transition');
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+      
+      // Fade in content smoothly
+      window.addEventListener('DOMContentLoaded', () => {
+        requestAnimationFrame(() => {
+          document.documentElement.style.opacity = '1';
+          setTimeout(() => {
+            document.documentElement.classList.remove('no-transition');
+          }, 1000); // Match the 1s fade duration
+        });
+      });
+    })();
+  </script>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Knowledge, Reason, Will, and Power" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Immanuel Kant by Adolf von Heydeck, early 18th century" />
+<meta property="og:description" content="Immanuel Kant by Adolf von Heydeck, early 18th century" />
+<link rel="canonical" href="http://localhost:4000/kant/" />
+<meta property="og:url" content="http://localhost:4000/kant/" />
+<meta property="og:site_name" content="ੴ" />
+<meta property="og:image" content="http://localhost:4000/assets/images/og-image.jpg" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2024-09-09T00:00:00-05:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="http://localhost:4000/assets/images/og-image.jpg" />
+<meta property="twitter:title" content="Knowledge, Reason, Will, and Power" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2024-09-09T00:00:00-05:00","datePublished":"2024-09-09T00:00:00-05:00","description":"Immanuel Kant by Adolf von Heydeck, early 18th century","headline":"Knowledge, Reason, Will, and Power","image":"http://localhost:4000/assets/images/og-image.jpg","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/kant/"},"url":"http://localhost:4000/kant/"}</script>
+<!-- End Jekyll SEO tag -->
+<title>
+    
+      Knowledge, Reason, Will, and Power
+    
+    
+    
+      | ੴ
+    
+  </title>
+  
+  <link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="ੴ" />
+
+<!-- Fonts -->
+<!-- Cormorant Garamond for main text and Courier Prime for code or monospace text -->
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Courier+Prime&display=swap" rel="stylesheet">
+
+<!-- Favicons and device-specific icons -->
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#000000">
+<link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+<link rel="icon" type="image/png" sizes="384x384" href="/android-chrome-384x384.png">
+
+<!-- Application metadata -->
+<meta name="application-name" content="Randhawa Inc.">
+<meta name="apple-mobile-web-app-title" content="Randhawa Inc.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+<!-- Microsoft Tile -->
+<meta name="msapplication-TileImage" content="/mstile-150x150.png">
+<meta name="msapplication-TileColor" content="#da532c">
+
+<!-- Theme color -->
+<!-- Default theme color -->
+<meta name="theme-color" content="#f8f4e9" id="theme-color-meta">
+<!-- Light mode theme color -->
+<meta name="theme-color" content="#f8f4e9" media="(prefers-color-scheme: light)">
+<!-- Dark mode theme color -->
+<meta name="theme-color" content="#1a1410" media="(prefers-color-scheme: dark)">
+
+<!-- Preload critical assets -->
+<link rel="preload" href="/assets/fonts/FleurCornerCaps.woff2" as="font" type="font/woff2" crossorigin>
+
+<!-- PWA settings -->
+<link rel="manifest" href="/manifest.json">
+
+<!-- Main JavaScript file -->
+<script src="/assets/js/main.js"></script>
+
+<!-- Script to open external links in new tab -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var links = document.links;
+    for (var i = 0, linksLength = links.length; i < linksLength; i++) {
+      if (links[i].hostname !== window.location.hostname) {
+        links[i].target = '_blank';
+        links[i].rel = 'noopener noreferrer';
+      }
+    }
+  });
+</script>
+
+<!-- Script for smooth color scheme transitions -->
+<script>
+  function applyTransitionClass() {
+    document.body.classList.add('transition-colors');
+  }
+
+  function removeTransitionClass() {
+    document.body.classList.remove('transition-colors');
+  }
+
+  function handlePageLoad() {
+    applyTransitionClass();
+    setTimeout(removeTransitionClass, 300);
+  }
+
+  document.addEventListener('DOMContentLoaded', handlePageLoad);
+</script>
+
+<!-- MathJax -->
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      processEscapes: true,
+      processEnvironments: true
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+    }
+  };
+  </script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<!-- Open Graph tags -->
+<meta property="og:title" content="Knowledge, Reason, Will, and Power">
+<meta property="og:description" content="Immanuel Kant by Adolf von Heydeck, early 18th century">
+<meta property="og:image" content="https://prabhchintan.com/assets/images/og-image.jpg">
+<meta property="og:image:secure_url" content="https://prabhchintan.com/assets/images/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<!-- Add a smaller version for better compatibility -->
+<meta property="og:image" content="https://prabhchintan.com/assets/images/og-image-small.jpg">
+<meta property="og:image:secure_url" content="https://prabhchintan.com/assets/images/og-image-small.jpg">
+<meta property="og:image:width" content="600">
+<meta property="og:image:height" content="315">
+<meta property="og:url" content="https://prabhchintan.com/kant/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Prabhchintan"><script>
+    function updateThemeColor() {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+      metaThemeColor.setAttribute('content', isDark ? '#1a1410' : '#f8f4e9');
+    }
+  
+    // Update on theme change
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'data-theme') {
+          updateThemeColor();
+          // Add this new code to force a repaint of the footer
+          const footer = document.querySelector('.site-footer');
+          if (footer) {
+            footer.style.transform = 'translateZ(0)';
+            requestAnimationFrame(() => {
+              footer.style.transform = '';
+            });
+          }
+        }
+      });
+    });
+  
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme']
+    });
+  
+    // Initial update
+    updateThemeColor();
+  </script>
+</head><body><header class="site-header">
+  <div class="wrapper"><a class="site-title" rel="author" href="/">ੴ</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/shop">Shop</a><a class="page-link" href="/about">About</a><a class="page-link" href="/thanks">Thanks</a></div>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+          <span class="theme-toggle-icon">🌙</span>
+        </button>
+      </nav></div>
+</header><div class="content-wrapper">
+      <main class="page-content" aria-label="Content">
+        <div class="wrapper">
+          <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Knowledge, Reason, Will, and Power</h1>
+    <p class="post-meta"><time class="dt-published" datetime="2024-09-09T00:00:00-05:00" itemprop="datePublished">
+        Sep 9, 2024
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">ਪ੍ਰਭਚਿੰਤਨਰੰਧਾਵਾ | Prab Randhawa</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><img src="/assets/images/2024-09-09-kant.jpg" alt="Immanuel Kant" /></p>
+<p style="font-size: 0.8em; font-style; text-align: center;">Immanuel Kant by Adolf von Heydeck, early 18th century</p>
+
+<blockquote>
+  <p>“Kant bifurcated reality into the phenomenal world (ideas) and the noumenal world (reality). Then the question became, well, <strong>what is the nature of this world of ideas?</strong> Hegel said <strong>it is reason</strong>. Schopenhauer, who hated Hegel, said <strong>it is will</strong>. Nietzsche said <strong>it is the will to power</strong>.”</p>
+</blockquote>
+
+<p><strong>Kant’s Bifurcated World: Phenomena and Noumena</strong></p>
+
+<p>Immanuel Kant (1724-1804) proposed a distinction between the world we experience (phenomena) and the world as it truly exists (noumena). He argued that the noumenal world is inaccessible to us directly, as our senses and cognitive faculties impose limitations on how we perceive reality.</p>
+
+<p><strong>Hegel’s Symphony of Reason: The Dialectic</strong></p>
+
+<p>Georg Wilhelm Friedrich Hegel (1770-1831) viewed history as a process driven by reason, unfolding through a dialectical process of thesis, antithesis, and synthesis. He believed that reality is a dynamic interplay of ideas progressing towards a state of absolute knowledge.</p>
+
+<p><strong>Schopenhauer’s Willful World: The Primacy of Desire</strong></p>
+
+<p>Arthur Schopenhauer (1788-1860) took a more pessimistic view, emphasizing the irrational force of the will as the driving force behind the universe. He argued that human life is ultimately a struggle against a blind and insatiable will, leading to inevitable suffering.</p>
+
+<p><strong>Nietzsche’s Will to Power: Embracing Change</strong></p>
+
+<p>Friedrich Nietzsche (1844-1900) challenged traditional morality and championed the concept of the “will to power.” He argued for the importance of self-overcoming, embracing challenges, and creating one’s own values in an ever-changing world.</p>
+
+<p>The quote in the beginning is from <a href="https://youtu.be/vKRVpSINsvI?si=A76ir9o9KBSo1azy&amp;t=1190">a statement by Michael Malice in this clip on YouTube.</a></p>
+
+  </div><a class="u-url" href="/kant/" hidden></a>
+  <script src="https://utteranc.es/client.js"
+  repo="prabhchintan/prabhchintan.github.io"
+  issue-term="pathname"
+  theme="gruvbox-dark"
+  crossorigin="anonymous"
+  async>
+  </script>
+</article>
+        </div>
+      </main>
+    </div><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <!-- Social Links Section -->
+    <div class="social-links"><ul class="social-media-list"><li>
+  <a rel="me" href="https://github.com/prabhchintan/prabhchintan.github.io" target="_blank" title="github">
+    <svg class="svg-icon grey">
+      <use xlink:href="/assets/minima-social-icons.svg#github"></use>
+    </svg>
+  </a>
+</li>
+<li>
+  <a rel="me" href="https://www.linkedin.com/in/prabhchintan" target="_blank" title="linkedin">
+    <svg class="svg-icon grey">
+      <use xlink:href="/assets/minima-social-icons.svg#linkedin"></use>
+    </svg>
+  </a>
+</li>
+<li>
+  <a rel="me" href="https://x.com/prabhchintan" target="_blank" title="x">
+    <svg class="svg-icon grey">
+      <use xlink:href="/assets/minima-social-icons.svg#x"></use>
+    </svg>
+  </a>
+</li>
+<li>
+  <a rel="me" href="https://www.instagram.com/prabhchintan" target="_blank" title="instagram">
+    <svg class="svg-icon grey">
+      <use xlink:href="/assets/minima-social-icons.svg#instagram"></use>
+    </svg>
+  </a>
+</li>
+<li>
+  <a rel="me" href="https://www.youtube.com/@prab" target="_blank" title="youtube">
+    <svg class="svg-icon grey">
+      <use xlink:href="/assets/minima-social-icons.svg#youtube"></use>
+    </svg>
+  </a>
+</li>
+<li>
+  <a href="https://prabhchintan.com/feed.xml" target="_blank" title="rss">
+    <svg class="svg-icon grey">
+      <use xlink:href="/assets/minima-social-icons.svg#rss"></use>
+    </svg>
+  </a>
+</li>
+</ul>
+</div><p></p>
+
+    <!-- Main Footer Content -->
+    <div class="center-text">
+      <!-- Symbolic Links -->
+      <div class="symbolic-links">
+        <a href="https://www.sikhitothemax.org/ang?ang=1&source=G"><span class="khanda-symbol">☬</span></a>&nbsp;|&nbsp;
+        <a href="https://www.archives.gov/founding-docs/constitution-transcript"><span class="flag-symbol">🇺🇸</span></a>&nbsp;&nbsp;|&nbsp;
+        <a href="mailto:prab@hey.com">✉️</a>&nbsp;&nbsp;|&nbsp;<a href="tel:+18323844877">📱</a><br>
+      </div>
+        <!-- Site Information -->
+        © Randhawa Inc. | Last updated: 2/1/25<br>
+        309 Coffeen Ave Suite 13286, Sheridan, Wyoming 82801<br>
+
+        <!-- Gurmukhi Text Link -->
+        <a href="https://www.sikhitothemax.org/ang?ang=1&source=G" class="gurmukhi-link">
+          ੴਸਤਿਨਾਮੁਕਰਤਾਪੁਰਖੁਨਿਰਭਉਨਿਰਵੈਰੁਅਕਾਲਮੂਰਤਿਅਜੂਨੀਸੈਭੰਗੁਰਪ੍ਰਸਾਦਿ॥
+        </a>
+    </div>
+  </div>
+</footer><script src="/assets/js/main.js" defer></script>
+    <script src="/assets/js/theme-toggle.js" defer></script>
+  </body>
+
+</html>
