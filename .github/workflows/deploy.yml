@@ -6,6 +6,9 @@ on:
 jobs:
   github-pages:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     permissions:
       contents: read
       pages: write
@@ -24,6 +27,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         
       - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
         
       - name: Wait for GitHub Pages
