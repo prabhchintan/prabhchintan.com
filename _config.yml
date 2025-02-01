@@ -74,7 +74,7 @@ minima:
     - { platform: rss,            user_url: "https://prabhchintan.com/feed.xml" }
 
 # Use post title to create website slug
-permalink: /:title
+permalink: /:title/
 
 include:
   - service-worker.js
