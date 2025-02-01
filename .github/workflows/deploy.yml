@@ -20,14 +20,17 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2'  # Updated from 3.1
+          ruby-version: '3.2'
           bundler-cache: true
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
       - name: Build site
-        run: bundle exec jekyll build
+        run: |
+          bundle config set --local path 'vendor/bundle'
+          bundle install
+          bundle exec jekyll build --trace
         env:
           JEKYLL_ENV: production
           
