@@ -428,13 +428,82 @@
 </ol>
 
   </div><a class="u-url" href="/product" hidden></a>
-  <script src="https://utteranc.es/client.js"
-  repo="prabhchintan/prabhchintan.github.io"
-  issue-term="pathname"
-  theme="gruvbox-dark"
-  crossorigin="anonymous"
-  async>
+
+  <!-- Enhanced comments section -->
+  <div class="comments-section">
+    <h2 class="comments-header">Discussion</h2>
+    <div id="utterances-container" class="comments-container"></div>
+  </div>
+
+  <!-- Optimized script loading with error handling -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const container = document.getElementById('utterances-container');
+      
+      const script = document.createElement('script');
+      const config = {
+        src: 'https://utteranc.es/client.js',
+        repo: 'prabhchintan/prabhchintan.github.io',
+        'issue-term': 'pathname',
+        theme: 'gruvbox-dark',
+        crossorigin: 'anonymous',
+        async: 'true'
+      };
+
+      Object.entries(config).forEach(([key, value]) => {
+        script.setAttribute(key, value);
+      });
+
+      script.onerror = function() {
+        container.innerHTML = `
+          <div class="comments-error">
+            <p>Unable to load comments. Please check your connection and refresh the page.</p>
+          </div>
+        `;
+      };
+
+      container.appendChild(script);
+    });
   </script>
+
+  <style>
+    .comments-section {
+      margin-top: 4rem;
+      margin-bottom: 2rem;
+    }
+
+    .comments-header {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--text-primary, #333);
+    }
+
+    .comments-container {
+      min-height: 200px;
+      background: var(--bg-secondary, #f8f9fa);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .comments-error {
+      padding: 2rem;
+      text-align: center;
+      color: var(--text-error, #dc3545);
+    }
+
+    /* Utterances iframe adjustments */
+    .utterances {
+      max-width: 100% !important;
+    }
+
+    /* Dark mode considerations */
+    @media (prefers-color-scheme: dark) {
+      .comments-container {
+        background: var(--bg-secondary, #2d2d2d);
+      }
+    }
+  </style>
 </article>
         </div>
       </main>
@@ -497,7 +566,7 @@
         <a href="mailto:prab@hey.com">✉️</a>&nbsp;&nbsp;|&nbsp;<a href="tel:+18323844877">📱</a><br>
       </div>
         <!-- Site Information -->
-        © Randhawa Inc. | Last updated: 2/1/25<br>
+        © Randhawa Inc. | Last updated: 2/2/25<br>
         309 Coffeen Ave Suite 13286, Sheridan, Wyoming 82801<br>
 
         <!-- Gurmukhi Text Link -->
