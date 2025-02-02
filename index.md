@@ -8,8 +8,9 @@
 layout: home
 ---
 <div style="max-width: 800px; margin: 0 auto;">
-  <div style="position: relative; padding-bottom: 56.25%;">
+  <div style="position: relative; padding-bottom: 56.25%;" id="mediaContainer">
     <video 
+      id="mainVideo"
       style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" 
       controls 
       preload="metadata"
@@ -24,7 +25,31 @@ layout: home
   video[poster] {
     object-fit: cover;
   }
+  iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
 </style>
+
+<script>
+document.getElementById('mainVideo').addEventListener('ended', function() {
+    const container = document.getElementById('mediaContainer');
+    const video = document.getElementById('mainVideo');
+    
+    // Create Twitch embed
+    const embed = document.createElement('iframe');
+    embed.src = "https://player.twitch.tv/?channel=prabhchintan&parent=" + window.location.hostname;
+    embed.allowFullscreen = true;
+    
+    // Replace video with Twitch embed
+    video.style.display = 'none';
+    container.appendChild(embed);
+});
+</script>
+
 <p style="font-size: 0.8em; font-style; text-align: center;">
   Dar El Bacha Museum, Marrakech, Morocco, December 2022
 </p>

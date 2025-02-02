@@ -37,16 +37,16 @@
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="Randhawa" />
 <meta property="og:description" content="Randhawa" />
-<link rel="canonical" href="prabhchintan.com/" />
-<meta property="og:url" content="prabhchintan.com/" />
+<link rel="canonical" href="http://localhost:4000/" />
+<meta property="og:url" content="http://localhost:4000/" />
 <meta property="og:site_name" content="ੴ" />
-<meta property="og:image" content="prabhchintan.com/assets/images/og-image.jpg" />
+<meta property="og:image" content="http://localhost:4000/assets/images/og-image.jpg" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta property="twitter:image" content="prabhchintan.com/assets/images/og-image.jpg" />
+<meta property="twitter:image" content="http://localhost:4000/assets/images/og-image.jpg" />
 <meta property="twitter:title" content="ੴ" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebSite","author":{"@type":"Person","name":"Randhawa Inc."},"description":"Randhawa","headline":"ੴ","image":"prabhchintan.com/assets/images/og-image.jpg","name":"ੴ","url":"prabhchintan.com/"}</script>
+{"@context":"https://schema.org","@type":"WebSite","author":{"@type":"Person","name":"Randhawa Inc."},"description":"Randhawa","headline":"ੴ","image":"http://localhost:4000/assets/images/og-image.jpg","name":"ੴ","url":"http://localhost:4000/"}</script>
 <!-- End Jekyll SEO tag -->
 <title>
     
@@ -56,7 +56,7 @@
     
   </title>
   
-  <link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="prabhchintan.com/feed.xml" title="ੴ" />
+  <link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="ੴ" />
 
 <!-- Fonts -->
 <!-- Cormorant Garamond for main text and Courier Prime for code or monospace text -->
@@ -211,8 +211,8 @@
       <main class="page-content" aria-label="Content">
         <div class="wrapper">
           <div class="home"><div style="max-width: 800px; margin: 0 auto;">
-  <div style="position: relative; padding-bottom: 56.25%;">
-    <video style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" controls="" preload="metadata" poster="/assets/images/og-image.jpg">
+  <div style="position: relative; padding-bottom: 56.25%;" id="mediaContainer">
+    <video id="mainVideo" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" controls="" preload="metadata" poster="/assets/images/og-image.jpg">
       <source src="/assets/videos/2022-12-25-dar-el-bacha-museum.mp4" type="video/mp4" />
       Your browser does not support the video tag.
     </video>
@@ -223,7 +223,30 @@
   video[poster] {
     object-fit: cover;
   }
+  iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
 </style>
+
+<script>
+document.getElementById('mainVideo').addEventListener('ended', function() {
+    const container = document.getElementById('mediaContainer');
+    const video = document.getElementById('mainVideo');
+    
+    // Create Twitch embed
+    const embed = document.createElement('iframe');
+    embed.src = "https://player.twitch.tv/?channel=prabhchintan&parent=" + window.location.hostname;
+    embed.allowFullscreen = true;
+    
+    // Replace video with Twitch embed
+    video.style.display = 'none';
+    container.appendChild(embed);
+});
+</script>
 
 <p style="font-size: 0.8em; font-style; text-align: center;">
   Dar El Bacha Museum, Marrakech, Morocco, December 2022
