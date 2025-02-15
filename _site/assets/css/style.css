@@ -242,14 +242,15 @@ html[data-theme="dark"] * { opacity: 1; transition: color var(--t-duration) var(
 
 body, .site-header { font-family: "Cormorant Garamond", serif; background-color: var(--background-color); color: var(--text-color); font-size: 19px; border-top: none; border-bottom: none; position: relative; z-index: 10; }
 
-.site-header { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 0.2rem 0; min-height: 45px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); background-color: rgba(var(--background-color-rgb), 0.85); }
+.site-header { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 0.2rem 0; min-height: 45px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); background-color: rgba(var(--background-color-rgb), 0.55); }
 
 body { padding-top: 60px; }
 
-.site-nav { background-color: var(--background-color); z-index: 11; }
-.site-nav .page-link { color: var(--text-color); }
+.site-nav { background-color: transparent !important; z-index: 11; }
+.site-nav .page-link { color: var(--text-color); background-color: transparent; }
 .site-nav .menu-icon { z-index: 13; }
 .site-nav .menu-icon > svg { fill: var(--heading-color); }
+.site-nav .trigger { background-color: transparent; z-index: 12; }
 
 h1, h2, h3 { color: var(--heading-color); font-weight: 1000; }
 
@@ -321,8 +322,8 @@ html[data-theme="light"] .site-nav .menu-icon > svg path, body[data-theme="light
 
 @media screen and (max-width: 600px) { .theme-toggle { position: fixed; right: 4rem; top: 0.7rem; z-index: 1001; }
   .site-nav .nav-trigger:checked ~ .trigger + .theme-toggle { display: none; }
-  .site-nav { position: fixed; top: 9px; right: 15px; background-color: var(--background-color); z-index: 1001; }
-  .site-nav .trigger { z-index: 12; } }
+  .site-nav { position: fixed; top: 9px; right: 15px; background-color: transparent !important; z-index: 1001; }
+  .site-nav .trigger { z-index: 12; background-color: rgba(var(--background-color-rgb), 0.55); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); } }
 @media screen and (min-width: 601px) { .theme-toggle { position: relative; right: 0; top: 0; margin-left: .7rem; margin-top: -0.01rem; z-index: 1; }
   .site-nav { display: flex; align-items: center; justify-content: flex-end; } }
 .site-footer .center-text { text-align: center; margin-top: 10px; }
