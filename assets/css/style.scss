@@ -534,7 +534,7 @@ body[data-theme="light"] {
     
     .trigger {
       z-index: 12;          // Keep existing z-index hierarchy
-      background-color: rgba(var(--background-color-rgb), 0.55);  // Add backdrop blur effect for mobile menu
+      background-color: rgba(var(--background-color-rgb), 0.85);  // Add backdrop blur effect for mobile menu
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
     }
