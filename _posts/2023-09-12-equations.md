@@ -8,7 +8,7 @@ categories:
   - mathematics
   - history-of-science
 author:
-- ਪ੍ਰਭਚਿੰਤਨਰੰਧਾਵਾ | Prab Randhawa
+- ਪ੍ਰਭਚਿੰਤਨਰੰਧਾਵਾ | Prabhchintan Randhawa
 meta: "Explore a comprehensive list of 30 fundamental equations that have shaped mathematics and physics. From ancient discoveries to modern theories, this concise guide covers pivotal formulas that define our understanding of the universe."
 ---
 

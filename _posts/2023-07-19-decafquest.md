@@ -9,7 +9,7 @@ categories:
   - interview
 author:
 - Mahmoud Rasmi
-- ਪ੍ਰਭਚਿੰਤਨਰੰਧਾਵਾ | Prab Randhawa
+- ਪ੍ਰਭਚਿੰਤਨਰੰਧਾਵਾ | Prabhchintan Randhawa
 meta: "An in-depth interview exploring experiences in business leadership, ethical dilemmas, philosophical applications, and personal growth strategies."
 ---
 
