@@ -52,5 +52,5 @@ document.getElementById('mainVideo').addEventListener('ended', function() {
 </script>
 
 <p style="font-size: 0.8em; font-style; text-align: center;">
-  Dar El Bacha Museum, Marrakech, Morocco, December 2022
+  Dar El Bacha Museum, Marrakech, Morocco, February 2023
 </p>
