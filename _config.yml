@@ -22,6 +22,7 @@ plugins:
   - jekyll-remote-theme
   - jekyll-paginate
   - jekyll-sitemap
+  - jekyll-redirect-from
 
 # Theme-specific settings
 
