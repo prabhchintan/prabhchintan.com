@@ -80,7 +80,7 @@ include:
   - service-worker.js
 
 repository: prabhchintan/prabhchintan.github.io.git
-url: "prabhchintan.com"
+url: "https://prabhchintan.com"
 baseurl: ""  # Leave empty if your site is at the root
 
 defaults:

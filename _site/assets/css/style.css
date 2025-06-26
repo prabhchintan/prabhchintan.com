@@ -323,7 +323,7 @@ html[data-theme="light"] .site-nav .menu-icon > svg path, body[data-theme="light
 @media screen and (max-width: 600px) { .theme-toggle { position: fixed; right: 4rem; top: 0.7rem; z-index: 1001; }
   .site-nav .nav-trigger:checked ~ .trigger + .theme-toggle { display: none; }
   .site-nav { position: fixed; top: 9px; right: 15px; background-color: transparent !important; z-index: 1001; }
-  .site-nav .trigger { z-index: 12; background-color: rgba(var(--background-color-rgb), 0.55); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); } }
+  .site-nav .trigger { z-index: 12; background-color: rgba(var(--background-color-rgb), 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); } }
 @media screen and (min-width: 601px) { .theme-toggle { position: relative; right: 0; top: 0; margin-left: .7rem; margin-top: -0.01rem; z-index: 1; }
   .site-nav { display: flex; align-items: center; justify-content: flex-end; } }
 .site-footer .center-text { text-align: center; margin-top: 10px; }
