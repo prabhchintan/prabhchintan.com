@@ -1,1 +1,1 @@
-Sitemap: prabhchintan.com/sitemap.xml
+Sitemap: https://prabhchintan.com/sitemap.xml
