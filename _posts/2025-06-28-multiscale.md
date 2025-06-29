@@ -8,7 +8,7 @@ redirect_from:
     - /multiscales
 author:
 - Storm (Stanford AI)
-- ਪ੍ਰਭਚਿੰਤਨਰੰਧਾਵਾ | Prabhchintan Randhawa
+- Prabhchintan Randhawa
 meta: "Testing the Stanford paper writing AI"
 ---
 
