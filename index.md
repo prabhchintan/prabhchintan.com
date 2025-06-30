@@ -14,7 +14,8 @@ layout: home
       style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" 
       controls 
       preload="metadata"
-      poster="{{ site.baseurl }}/assets/images/og-image.jpg">
+      poster="{{ site.baseurl }}/assets/images/og-image.webp"
+      loading="lazy">
       <source src="{{ site.baseurl }}/assets/videos/2022-12-25-dar-el-bacha-museum.mp4" type="video/mp4">
       Your browser does not support the video tag.
     </video>

@@ -339,7 +339,7 @@ html[data-theme="light"] .site-nav .menu-icon > svg path, body[data-theme="light
 
 .post-list h3:hover + .post-meta-summary, .post-list h3:focus-within + .post-meta-summary { color: var(--heading-color); opacity: 1; text-decoration: none; }
 
-.post-list h3, .post-meta-summary { margin-top: 0.5em; margin-bottom: 0; padding-top: 0; padding-bottom: 0; line-height: 1.1; }
+.post-list h3, .post-meta-summary { margin-top: 0.4em; margin-bottom: 0; padding-top: 0; padding-bottom: 0; line-height: 1.1; }
 
 .post-list .post-meta { display: block; margin-bottom: 0.5em; }
 

@@ -17,3 +17,5 @@ gem "http_parser.rb", "~> 0.6.0", :platforms => [:jruby]
 gem 'faraday-retry'
 
 gem 'jekyll-redirect-from'
+
+gem 'jekyll-minifier'

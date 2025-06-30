@@ -5,7 +5,7 @@
 
 <!-- Fonts -->
 <!-- Cormorant Garamond for main text and Courier Prime for code or monospace text -->
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Courier+Prime&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Courier+Prime&display=swap" rel="stylesheet" media="all">
 
 <!-- Favicons and device-specific icons -->
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -40,7 +40,7 @@
 <link rel="manifest" href="/manifest.json">
 
 <!-- Main JavaScript file -->
-<script src="{{ '/assets/js/main.js' | relative_url }}"></script>
+<script src="{{ '/assets/js/main.js' | relative_url }}" defer></script>
 
 <!-- Script to open external links in new tab -->
 <script>
@@ -87,7 +87,7 @@
     }
   };
   </script>
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
 <!-- Open Graph tags -->
@@ -97,6 +97,9 @@
 <meta property="og:image:secure_url" content="https://prabhchintan.com/assets/images/og-image.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+<!-- For modern crawlers, also provide a WebP version (optional, not all platforms support this yet) -->
+<meta property="og:image:type" content="image/webp">
+<!-- <meta property="og:image" content="https://prabhchintan.com/assets/images/og-image.webp"> -->
 <!-- Add a smaller version for better compatibility -->
 <meta property="og:image" content="https://prabhchintan.com/assets/images/og-image-small.jpg">
 <meta property="og:image:secure_url" content="https://prabhchintan.com/assets/images/og-image-small.jpg">
@@ -105,3 +108,6 @@
 <meta property="og:url" content="https://prabhchintan.com{{ page.url | replace:'index.html','' }}">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Prabhchintan">
+
+<link rel="preload" as="style" href="{{ '/assets/css/style.css' | relative_url }}">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Courier+Prime&display=swap">
