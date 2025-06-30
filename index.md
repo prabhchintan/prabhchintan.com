@@ -9,24 +9,25 @@ layout: home
 ---
 <div style="max-width: 800px; margin: 0 auto;">
   <div style="position: relative; padding-bottom: 56.25%;" id="mediaContainer">
-    <video 
-      id="mainVideo"
-      style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" 
-      controls 
-      preload="metadata"
-      poster="{{ site.baseurl }}/assets/images/og-image.jpg"
-      loading="lazy">
-      <source src="{{ site.baseurl }}/assets/videos/2022-12-25-dar-el-bacha-museum.mp4" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
+    <img 
+      id="mainImage"
+      src="{{ site.baseurl }}/assets/images/og-image.jpg"
+      alt="Dar El Bacha Museum, Marrakech"
+      style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; display: block;">
+    <button id="playTwitch" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: none; border: none; cursor: pointer;">
+      <svg width="80" height="80" viewBox="0 0 80 80">
+        <circle cx="40" cy="40" r="38" fill="rgba(0,0,0,0.5)" />
+        <polygon points="32,25 60,40 32,55" fill="#fff"/>
+      </svg>
+    </button>
   </div>
 </div>
 
 <style>
-  video[poster] {
+  #mediaContainer img {
     object-fit: cover;
   }
-  iframe {
+  #mediaContainer iframe {
     position: absolute;
     top: 0;
     left: 0;
@@ -37,19 +38,18 @@ layout: home
 </style>
 
 <script>
-document.getElementById('mainVideo').addEventListener('ended', function() {
-    const container = document.getElementById('mediaContainer');
-    const video = document.getElementById('mainVideo');
-    
-    // Create Twitch embed
-    const embed = document.createElement('iframe');
-    embed.src = "https://player.twitch.tv/?channel=prabhchintan&parent=" + window.location.hostname;
-    embed.allowFullscreen = true;
-    
-    // Replace video with Twitch embed
-    video.style.display = 'none';
-    container.appendChild(embed);
-});
+  document.getElementById('playTwitch').onclick = function() {
+    document.getElementById('mediaContainer').innerHTML = `
+      <iframe
+        src="https://player.twitch.tv/?channel=prabhchintan&parent=${location.hostname}"
+        height="480"
+        width="100%"
+        allowfullscreen
+        frameborder="0"
+        style="display:block; margin:0 auto; max-width:900px;">
+      </iframe>
+    `;
+  };
 </script>
 
 <p style="font-size: 0.8em; font-style; text-align: center;">
