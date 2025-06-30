@@ -226,7 +226,7 @@ a {
   }
   
   .post-list > li {
-    margin-bottom: 0.7em;
+    margin-bottom: 1.2em;
   }
   
   .post-meta {
@@ -601,4 +601,35 @@ body[data-theme="light"] {
     width: 100%;
     height: 100%;
   }
+}
+
+// Default state
+.post-meta-summary {
+  margin-top: 0;
+  margin-bottom: 0;
+  font-style: italic;
+  opacity: 0.8;
+  color: var(--link-hover-color);
+  transition: color 0.2s, opacity 0.2s;
+}
+
+// When the title is hovered, reverse the color/opacity
+.post-list h3:hover + .post-meta-summary,
+.post-list h3:focus-within + .post-meta-summary {
+  color: var(--heading-color); // or var(--text-color) for more contrast
+  opacity: 1;
+}
+
+.post-list h3,
+.post-meta-summary {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  line-height: 1.1; // or 1 for even tighter, but don't go too low for readability
+}
+
+.post-list .post-meta {
+  display: block;
+  margin-bottom: 0.5em;
 }

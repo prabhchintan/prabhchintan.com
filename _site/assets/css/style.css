@@ -269,7 +269,7 @@ a:hover { color: var(--link-hover-color); text-decoration: underline; }
 
 .home .post-list-heading, .home .post-list li > a, .home .post-link { font-weight: 600; }
 .home .post-list-heading { margin-bottom: 0.3em; }
-.home .post-list > li { margin-bottom: 0.7em; }
+.home .post-list > li { margin-bottom: 1.2em; }
 .home .post-meta { margin-bottom: 0.2em; }
 
 .page-content { padding-top: 1em; padding-bottom: 1em; }
@@ -334,3 +334,11 @@ html[data-theme="light"] .site-nav .menu-icon > svg path, body[data-theme="light
 
 .video-container { position: relative; padding-bottom: 56.25%; /* 16:9 aspect ratio */ height: 0; overflow: hidden; max-width: 100%; }
 .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+.post-meta-summary { margin-top: 0; margin-bottom: 0; font-style: italic; opacity: 0.8; color: var(--link-hover-color); transition: color 0.2s, opacity 0.2s; }
+
+.post-list h3:hover + .post-meta-summary, .post-list h3:focus-within + .post-meta-summary { color: var(--heading-color); opacity: 1; }
+
+.post-list h3, .post-meta-summary { margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: 0; line-height: 1.1; }
+
+.post-list .post-meta { display: block; margin-bottom: 0.5em; }

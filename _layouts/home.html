@@ -31,6 +31,9 @@ layout: base
             {{ post.title | escape }}
           </a>
         </h3>
+        {%- if post.meta -%}
+          <div class="post-meta post-meta-summary">{{ post.meta | escape }}</div>
+        {%- endif -%}
         {%- if site.show_excerpts -%}
           {{ post.excerpt }}
         {%- endif -%}
