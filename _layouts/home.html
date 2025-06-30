@@ -32,7 +32,9 @@ layout: base
           </a>
         </h3>
         {%- if post.meta -%}
-          <div class="post-meta post-meta-summary">{{ post.meta | escape }}</div>
+          <a class="post-meta post-meta-summary" href="{{ post.url | relative_url }}">
+            {{ post.meta | escape }}
+          </a>
         {%- endif -%}
         {%- if site.show_excerpts -%}
           {{ post.excerpt }}

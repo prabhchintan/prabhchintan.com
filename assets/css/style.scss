@@ -611,6 +611,8 @@ body[data-theme="light"] {
   opacity: 0.8;
   color: var(--link-hover-color);
   transition: color 0.2s, opacity 0.2s;
+  cursor: pointer;
+  text-decoration: none; // always no underline
 }
 
 // When the title is hovered, reverse the color/opacity
@@ -618,11 +620,12 @@ body[data-theme="light"] {
 .post-list h3:focus-within + .post-meta-summary {
   color: var(--heading-color); // or var(--text-color) for more contrast
   opacity: 1;
+  text-decoration: none; // ensures no underline
 }
 
 .post-list h3,
 .post-meta-summary {
-  margin-top: 0;
+  margin-top: 0.5em;
   margin-bottom: 0;
   padding-top: 0;
   padding-bottom: 0;
@@ -632,4 +635,10 @@ body[data-theme="light"] {
 .post-list .post-meta {
   display: block;
   margin-bottom: 0.5em;
+}
+
+a.post-meta-summary:hover,
+a.post-meta-summary:focus {
+  text-decoration: none !important;
+  /* The rest of your hover/focus styles are already handled by the h3:hover + .post-meta-summary selector */
 }
