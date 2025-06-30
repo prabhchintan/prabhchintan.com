@@ -81,7 +81,7 @@ include:
   - service-worker.js
 
 repository: prabhchintan/prabhchintan.github.io.git
-url: "https://prabhchintan.com"
+url: "https://xn--pcce.com"
 baseurl: ""  # Leave empty if your site is at the root
 
 defaults:
