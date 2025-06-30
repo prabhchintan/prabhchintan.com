@@ -11,7 +11,7 @@ layout: home
   <div style="position: relative; padding-bottom: 56.25%;" id="mediaContainer">
     <img 
       id="mainImage"
-      src="{{ site.baseurl }}/assets/images/og-image.jpg"
+      src="{{ site.baseurl }}/assets/images/og-image-small.jpg"
       alt="Dar El Bacha Museum, Marrakech"
       style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; display: block;">
     <button id="playTwitch" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: none; border: none; cursor: pointer;">
