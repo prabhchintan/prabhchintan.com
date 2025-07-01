@@ -58,7 +58,7 @@ minima:
   #  - { platform: dribbble,       user_url: "https://dribbble.com/jekyll" }
   #  - { platform: facebook,       user_url: "https://www.facebook.com/jekyll" }
   #  - { platform: flickr,         user_url: "https://www.flickr.com/photos/jekyll" }
-    - { platform: github,         user_url: "https://github.com/prabhchintan/prabhchintan.github.io" }
+    - { platform: github,         user_url: "https://github.com/prabhchintan" }
     - { platform: linkedin,       user_url: "https://www.linkedin.com/in/prabhchintan" }
   #  - { platform: gitlab,         user_url: "https://gitlab.com/jekyll" }
   #  - { platform: google_scholar, user_url: "https://scholar.google.com/citations?user=qc6CJjYAAAAJ" }
