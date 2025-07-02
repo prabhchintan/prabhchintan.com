@@ -51,8 +51,5 @@ redirect_from:
       allow="autoplay; fullscreen"
       title="Twitch Live Stream"
     ></iframe>
-    <div class="twitch-link">
-      <a href="https://www.twitch.tv/prabhchintan" target="_blank" rel="noopener">Watch on Twitch</a>
-    </div>
   `;
 </script>
