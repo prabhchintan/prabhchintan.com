@@ -320,6 +320,13 @@ html[data-theme="light"] .site-nav .menu-icon > svg path, body[data-theme="light
 .theme-toggle { background: none !important; border: none !important; padding: 0.5rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; color: var(--text-color); -webkit-appearance: none; -moz-appearance: none; appearance: none; }
 .theme-toggle .theme-toggle-icon { font-size: 1.1rem; line-height: 1; }
 
+.skip-link { position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; overflow: hidden; z-index: 999; padding: 8px 16px; background: var(--heading-color); color: var(--background-color); text-decoration: none; font-size: 14px; border-radius: 4px; }
+.skip-link:focus { left: 10px; top: 10px; width: auto; height: auto; overflow: visible; }
+
+.sr-only { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important; }
+
+.theme-toggle .sr-only { display: none !important; }
+
 @media screen and (max-width: 600px) { .theme-toggle { position: fixed; right: 4rem; top: 0.7rem; z-index: 1001; }
   .site-nav .nav-trigger:checked ~ .trigger + .theme-toggle { display: none; }
   .site-nav { position: fixed; top: 9px; right: 15px; background-color: transparent !important; z-index: 1001; }
