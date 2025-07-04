@@ -1,96 +1,130 @@
-// Name of the cache used by this service worker
-const CACHE_NAME = 'randhawa-inc-v4'; // Increment the version when making changes
+// Cache configuration
+const CACHE_NAME = 'randhawa-inc-v5';
+const STATIC_CACHE = 'static-v5';
+const IMAGE_CACHE = 'images-v5';
 
-// List of URLs to cache when the service worker is installed
-const urlsToCache = [
-  '/',
-  '/index.html',
-  '/offline/',
+// Static assets for cache-first strategy
+const STATIC_ASSETS = [
   '/assets/css/style.css',
   '/assets/js/bundle.js',
   '/assets/fonts/FleurCornerCaps.woff2',
-  '/assets/images/og-image-small.jpg',
+  '/manifest.json'
+];
+
+// Essential assets for immediate caching
+const CORE_ASSETS = [
+  '/',
+  '/offline/',
+  '/assets/images/og-image-small.webp',
   '/android-chrome-192x192.png',
-  '/android-chrome-384x384.png',
-  '/apple-touch-icon.png',
-  '/favicon-32x32.png',
-  '/favicon-16x16.png',
-  '/manifest.json',
-  // Add other important assets here
+  '/favicon-32x32.png'
+];
+
+// Image assets with WebP support
+const IMAGE_ASSETS = [
+  '/assets/images/og-image-small.webp',
+  '/assets/images/og-image.webp',
+  '/assets/images/og-image-optimized.webp'
 ];
 
 /**
- * Install event: caches assets when the service worker is installed
+ * Install event: caches essential assets
  */
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('Opened cache');
-        return cache.addAll(urlsToCache);
-      })
-      .catch(error => {
-        console.error('Error caching assets:', error);
-      })
-  );
-});
-
-/**
- * Activate event: cleans up old caches when a new service worker takes over
- */
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
+    Promise.all([
+      caches.open(CACHE_NAME).then(cache => cache.addAll(CORE_ASSETS)),
+      caches.open(STATIC_CACHE).then(cache => cache.addAll(STATIC_ASSETS)),
+      caches.open(IMAGE_CACHE).then(cache => cache.addAll(IMAGE_ASSETS))
+    ]).then(() => {
+      self.skipWaiting(); // Activate immediately
     })
   );
 });
 
 /**
- * Fetch event: handles requests, attempting to serve from network first, then cache
+ * Activate event: clean up old caches
  */
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    fetch(event.request)
-      .then(response => {
-        // Check if we received a valid response
-        if (!response || response.status !== 200 || response.type !== 'basic') {
-          return response;
-        }
-
-        // Clone the response
-        const responseToCache = response.clone();
-
-        caches.open(CACHE_NAME)
-          .then(cache => {
-            cache.put(event.request, responseToCache);
-          })
-          .catch(error => {
-            console.error('Error caching response:', error);
-          });
-
-        return response;
-      })
-      .catch(() => {
-        // If the network request fails, try to serve from cache
-        return caches.match(event.request)
-          .then(cachedResponse => {
-            if (cachedResponse) {
-              return cachedResponse;
-            }
-            // If the resource is not in the cache, return the offline page
-            return caches.match('/offline/');
-          });
-      })
+self.addEventListener('activate', event => {
+  const expectedCaches = [CACHE_NAME, STATIC_CACHE, IMAGE_CACHE];
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (!expectedCaches.includes(cacheName)) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    }).then(() => {
+      self.clients.claim(); // Take control immediately
+    })
   );
 });
+
+/**
+ * Fetch event: optimized caching strategies
+ */
+self.addEventListener('fetch', event => {
+  const { request } = event;
+  const url = new URL(request.url);
+  
+  // Cache-first for static assets
+  if (STATIC_ASSETS.some(asset => url.pathname.includes(asset))) {
+    event.respondWith(cacheFirst(request, STATIC_CACHE));
+    return;
+  }
+  
+  // Stale-while-revalidate for images
+  if (request.destination === 'image' || url.pathname.includes('/assets/images/')) {
+    event.respondWith(staleWhileRevalidate(request, IMAGE_CACHE));
+    return;
+  }
+  
+  // Network-first for pages
+  event.respondWith(networkFirst(request));
+});
+
+// Cache-first strategy
+function cacheFirst(request, cacheName) {
+  return caches.open(cacheName).then(cache => {
+    return cache.match(request).then(response => {
+      return response || fetch(request).then(networkResponse => {
+        cache.put(request, networkResponse.clone());
+        return networkResponse;
+      });
+    });
+  });
+}
+
+// Stale-while-revalidate strategy
+function staleWhileRevalidate(request, cacheName) {
+  return caches.open(cacheName).then(cache => {
+    return cache.match(request).then(cachedResponse => {
+      const fetchPromise = fetch(request).then(networkResponse => {
+        cache.put(request, networkResponse.clone());
+        return networkResponse;
+      });
+      return cachedResponse || fetchPromise;
+    });
+  });
+}
+
+// Network-first strategy
+function networkFirst(request) {
+  return fetch(request).then(response => {
+    if (response.ok) {
+      caches.open(CACHE_NAME).then(cache => {
+        cache.put(request, response.clone());
+      });
+    }
+    return response;
+  }).catch(() => {
+    return caches.match(request).then(cachedResponse => {
+      return cachedResponse || caches.match('/offline/');
+    });
+  });
+}
 
 /**
  * Push event: handles push notifications (if implemented)

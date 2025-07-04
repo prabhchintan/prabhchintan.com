@@ -237,6 +237,8 @@ table td { border: 1px solid #e8e8e8; }
 
 button:focus, input:focus, textarea:focus, select:focus, a:focus { outline: 2px solid #4A90E2; outline-offset: 2px; }
 
+.highlight .c, .highlight .err, .highlight .k, .highlight .o, .highlight .cm, .highlight .cp, .highlight .c1, .highlight .cs, .highlight .gd, .highlight .gd .x, .highlight .ge, .highlight .gr, .highlight .gh, .highlight .gi, .highlight .gi .x, .highlight .go, .highlight .gp, .highlight .gs, .highlight .gu, .highlight .gt, .highlight .kc, .highlight .kd, .highlight .kp, .highlight .kr, .highlight .kt, .highlight .m, .highlight .s, .highlight .na, .highlight .nb, .highlight .nc, .highlight .no, .highlight .ni, .highlight .ne, .highlight .nf, .highlight .nn, .highlight .nt, .highlight .nv, .highlight .ow, .highlight .w, .highlight .mf, .highlight .mh, .highlight .mi, .highlight .mo, .highlight .sb, .highlight .sc, .highlight .sd, .highlight .s2, .highlight .se, .highlight .sh, .highlight .si, .highlight .sx, .highlight .sr, .highlight .s1, .highlight .ss, .highlight .bp, .highlight .vc, .highlight .vg, .highlight .vi, .highlight .il { color: inherit; background-color: inherit; font-style: inherit; font-weight: inherit; }
+
 :root { --t-duration: 0.2s; --t-easing: ease; }
 
 html:not(.no-transition) * { transition: color var(--t-duration) var(--t-easing), background-color var(--t-duration) var(--t-easing), border-color var(--t-duration) var(--t-easing); }
@@ -314,15 +316,6 @@ html[data-theme="light"], body[data-theme="light"] { --background-color-rgb: 248
 html[data-theme="light"] .site-title svg path, body[data-theme="light"] .site-title svg path { fill: #1c1310 !important; }
 html[data-theme="light"] .site-nav .menu-icon > svg path, body[data-theme="light"] .site-nav .menu-icon > svg path { fill: #1c1310 !important; }
 @media (prefers-color-scheme: light) { html[data-theme="light"] + script + meta[name="theme-color"], body[data-theme="light"] + script + meta[name="theme-color"] { content: "#f8f4e9"; } }
-
-.theme-toggle { background: none !important; border: none !important; padding: 0.5rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; color: var(--text-color); -webkit-appearance: none; -moz-appearance: none; appearance: none; }
-.theme-toggle .theme-toggle-icon { font-size: 1.1rem; line-height: 1; }
-
-.site-nav { background-color: var(--background-color); z-index: 11; }
-.site-nav .page-link { color: var(--text-color); }
-.site-nav .menu-icon { z-index: 13; }
-.site-nav .menu-icon > svg { fill: var(--heading-color); }
-.site-nav .trigger { z-index: 12; }
 
 .theme-toggle { background: none !important; border: none !important; padding: 0.5rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; color: var(--text-color); -webkit-appearance: none; -moz-appearance: none; appearance: none; }
 .theme-toggle .theme-toggle-icon { font-size: 1.1rem; line-height: 1; }

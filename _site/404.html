@@ -80,7 +80,62 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Courier+Prime&display=swap" rel="stylesheet" media="all">
 
-<!-- Preload critical assets -->
+<!-- Critical CSS inlined for performance -->
+<style>
+  /* Critical above-the-fold styles */
+  :root {
+    --background-color-rgb: 248, 244, 233;
+    --background-color: #f8f4e9;
+    --text-color: #1c1310;
+    --heading-color: #5e3a1d;
+    --link-color: #663106;
+    --t-duration: 0.2s;
+    --t-easing: ease;
+  }
+  html { font-size: 16px; }
+  body {
+    font-family: 'Cormorant Garamond', serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-size: 19px;
+    font-weight: 600;
+    margin: 0;
+    padding-top: 60px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.5;
+  }
+  .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding: 0.2rem 0;
+    min-height: 45px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background-color: rgba(var(--background-color-rgb), 0.55);
+    font-family: 'Cormorant Garamond', serif;
+  }
+  .wrapper { max-width: calc(800px - 60px); margin: 0 auto; padding: 0 30px; }
+  .site-title {
+    font-size: 26px;
+    font-weight: 300;
+    line-height: 54px;
+    letter-spacing: -1px;
+    margin-bottom: 0;
+    float: left;
+    color: var(--text-color);
+    text-decoration: none;
+  }
+  h1, h2, h3 { color: var(--heading-color); font-weight: 1000; }
+  a { color: var(--link-color); text-decoration: none; }
+  .no-transition * { transition: none !important; }
+</style>
+
+<!-- Preload non-critical assets -->
 <link rel="preload" href="/assets/css/style.css" as="style">
 <link rel="preload" href="/assets/js/bundle.js" as="script">
 
@@ -110,8 +165,9 @@
 <!-- Dark mode theme color -->
 <meta name="theme-color" content="#1a1410" media="(prefers-color-scheme: dark)">
 
-<!-- Preload critical assets -->
+<!-- Font preloading optimized -->
 <link rel="preload" href="/assets/fonts/FleurCornerCaps.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="https://fonts.gstatic.com/s/cormorantgaramond/v16/co3YmX5slCNuHLi8bLeY9MK7whWMhyjQrUVjWnSFfMrWWg.woff2" as="font" type="font/woff2" crossorigin>
 
 <!-- PWA settings -->
 <link rel="manifest" href="/manifest.json">
@@ -167,27 +223,19 @@
           integrity="sha384-fNl9rj/eK1wEYfKc26CbPM6qkVQ+9MvYaoAFNql4ulbjBp888ROQQOqSwwq8YIXp" 
           crossorigin="anonymous"></script>
 
-<!-- Open Graph tags -->
+<!-- Optimized Open Graph tags -->
 <meta property="og:title" content="ੴ">
 <meta property="og:description" content="Randhawa Inc. builds and analyzes technology for the real world.  AI, analytics, and digital infrastructure expertise for Fortune 100s and startups. Engineering consulting, data science, and technical advisory services.">
-<meta property="og:image" content="https://prabhchintan.com/assets/images/og-image-small.jpg">
-<meta property="og:image:secure_url" content="https://prabhchintan.com/assets/images/og-image-small.jpg">
+<meta property="og:image" content="https://prabhchintan.com/assets/images/og-image-small.webp">
+<meta property="og:image:secure_url" content="https://prabhchintan.com/assets/images/og-image-small.webp">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<!-- For modern crawlers, also provide a WebP version (optional, not all platforms support this yet) -->
 <meta property="og:image:type" content="image/webp">
-<!-- <meta property="og:image" content="https://prabhchintan.com/assets/images/og-image-small.webp"> -->
-<!-- Add a smaller version for better compatibility -->
+<!-- Fallback for older platforms -->
 <meta property="og:image" content="https://prabhchintan.com/assets/images/og-image-small.jpg">
-<meta property="og:image:secure_url" content="https://prabhchintan.com/assets/images/og-image-small.jpg">
-<meta property="og:image:width" content="600">
-<meta property="og:image:height" content="315">
 <meta property="og:url" content="https://prabhchintan.com/404">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Prabhchintan">
-
-<link rel="preload" as="style" href="/assets/css/style.css">
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Courier+Prime&display=swap"><script>
+<meta property="og:site_name" content="Prabhchintan"><script>
     function updateThemeColor() {
       const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
       const metaThemeColor = document.querySelector('meta[name="theme-color"]');
@@ -326,7 +374,7 @@
         <a href="mailto:prab@hey.com">✉️</a>&nbsp;&nbsp;|&nbsp;<a href="tel:+18323844877">📱</a><br>
       </div>
         <!-- Site Information -->
-        © Randhawa Inc. | Last updated: 7/3/25<br>
+        © Randhawa Inc. | Last updated: 7/4/25<br>
         309 Coffeen Ave Suite 13286, Sheridan, Wyoming 82801<br>
 
         <!-- Gurmukhi Text Link -->

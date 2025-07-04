@@ -81,37 +81,25 @@ class ThemeManager {
 }
 
 /**
- * Service Worker Registration
+ * Optimized Service Worker Registration
  */
 function registerServiceWorker() {
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/service-worker.js')
-        .then(registration => {
-          console.log('Service Worker registered successfully:', registration.scope);
-        })
-        .catch(error => {
+  if ('serviceWorker' in navigator && !navigator.serviceWorker.controller) {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(registration => {
+        if (process.env.NODE_ENV !== 'production') {
+          console.log('Service Worker registered:', registration.scope);
+        }
+      })
+      .catch(error => {
+        if (process.env.NODE_ENV !== 'production') {
           console.error('Service Worker registration failed:', error);
-        });
-    });
+        }
+      });
   }
 }
 
-/**
- * MathJax Loading Handler
- */
-function initializeMathJax() {
-  document.body.classList.add('mathjax-loading');
-  
-  if (typeof MathJax !== 'undefined') {
-    MathJax.Hub.Queue(function() {
-      document.body.classList.remove('mathjax-loading');
-      document.body.classList.add('mathjax-loaded');
-    });
-  } else {
-    document.body.classList.remove('mathjax-loading');
-  }
-}
+// MathJax code removed - not used on this site
 
 /**
  * Initialize all components when DOM is ready
@@ -120,9 +108,6 @@ document.addEventListener('DOMContentLoaded', function() {
   // Initialize theme manager
   new ThemeManager();
   
-  // Initialize MathJax
-  initializeMathJax();
-  
-  // Register service worker
+  // Register service worker (only on first visit)
   registerServiceWorker();
 });

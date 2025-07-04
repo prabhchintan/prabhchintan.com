@@ -5,6 +5,26 @@
 // 1. IMPORTS
 @import "minima/skins/{{ site.minima.skin | default: 'auto' }}", "minima/initialize";
 
+// Remove unused highlight styles for performance
+.highlight .c, .highlight .err, .highlight .k, .highlight .o, .highlight .cm, .highlight .cp,
+.highlight .c1, .highlight .cs, .highlight .gd, .highlight .gd .x, .highlight .ge,
+.highlight .gr, .highlight .gh, .highlight .gi, .highlight .gi .x, .highlight .go,
+.highlight .gp, .highlight .gs, .highlight .gu, .highlight .gt, .highlight .kc,
+.highlight .kd, .highlight .kp, .highlight .kr, .highlight .kt, .highlight .m,
+.highlight .s, .highlight .na, .highlight .nb, .highlight .nc, .highlight .no,
+.highlight .ni, .highlight .ne, .highlight .nf, .highlight .nn, .highlight .nt,
+.highlight .nv, .highlight .ow, .highlight .w, .highlight .mf, .highlight .mh,
+.highlight .mi, .highlight .mo, .highlight .sb, .highlight .sc, .highlight .sd,
+.highlight .s2, .highlight .se, .highlight .sh, .highlight .si, .highlight .sx,
+.highlight .sr, .highlight .s1, .highlight .ss, .highlight .bp, .highlight .vc,
+.highlight .vg, .highlight .vi, .highlight .il {
+  // Override all unused highlight styles
+  color: inherit;
+  background-color: inherit;
+  font-style: inherit;
+  font-weight: inherit;
+}
+
 // 2. GLOBAL TRANSITIONS
 :root {
   --t-duration: 0.2s;
@@ -468,48 +488,7 @@ body[data-theme="light"] {
 }
 
 // Mobile styles
-// Site nav base styles
-.site-nav {
-  background-color: var(--background-color);
-  z-index: 11;
-  
-  .page-link {
-    color: var(--text-color);
-  }
-  
-  .menu-icon {
-    z-index: 13;
-    
-    > svg {
-      fill: var(--heading-color);
-    }
-  }
-
-  .trigger {
-    z-index: 12;  // Add this to ensure menu content stays above theme toggle
-  }
-}
-
-// Theme toggle base styles
-.theme-toggle {
-  background: none !important;
-  border: none !important;
-  padding: 0.5rem;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-color);
-  
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  
-  .theme-toggle-icon {
-    font-size: 1.1rem;
-    line-height: 1;
-  }
-}
+// Duplicate styles removed - consolidated above
 
 // Mobile styles
 @media screen and (max-width: 600px) {
