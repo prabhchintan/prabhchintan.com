@@ -1,6 +1,35 @@
 ---
 layout: base
 ---
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "{% if page.page_title %}{{ page.page_title | escape | strip_html }}{% else %}{{ page.title | escape | strip_html }}{% endif %}",
+  "author": {
+    "@type": "Person",
+    "name": "{{ site.author.name | default: site.title }}",
+    "url": "{{ site.url }}"
+  },
+  "datePublished": "{{ page.date | date_to_xmlschema }}",
+  {% if page.modified_date %}"dateModified": "{{ page.modified_date | date_to_xmlschema }}",{% endif %}
+  "publisher": {
+    "@type": "Organization",
+    "name": "{{ site.title }}",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ site.url }}/assets/images/og-image-small.jpg"
+    }
+  },
+  "image": "{{ page.image | default: site.image | absolute_url }}",
+  "url": "{{ page.url | absolute_url }}",
+  "description": "{{ page.excerpt | default: page.content | strip_html | strip_newlines | truncate: 160 | escape }}",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{ page.url | absolute_url }}"
+  }
+}
+</script>
 <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
   <header class="post-header">
@@ -68,11 +97,12 @@ layout: base
       });
 
       script.onerror = function() {
-        container.innerHTML = `
-          <div class="comments-error">
-            <p>Unable to load comments. Please check your connection and refresh the page.</p>
-          </div>
-        `;
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'comments-error';
+        const errorText = document.createElement('p');
+        errorText.textContent = 'Unable to load comments. Please check your connection and refresh the page.';
+        errorDiv.appendChild(errorText);
+        container.appendChild(errorDiv);
       };
 
       container.appendChild(script);

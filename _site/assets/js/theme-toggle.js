@@ -32,6 +32,14 @@ class ThemeManager {
       this.toggleTheme();
     });
 
+    // Add keyboard support
+    this.themeToggle.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        this.toggleTheme();
+      }
+    });
+
     this.mediaQuery.addEventListener('change', (e) => {
       if (!localStorage.getItem('theme')) {
         this.setTheme(e.matches ? 'dark' : 'light', true);

@@ -1,7 +1,7 @@
 {
     "version": "https://jsonfeed.org/version/1",
     "title": "ੴ",
-    "description": "Randhawa",
+    "description": "Randhawa Inc. builds and analyzes technology for the real world.  AI, analytics, and digital infrastructure expertise for Fortune 100s and startups. Engineering consulting, data science, and technical advisory services.",
     "home_page_url": "http://localhost:4000",
     "feed_url": "http://localhost:4000/feed.json",
     "items": [

@@ -35,8 +35,8 @@
 <meta property="og:title" content="Privacy Policy" />
 <meta name="author" content="Randhawa Inc." />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Randhawa" />
-<meta property="og:description" content="Randhawa" />
+<meta name="description" content="Randhawa Inc. builds and analyzes technology for the real world. AI, analytics, and digital infrastructure expertise for Fortune 100s and startups. Engineering consulting, data science, and technical advisory services." />
+<meta property="og:description" content="Randhawa Inc. builds and analyzes technology for the real world. AI, analytics, and digital infrastructure expertise for Fortune 100s and startups. Engineering consulting, data science, and technical advisory services." />
 <link rel="canonical" href="http://localhost:4000/privacy" />
 <meta property="og:url" content="http://localhost:4000/privacy" />
 <meta property="og:site_name" content="ੴ" />
@@ -46,7 +46,7 @@
 <meta property="twitter:image" content="http://localhost:4000/assets/images/og-image.jpg" />
 <meta property="twitter:title" content="Privacy Policy" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","author":{"@type":"Person","name":"Randhawa Inc."},"description":"Randhawa","headline":"Privacy Policy","image":"http://localhost:4000/assets/images/og-image.jpg","url":"http://localhost:4000/privacy"}</script>
+{"@context":"https://schema.org","@type":"WebPage","author":{"@type":"Person","name":"Randhawa Inc."},"description":"Randhawa Inc. builds and analyzes technology for the real world. AI, analytics, and digital infrastructure expertise for Fortune 100s and startups. Engineering consulting, data science, and technical advisory services.","headline":"Privacy Policy","image":"http://localhost:4000/assets/images/og-image.jpg","url":"http://localhost:4000/privacy"}</script>
 <!-- End Jekyll SEO tag -->
 <title>
     
@@ -60,9 +60,29 @@
   
   <link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="ੴ" />
 
-<!-- Fonts -->
+<!-- Security Headers -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://utteranc.es https://cdn.jsdelivr.net https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; frame-src https://player.twitch.tv https://utteranc.es; connect-src 'self' https://api.github.com;">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-XSS-Protection" content="1; mode=block">
+<meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+<meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), interest-cohort=()">
+
+<!-- Resource Hints for Performance -->
+<link rel="dns-prefetch" href="https://fonts.googleapis.com">
+<link rel="dns-prefetch" href="https://fonts.gstatic.com">
+<link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+<link rel="dns-prefetch" href="https://utteranc.es">
+
+<!-- Fonts - Optimized weights -->
 <!-- Cormorant Garamond for main text and Courier Prime for code or monospace text -->
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Courier+Prime&display=swap" rel="stylesheet" media="all">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Courier+Prime&display=swap" rel="stylesheet" media="all">
+
+<!-- Preload critical assets -->
+<link rel="preload" href="/assets/css/style.css" as="style">
+<link rel="preload" href="/assets/js/bundle.js" as="script">
 
 <!-- Favicons and device-specific icons -->
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -96,8 +116,7 @@
 <!-- PWA settings -->
 <link rel="manifest" href="/manifest.json">
 
-<!-- Main JavaScript file -->
-<script src="/assets/js/main.js" defer></script>
+<!-- Main JavaScript file loaded in base layout -->
 
 <!-- Script to open external links in new tab -->
 <script>
@@ -144,12 +163,13 @@
     }
   };
   </script>
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
-  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" 
+          integrity="sha384-fNl9rj/eK1wEYfKc26CbPM6qkVQ+9MvYaoAFNql4ulbjBp888ROQQOqSwwq8YIXp" 
+          crossorigin="anonymous"></script>
 
 <!-- Open Graph tags -->
 <meta property="og:title" content="Privacy Policy">
-<meta property="og:description" content="Randhawa">
+<meta property="og:description" content="Randhawa Inc. builds and analyzes technology for the real world.  AI, analytics, and digital infrastructure expertise for Fortune 100s and startups. Engineering consulting, data science, and technical advisory services.">
 <meta property="og:image" content="https://prabhchintan.com/assets/images/og-image-small.jpg">
 <meta property="og:image:secure_url" content="https://prabhchintan.com/assets/images/og-image-small.jpg">
 <meta property="og:image:width" content="1200">
@@ -203,24 +223,26 @@
     // Initial update
     updateThemeColor();
   </script>
-</head><body><header class="site-header">
+</head><body><a href="#main-content" class="skip-link">Skip to main content</a>
+<header class="site-header">
   <div class="wrapper"><a class="site-title" rel="author" href="/">ੴ</a><nav class="site-nav">
         <input type="checkbox" id="nav-trigger" class="nav-trigger" />
-        <label for="nav-trigger">
+        <label for="nav-trigger" aria-label="Toggle navigation menu">
           <span class="menu-icon">
-            <svg viewBox="0 0 18 15" width="18px" height="15px">
+            <svg viewBox="0 0 18 15" width="18px" height="15px" aria-hidden="true">
               <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
             </svg>
           </span>
         </label>
 
         <div class="trigger"><a class="page-link" href="/about">About</a></div>
-        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
-          <span class="theme-toggle-icon">🌙</span>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle between light and dark mode">
+          <span class="theme-toggle-icon" aria-hidden="true">🌙</span>
+          <span class="sr-only">Toggle theme</span>
         </button>
       </nav></div>
 </header><div class="content-wrapper">
-      <main class="page-content" aria-label="Content">
+      <main id="main-content" class="page-content" aria-label="Content">
         <div class="wrapper">
           <article class="post">
 
@@ -502,7 +524,7 @@ If you have any questions about this Privacy Policy, You can contact us:</p>
         <a href="mailto:prab@hey.com">✉️</a>&nbsp;&nbsp;|&nbsp;<a href="tel:+18323844877">📱</a><br>
       </div>
         <!-- Site Information -->
-        © Randhawa Inc. | Last updated: 7/1/25<br>
+        © Randhawa Inc. | Last updated: 7/3/25<br>
         309 Coffeen Ave Suite 13286, Sheridan, Wyoming 82801<br>
 
         <!-- Gurmukhi Text Link -->
@@ -511,8 +533,7 @@ If you have any questions about this Privacy Policy, You can contact us:</p>
         </a>
     </div>
   </div>
-</footer><script src="/assets/js/main.js" defer></script>
-    <script src="/assets/js/theme-toggle.js" defer></script>
+</footer><script src="/assets/js/bundle.js" defer></script>
   </body>
 
 </html>

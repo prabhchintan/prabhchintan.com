@@ -3,9 +3,29 @@
   This file includes meta tags, fonts, favicons, and scripts for enhanced functionality and appearance.
 {% endcomment %}
 
-<!-- Fonts -->
+<!-- Security Headers -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://utteranc.es https://cdn.jsdelivr.net https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; frame-src https://player.twitch.tv https://utteranc.es; connect-src 'self' https://api.github.com;">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-XSS-Protection" content="1; mode=block">
+<meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+<meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), interest-cohort=()">
+
+<!-- Resource Hints for Performance -->
+<link rel="dns-prefetch" href="https://fonts.googleapis.com">
+<link rel="dns-prefetch" href="https://fonts.gstatic.com">
+<link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+<link rel="dns-prefetch" href="https://utteranc.es">
+
+<!-- Fonts - Optimized weights -->
 <!-- Cormorant Garamond for main text and Courier Prime for code or monospace text -->
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Courier+Prime&display=swap" rel="stylesheet" media="all">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Courier+Prime&display=swap" rel="stylesheet" media="all">
+
+<!-- Preload critical assets -->
+<link rel="preload" href="{{ '/assets/css/style.css' | relative_url }}" as="style">
+<link rel="preload" href="{{ '/assets/js/bundle.js' | relative_url }}" as="script">
 
 <!-- Favicons and device-specific icons -->
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -39,8 +59,7 @@
 <!-- PWA settings -->
 <link rel="manifest" href="/manifest.json">
 
-<!-- Main JavaScript file -->
-<script src="{{ '/assets/js/main.js' | relative_url }}" defer></script>
+<!-- Main JavaScript file loaded in base layout -->
 
 <!-- Script to open external links in new tab -->
 <script>
@@ -87,8 +106,9 @@
     }
   };
   </script>
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
-  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" 
+          integrity="sha384-fNl9rj/eK1wEYfKc26CbPM6qkVQ+9MvYaoAFNql4ulbjBp888ROQQOqSwwq8YIXp" 
+          crossorigin="anonymous"></script>
 
 <!-- Open Graph tags -->
 <meta property="og:title" content="{% if page.title %}{{ page.title | escape | strip_html }}{% else %}{{ site.title | escape | strip_html }}{% endif %}">

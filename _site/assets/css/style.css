@@ -230,6 +230,13 @@ table td { border: 1px solid #e8e8e8; }
 
 /** Grid helpers */
 @media screen and (min-width: 800px) { .one-half { width: calc(50% - (30px / 2)); } }
+.skip-link { position: absolute; left: -9999px; top: 0; z-index: 999; padding: 8px 16px; background: #000; color: #fff; text-decoration: none; font-size: 14px; border-radius: 0 0 4px 0; }
+.skip-link:focus { left: 0; top: 0; }
+
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+button:focus, input:focus, textarea:focus, select:focus, a:focus { outline: 2px solid #4A90E2; outline-offset: 2px; }
+
 :root { --t-duration: 0.2s; --t-easing: ease; }
 
 html:not(.no-transition) * { transition: color var(--t-duration) var(--t-easing), background-color var(--t-duration) var(--t-easing), border-color var(--t-duration) var(--t-easing); }

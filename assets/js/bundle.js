@@ -1,3 +1,11 @@
+/**
+ * Bundled JavaScript for Randhawa Inc. website
+ * Includes theme toggle functionality and main application logic
+ */
+
+/**
+ * Theme Management System
+ */
 class ThemeManager {
   constructor() {
     this.themeToggle = document.getElementById('theme-toggle');
@@ -72,5 +80,49 @@ class ThemeManager {
   }
 }
 
-// Initialize theme manager immediately
-new ThemeManager();
+/**
+ * Service Worker Registration
+ */
+function registerServiceWorker() {
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(registration => {
+          console.log('Service Worker registered successfully:', registration.scope);
+        })
+        .catch(error => {
+          console.error('Service Worker registration failed:', error);
+        });
+    });
+  }
+}
+
+/**
+ * MathJax Loading Handler
+ */
+function initializeMathJax() {
+  document.body.classList.add('mathjax-loading');
+  
+  if (typeof MathJax !== 'undefined') {
+    MathJax.Hub.Queue(function() {
+      document.body.classList.remove('mathjax-loading');
+      document.body.classList.add('mathjax-loaded');
+    });
+  } else {
+    document.body.classList.remove('mathjax-loading');
+  }
+}
+
+/**
+ * Initialize all components when DOM is ready
+ */
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize theme manager
+  new ThemeManager();
+  
+  // Initialize MathJax
+  initializeMathJax();
+  
+  // Register service worker
+  registerServiceWorker();
+});
