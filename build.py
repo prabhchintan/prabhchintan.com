@@ -30,6 +30,21 @@ class SamuraiBlog:
             'category': None
         }
     
+    def insert_date_after_first_heading(self, html_content, date):
+        """Insert date after the first heading"""
+        # Find the first heading (h1, h2, h3, etc.)
+        heading_pattern = r'(<h[1-6][^>]*>.*?</h[1-6]>)'
+        match = re.search(heading_pattern, html_content, re.DOTALL)
+        
+        if match:
+            # Insert date after the first heading
+            heading_end = match.end()
+            date_html = f'<p><em>{date}</em></p>'
+            return html_content[:heading_end] + date_html + html_content[heading_end:]
+        else:
+            # If no heading found, put date at the beginning
+            return f'<p><em>{date}</em></p>' + html_content
+    
     def build_post(self, md_file):
         filename = Path(md_file).name
         date, slug = self.parse_filename(filename)
@@ -56,9 +71,12 @@ class SamuraiBlog:
         title = slug.replace('_', ' ').title()
         formatted_date = date.strftime("%B %d, %Y")
         
+        # Insert date after first heading
+        html_with_date = self.insert_date_after_first_heading(html, formatted_date)
+        
         post_html = template.replace('{{title}}', title)\
                            .replace('{{date}}', formatted_date)\
-                           .replace('{{content}}', html)\
+                           .replace('{{content}}', html_with_date)\
                            .replace('{{slug}}', slug)\
                            .replace('{{description}}', metadata['description'])
         
