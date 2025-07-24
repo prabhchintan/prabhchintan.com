@@ -99,7 +99,7 @@ class SamuraiBlog:
 <em>{date.strftime("%B %d, %Y")}</em></p>'''
         
         blog_html += '''
-<footer>© 2024 Randhawa Inc.</footer>
+<footer>© 2025 Randhawa Inc.</footer>
 </body>
 </html>'''
         
