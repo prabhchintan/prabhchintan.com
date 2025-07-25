@@ -53,6 +53,19 @@ class UltimateBlog:
             'category': None
         }
     
+    def extract_first_heading(self, content):
+        """Extract the first heading from markdown content"""
+        lines = content.split('\n')
+        for line in lines:
+            line = line.strip()
+            if line.startswith('# '):
+                return line[2:].strip()  # Remove '# ' prefix
+            elif line.startswith('## '):
+                return line[3:].strip()  # Remove '## ' prefix
+            elif line.startswith('### '):
+                return line[4:].strip()  # Remove '### ' prefix
+        return None
+
     def insert_date_after_first_heading(self, html_content, date):
         """Insert date after first heading with fallback"""
         heading_pattern = r'(<h[1-6][^>]*>.*?</h[1-6]>)'
@@ -84,6 +97,11 @@ class UltimateBlog:
         # Extract metadata
         metadata = self.extract_metadata(content)
         
+        # Extract actual heading for title
+        actual_title = self.extract_first_heading(content)
+        if not actual_title:
+            actual_title = slug.replace('_', ' ').title()  # Fallback to slug
+        
         # Load template
         template_file = self.templates_dir / 'post.html'
         if not template_file.exists():
@@ -93,12 +111,11 @@ class UltimateBlog:
             template = f.read()
         
         # Generate content
-        title = slug.replace('_', ' ').title()
         formatted_date = date.strftime("%B %d, %Y")
         html_with_date = self.insert_date_after_first_heading(html, formatted_date)
         
         # Replace placeholders
-        post_html = template.replace('{{title}}', title)\
+        post_html = template.replace('{{title}}', actual_title)\
                            .replace('{{date}}', formatted_date)\
                            .replace('{{content}}', html_with_date)\
                            .replace('{{slug}}', slug)\
@@ -114,7 +131,7 @@ class UltimateBlog:
         print(f"✓ Built: /{slug}")
         return {
             'slug': slug,
-            'title': title,
+            'title': actual_title,
             'date': date,
             'formatted_date': formatted_date,
             'description': metadata['description'],
