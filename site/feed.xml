@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+<channel>
+<title>Randhawa Inc. Blog</title>
+<link>https://prabhchintan.com/blog</link>
+<description>Personal blog featuring thoughts on technology, design, and life.</description>
+<lastBuildDate>Fri, 25 Jul 2025 13:36:09 +0000</lastBuildDate>
+<item>
+<title>Samurai Blogging</title>
+<link>https://prabhchintan.com/samurai_blogging</link>
+<description>This is the first post using our new samurai blogging system. The system is designed to be brutally minimal while providing maximum power and flexibility.</description>
+<pubDate>Wed, 15 Jan 2025 12:00:00 +0000</pubDate>
+<guid>https://prabhchintan.com/samurai_blogging</guid>
+</item>
+<item>
+<title>Freedom</title>
+<link>https://prabhchintan.com/freedom</link>
+<description>what if i write a bunch of shit on here will it show up once i run the stupid dumb command????</description>
+<pubDate>Sun, 01 Aug 2021 12:00:00 +0000</pubDate>
+<guid>https://prabhchintan.com/freedom</guid>
+</item>
+</channel>
+</rss>
