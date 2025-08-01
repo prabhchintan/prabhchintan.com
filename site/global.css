@@ -18,7 +18,7 @@ a:active { color:#002266; }
   body { padding:0.8em; transform:rotate(0.5deg); }
   h1 { font-size:1.8em; margin:1em 0; }
   h2 { font-size:1.2em; }
-  a, button { min-height:44px; min-width:44px; display:inline-block; }
+  a, button { min-height:44px; min-width:44px; }
 }
 @media print {
   body { max-width:none; margin:0; padding:1em; color:#000; background:#fff; transform:none; }
