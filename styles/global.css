@@ -6,12 +6,12 @@ p { font-size:1em; margin:1.2em 0; line-height:1.7; }
 .eq { display:block; text-align:center; margin:1.5em 0; font-family:'Special Elite',"Times New Roman",Times,serif; font-size:1.1em; }
 footer { text-align:center; margin-top:4em; padding:2em 0; color:#888; font-size:0.9em; display:block; width:100%; }
 a { color:#0066cc; text-decoration:underline; }
-a:hover, a:focus { color:#004499; outline:2px solid #0066cc; outline-offset:2px; }
+a:hover, a:focus { color:#004499; }
 a:active { color:#002266; }
 @media (prefers-color-scheme: dark) {
   html, body { background:#1a1a1a; color:#e0e0e0; }
   a { color:#66aaff; }
-  a:hover, a:focus { color:#99ccff; outline-color:#66aaff; }
+  a:hover, a:focus { color:#99ccff; }
   footer { color:#999; }
 }
 @media (max-width: 600px) {
