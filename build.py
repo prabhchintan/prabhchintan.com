@@ -125,6 +125,10 @@ class UltimateBlog:
         
         # Output to site directory
         output_file = self.site_dir / f'{slug}.html'
+        
+        # Apply the same minimal CSS as index page
+        post_html = post_html.replace('</head>', f'<style>{self.critical_css}</style></head>')
+        
         with open(output_file, 'w', encoding='utf-8') as f:
             f.write(post_html)
         
@@ -180,9 +184,6 @@ class UltimateBlog:
 <title>Blog - Randhawa Inc.</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Personal blog by Randhawa Inc. featuring thoughts on technology, design, and life.">
-<link rel="preload" href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" as="style">
-<link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="global.css">
 <link rel="canonical" href="https://prabhchintan.com/blog">
 </head>
 <body>
@@ -197,6 +198,12 @@ class UltimateBlog:
 <footer>© 2025 Randhawa Inc.</footer>
 </body>
 </html>'''
+        
+        with open(self.site_dir / 'blog.html', 'w', encoding='utf-8') as f:
+            f.write(blog_html)
+        
+        # Apply the same minimal CSS as index page
+        blog_html = blog_html.replace('</head>', f'<style>{self.critical_css}</style></head>')
         
         with open(self.site_dir / 'blog.html', 'w', encoding='utf-8') as f:
             f.write(blog_html)
@@ -253,13 +260,12 @@ class UltimateBlog:
         print("✓ Generated RSS feed")
     
     def create_404_page(self):
-        """Generate 404 error page"""
+        """Generate 404 page"""
         html_404 = '''<!DOCTYPE html>
 <html lang="en">
 <head>
 <title>404 - Page Not Found</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="stylesheet" href="global.css">
 </head>
 <body>
 <h1>404</h1>
@@ -267,6 +273,12 @@ class UltimateBlog:
 <footer>© 2025 Randhawa Inc.</footer>
 </body>
 </html>'''
+        
+        with open(self.site_dir / '404.html', 'w', encoding='utf-8') as f:
+            f.write(html_404)
+        
+        # Apply the same minimal CSS as index page
+        html_404 = html_404.replace('</head>', f'<style>{self.critical_css}</style></head>')
         
         with open(self.site_dir / '404.html', 'w', encoding='utf-8') as f:
             f.write(html_404)
@@ -288,10 +300,6 @@ class UltimateBlog:
 <meta property="og:url" content="{{url}}">
 <meta property="article:published_time" content="{{year}}">
 <link rel="canonical" href="{{url}}">
-<link rel="preload" href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" as="style">
-<link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="global.css">
-<style media="print">body{max-width:none;margin:0;padding:1em}h1{font-size:1.8em}footer{display:none}</style>
 </head>
 <body>
 {{content}}
