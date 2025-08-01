@@ -1,31 +1,7 @@
-html, body { height:100%; margin:0; padding:0; background:#fff; color:#000; font-family:"Times New Roman",Times,serif; }
-body { max-width:800px; margin:0 auto; padding:2em; }
-body.typewriter { transform:rotate(0.8deg); transform-origin:center center; font-family:'Special Elite',"Times New Roman",Times,serif; }
-body.typewriter .punjabi { font-family:'Adhiapak',serif; }
-.punjabi { font-family:inherit; }
-h1 { font-size:2em; margin:0 0 1em 0; font-weight:normal; }
-h2 { font-size:1.5em; margin:2em 0 0.5em 0; font-weight:normal; }
+body { max-width:800px; margin:0 auto; padding:2em; font-family:serif; }
+h1 { font-size:2em; margin:0 0 1em 0; }
+h2 { font-size:1.5em; margin:2em 0 0.5em 0; }
 p { font-size:1em; margin:1em 0; line-height:1.5; }
-.eq { display:block; text-align:center; margin:1.5em 0; font-size:1.1em; }
-.punjabi { text-align:center; display:inline-block; width:100%; }
 footer { text-align:center; margin-top:3em; padding:1em 0; color:#666; font-size:0.9em; }
 a { color:#0066cc; text-decoration:none; }
 a:hover { text-decoration:underline; }
-@media (prefers-color-scheme: dark) {
-  html, body { background:#000; color:#fff; }
-  a { color:#66aaff; }
-  footer { color:#999; }
-}
-@media (max-width: 600px) {
-  body { padding:1em; }
-  body.typewriter { transform:rotate(0.5deg); }
-  h1 { font-size:1.8em; }
-  h2 { font-size:1.3em; }
-}
-@media print {
-  body { max-width:none; margin:0; padding:1em; color:#000; background:#fff; transform:none; }
-  h1 { font-size:1.8em; }
-  footer { display:none; }
-  a { color:#000; text-decoration:none; }
-  a:after { content:" (" attr(href) ")"; }
-}
