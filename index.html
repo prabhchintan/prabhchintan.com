@@ -20,7 +20,7 @@
       <a href="https://x.com/prabhchintan">X</a>,
       <a href="https://www.youtube.com/@prab">YouTube</a>, and 
       <a href="mailto:contact@prabhchintan.com">email</a>.</p>
-    <footer>© 2025 Randhawa Inc. <a href="?v">⚪</a> <a href="?t">⌨</a> <a href="?d">🌙</a></footer>
-    <script>if(location.search.includes('v'))document.body.className='vanilla';if(location.search.includes('d'))document.body.className+=' dark'</script>
+    <footer>© 2025 Randhawa Inc. <a href="?t" id="toggle">⌨</a></footer>
+    <script>if(location.search.includes('t')){document.body.className='typewriter';document.getElementById('toggle').href='?';document.getElementById('toggle').textContent='⚪'}else{document.getElementById('toggle').href='?t';document.getElementById('toggle').textContent='⌨'}</script>
   </body>
 </html>
