@@ -312,21 +312,11 @@ class UltimateBlog:
         content = re.sub(r'<link rel="stylesheet" href="global\.css">', '', content)
         content = re.sub(r'<style>.*?</style>', '', content, flags=re.DOTALL)
         
-        # Create optimized version with inlined critical CSS
-        optimized = re.sub(
-            r'<link href="https://fonts\.googleapis\.com/css2\?family=Special\+Elite&display=swap" rel="stylesheet">',
-            f'<link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet"><style>{self.critical_css}</style>',
-            content
-        )
-        
-        # Add preload for full CSS and font
-        optimized = optimized.replace(
-            '<style>',
-            '<link rel="preload" href="global.css" as="style" onload="this.onload=null;this.rel=\'stylesheet\'"><link rel="preload" href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" as="style"><style>'
-        )
+        # Add the critical CSS directly to the head
+        content = content.replace('</head>', f'<style>{self.critical_css}</style></head>')
         
         with open(self.site_dir / 'index.html', 'w', encoding='utf-8') as f:
-            f.write(optimized)
+            f.write(content)
         
         print("✓ Optimized index.html for single-packet delivery")
     
