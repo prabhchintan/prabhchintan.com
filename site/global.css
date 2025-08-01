@@ -1,5 +1,5 @@
 body { max-width:600px; margin:0 auto; padding:4em 2em; font-family:sans-serif; }
-h1 { font-size:2em; margin:0 0 1em 0; }
+h1 { font-size:3em; margin:0 0 1em 0; font-weight:bold; }
 h2 { font-size:1.5em; margin:2em 0 0.5em 0; }
 p { font-size:1em; margin:1em 0; line-height:1.6; }
 footer { text-align:center; margin-top:4em; padding:1em 0; color:#666; font-size:0.9em; }
