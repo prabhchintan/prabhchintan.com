@@ -18,7 +18,7 @@ class UltimateBlog:
         self.drafts_dir = Path('posts/drafts/')
         
         # Critical CSS for single-packet index.html
-        self.critical_css = """html,body{height:100%;margin:0;padding:0;background:#fafaf8;color:#222;font-family:'Special Elite',"Times New Roman",Times,serif}body{max-width:700px;margin:0 auto;padding:1em 1em 0 1em}h1{text-align:center;font-size:2.2em;margin:1.2em 0;font-weight:700;letter-spacing:0.01em}footer{text-align:center;margin-top:4em;padding:2em 0;color:#888;font-size:0.9em;display:block;width:100%}@font-face{font-family:'Adhiapak';src:url('fonts/adhiapak-subset.ttf')format('truetype')}.punjabi{font-family:'Adhiapak',serif}@media(prefers-color-scheme:dark){html,body{background:#1a1a1a;color:#e0e0e0}footer{color:#999}}"""
+        self.critical_css = """body{max-width:600px;margin:0 auto;padding:6em 2em;font-family:sans-serif}h1{font-size:3em;margin:0 0 1.5em 0;font-weight:bold}h2{font-size:1.5em;margin:2.5em 0 0.8em 0}p{font-size:1em;margin:1.5em 0;line-height:1.8}footer{text-align:center;margin-top:4em;padding:1em 0;color:#666;font-size:0.9em}a{color:#0066cc;text-decoration:none}a:hover{text-decoration:underline}@media(max-width:768px){body{padding:3em 1em}h1{font-size:2.5em}}"""
         
     def setup_dirs(self):
         """Ensure all directories exist"""
