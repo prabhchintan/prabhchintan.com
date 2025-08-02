@@ -323,7 +323,11 @@ class UltimateBlog:
         # Add the critical CSS directly to the head
         content = content.replace('</head>', f'<style>{self.critical_css}</style></head>')
         
+        # Write to both site directory and root
         with open(self.site_dir / 'index.html', 'w', encoding='utf-8') as f:
+            f.write(content)
+        
+        with open('index.html', 'w', encoding='utf-8') as f:
             f.write(content)
         
         print("✓ Optimized index.html for single-packet delivery")
