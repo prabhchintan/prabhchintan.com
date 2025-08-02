@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-# Read the new base64 data URL
-with open('profile_final_data_url.txt', 'r') as f:
+# Read the new saturated base64 data URL
+with open('/home/prab/Downloads/saturated_data_url.txt', 'r') as f:
     new_image_data = f.read().strip()
 
 # Read the current index.html
@@ -18,4 +18,4 @@ updated_content = re.sub(old_pattern, new_src, content)
 with open('index.html', 'w') as f:
     f.write(updated_content)
 
-print("✓ Updated index.html with new optimized image") 
+print("✓ Updated index.html with new saturated image") 
