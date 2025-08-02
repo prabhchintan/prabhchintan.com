@@ -345,6 +345,11 @@ class UltimateBlog:
             for font_file in fonts_dir.glob('*.ttf'):
                 shutil.copy2(font_file, site_fonts_dir / font_file.name)
         
+        # Copy profile images
+        for img_file in ['profile.png', 'profile.jpg', 'profile_small.jpg']:
+            if Path(img_file).exists():
+                shutil.copy2(img_file, self.site_dir / img_file)
+        
         print("✓ Copied assets to site/")
     
     def validate_urls(self):
