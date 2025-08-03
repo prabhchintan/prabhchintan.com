@@ -170,12 +170,16 @@ class UltimateBlog:
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://prabhchintan.com/{source}">
 <meta property="og:site_name" content="prabhchintan.com">
+<meta property="og:image" content="https://prabhchintan.com/profile_sharp.png">
+<meta property="og:image:width" content="400">
+<meta property="og:image:height" content="400">
 
 <!-- Twitter Card Meta Tags -->
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Redirecting...">
 <meta name="twitter:description" content="Redirecting to {target}">
 <meta name="twitter:url" content="https://prabhchintan.com/{source}">
+<meta name="twitter:image" content="https://prabhchintan.com/profile_sharp.png">
 
 <!-- Canonical URL -->
 <link rel="canonical" href="{target}">
@@ -206,12 +210,16 @@ class UltimateBlog:
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://prabhchintan.com/blog">
 <meta property="og:site_name" content="prabhchintan.com">
+<meta property="og:image" content="https://prabhchintan.com/profile_sharp.png">
+<meta property="og:image:width" content="400">
+<meta property="og:image:height" content="400">
 
 <!-- Twitter Card Meta Tags -->
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Blog - Randhawa Inc.">
 <meta name="twitter:description" content="Personal blog by Randhawa Inc. featuring thoughts on technology, design, and life.">
 <meta name="twitter:url" content="https://prabhchintan.com/blog">
+<meta name="twitter:image" content="https://prabhchintan.com/profile_sharp.png">
 
 <!-- Canonical URL -->
 <link rel="canonical" href="https://prabhchintan.com/blog">
@@ -303,12 +311,16 @@ class UltimateBlog:
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://prabhchintan.com/404">
 <meta property="og:site_name" content="prabhchintan.com">
+<meta property="og:image" content="https://prabhchintan.com/profile_sharp.png">
+<meta property="og:image:width" content="400">
+<meta property="og:image:height" content="400">
 
 <!-- Twitter Card Meta Tags -->
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="404 - Page Not Found">
 <meta name="twitter:description" content="The page you're looking for doesn't exist.">
 <meta name="twitter:url" content="https://prabhchintan.com/404">
+<meta name="twitter:image" content="https://prabhchintan.com/profile_sharp.png">
 
 <!-- Canonical URL -->
 <link rel="canonical" href="https://prabhchintan.com/404">
