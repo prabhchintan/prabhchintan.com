@@ -163,6 +163,21 @@ class UltimateBlog:
 <meta charset="utf-8">
 <title>Redirecting...</title>
 <meta http-equiv="refresh" content="0; url={target}">
+
+<!-- Social Media Meta Tags -->
+<meta property="og:title" content="Redirecting...">
+<meta property="og:description" content="Redirecting to {target}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://prabhchintan.com/{source}">
+<meta property="og:site_name" content="prabhchintan.com">
+
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Redirecting...">
+<meta name="twitter:description" content="Redirecting to {target}">
+<meta name="twitter:url" content="https://prabhchintan.com/{source}">
+
+<!-- Canonical URL -->
 <link rel="canonical" href="{target}">
 </head>
 <body>
@@ -184,6 +199,21 @@ class UltimateBlog:
 <title>Blog - Randhawa Inc.</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Personal blog by Randhawa Inc. featuring thoughts on technology, design, and life.">
+
+<!-- Social Media Meta Tags -->
+<meta property="og:title" content="Blog - Randhawa Inc.">
+<meta property="og:description" content="Personal blog by Randhawa Inc. featuring thoughts on technology, design, and life.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://prabhchintan.com/blog">
+<meta property="og:site_name" content="prabhchintan.com">
+
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Blog - Randhawa Inc.">
+<meta name="twitter:description" content="Personal blog by Randhawa Inc. featuring thoughts on technology, design, and life.">
+<meta name="twitter:url" content="https://prabhchintan.com/blog">
+
+<!-- Canonical URL -->
 <link rel="canonical" href="https://prabhchintan.com/blog">
 </head>
 <body>
@@ -266,6 +296,22 @@ class UltimateBlog:
 <head>
 <title>404 - Page Not Found</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
+<!-- Social Media Meta Tags -->
+<meta property="og:title" content="404 - Page Not Found">
+<meta property="og:description" content="The page you're looking for doesn't exist.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://prabhchintan.com/404">
+<meta property="og:site_name" content="prabhchintan.com">
+
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="404 - Page Not Found">
+<meta name="twitter:description" content="The page you're looking for doesn't exist.">
+<meta name="twitter:url" content="https://prabhchintan.com/404">
+
+<!-- Canonical URL -->
+<link rel="canonical" href="https://prabhchintan.com/404">
 </head>
 <body>
 <h1>404</h1>
