@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Certifications - Randhawa Inc.</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Professional certifications and qualifications of Prabhchintan Randhawa">
+
+<!-- Social Media Meta Tags -->
+<meta property="og:title" content="Certifications - Randhawa Inc.">
+<meta property="og:description" content="Professional certifications and qualifications of Prabhchintan Randhawa">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://prabhchintan.com/certifications">
+<meta property="og:site_name" content="prabhchintan.com">
+<meta property="og:image" content="https://prabhchintan.com/profile.png">
+<meta property="og:image:width" content="400">
+<meta property="og:image:height" content="400">
+
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Certifications - Randhawa Inc.">
+<meta name="twitter:description" content="Professional certifications and qualifications of Prabhchintan Randhawa">
+<meta name="twitter:url" content="https://prabhchintan.com/certifications">
+<meta name="twitter:image" content="https://prabhchintan.com/profile.png">
+
+<!-- Canonical URL -->
+<link rel="canonical" href="https://prabhchintan.com/certifications">
+<style>body{max-width:600px;margin:0 auto;padding:4em 2em;font-family:Baskerville,"Times New Roman",Times,serif}.profile-pic{text-align:center;margin-bottom:2em}.profile-pic img{width:80px;height:80px;border-radius:50%;object-fit:cover}h1{font-size:2.5em;margin:0 0 1em 0;font-weight:normal}p{font-size:1em;margin:1em 0;line-height:1.6}footer{text-align:center;margin-top:1em;padding:1em 0;color:#666;font-size:0.9em}a{color:#0066cc;text-decoration:none;font-weight:300}a:hover{text-decoration:underline}@media(max-width:768px){body{padding:2.5em 1.5em}h1{font-size:2.2em}}</style>
+</head>
+<body>
+<h1>Certifications</h1>
+
+<p>Professional certifications and qualifications. Click to view full resolution.</p>
+
+<div id="certifications">
+  <!-- Certifications will be auto-generated here -->
+</div>
+
+<p><a href="/">← Back to home</a></p>
+
+<footer>© 2025 Randhawa Inc.</footer>
+
+<script>
+// Auto-generate certification list from files
+fetch('/certifications/')
+  .then(response => response.text())
+  .then(html => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const links = Array.from(doc.querySelectorAll('a'));
+    
+    const certLinks = links
+      .filter(link => /\.(pdf|jpg|jpeg|png)$/i.test(link.href))
+      .map(link => {
+        const filename = link.textContent.trim();
+        const ext = filename.split('.').pop().toLowerCase();
+        const name = filename.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        
+        return `<p><a href="/certifications/${filename}" target="_blank">${name}</a> (${ext.toUpperCase()})</p>`;
+      });
+    
+    document.getElementById('certifications').innerHTML = certLinks.join('');
+  })
+  .catch(() => {
+    document.getElementById('certifications').innerHTML = '<p>No certifications found. Add files to the certifications/ directory.</p>';
+  });
+</script>
+</body>
+</html> 

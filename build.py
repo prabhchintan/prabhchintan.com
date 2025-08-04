@@ -259,7 +259,8 @@ class UltimateBlog:
         sitemap = '''<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url><loc>https://prabhchintan.com/</loc><priority>1.0</priority></url>
-<url><loc>https://prabhchintan.com/blog</loc><priority>0.9</priority></url>'''
+<url><loc>https://prabhchintan.com/blog</loc><priority>0.9</priority></url>
+<url><loc>https://prabhchintan.com/certifications</loc><priority>0.8</priority></url>'''
         
         for post in posts:
             sitemap += f'''
@@ -474,6 +475,15 @@ class UltimateBlog:
         if Path('profile.png').exists():
             shutil.copy2('profile.png', self.site_dir / 'profile.png')
         
+        # Copy certifications directory if it exists
+        certs_dir = Path('certifications/')
+        if certs_dir.exists():
+            site_certs_dir = self.site_dir / 'certifications'
+            site_certs_dir.mkdir(exist_ok=True)
+            for cert_file in certs_dir.glob('*'):
+                if cert_file.is_file():
+                    shutil.copy2(cert_file, site_certs_dir / cert_file.name)
+        
         print("✓ Copied assets to site/")
     
     def validate_urls(self):
@@ -536,6 +546,11 @@ class UltimateBlog:
         self.create_404_page()
         self.optimize_index()
         self.copy_assets()
+        
+        # Copy certifications page
+        if Path('certifications.html').exists():
+            shutil.copy2('certifications.html', self.site_dir / 'certifications.html')
+            print("✓ Copied certifications page")
         
         # Git operations
         subprocess.run(['git', 'add', '.'])
