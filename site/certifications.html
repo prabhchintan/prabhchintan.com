@@ -31,38 +31,11 @@
 
 <p>Professional certifications and qualifications. Click to view full resolution.</p>
 
-<div id="certifications">
-  <!-- Certifications will be auto-generated here -->
-</div>
+<p><a href="/certifications/Digital Assets and Tax Law.pdf" target="_blank">Digital Assets And Tax Law</a> (PDF)</p>
+
 
 <p><a href="/">← Back to home</a></p>
 
 <footer>© 2025 Randhawa Inc.</footer>
-
-<script>
-// Auto-generate certification list from files
-fetch('/certifications/')
-  .then(response => response.text())
-  .then(html => {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, 'text/html');
-    const links = Array.from(doc.querySelectorAll('a'));
-    
-    const certLinks = links
-      .filter(link => /\.(pdf|jpg|jpeg|png)$/i.test(link.href))
-      .map(link => {
-        const filename = link.textContent.trim();
-        const ext = filename.split('.').pop().toLowerCase();
-        const name = filename.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-        
-        return `<p><a href="/certifications/${filename}" target="_blank">${name}</a> (${ext.toUpperCase()})</p>`;
-      });
-    
-    document.getElementById('certifications').innerHTML = certLinks.join('');
-  })
-  .catch(() => {
-    document.getElementById('certifications').innerHTML = '<p>No certifications found. Add files to the certifications/ directory.</p>';
-  });
-</script>
 </body>
-</html> 
+</html>

@@ -486,6 +486,80 @@ class UltimateBlog:
         
         print("✓ Copied assets to site/")
     
+    def generate_certifications_page(self):
+        """Generate certifications page with static list"""
+        certs_dir = Path('certifications/')
+        certifications = []
+        
+        if certs_dir.exists():
+            for cert_file in certs_dir.glob('*'):
+                if cert_file.is_file() and cert_file.suffix.lower() in ['.pdf', '.jpg', '.jpeg', '.png']:
+                    filename = cert_file.name
+                    ext = cert_file.suffix.lower()[1:].upper()
+                    # Convert filename to readable name (remove extension, replace underscores/hyphens with spaces, title case)
+                    name = filename.replace(cert_file.suffix, '').replace('_', ' ').replace('-', ' ').title()
+                    certifications.append({
+                        'filename': filename,
+                        'name': name,
+                        'ext': ext
+                    })
+        
+        # Sort by name
+        certifications.sort(key=lambda x: x['name'])
+        
+        # Generate HTML
+        certs_html = ''
+        for cert in certifications:
+            certs_html += f'<p><a href="/certifications/{cert["filename"]}" target="_blank">{cert["name"]}</a> ({cert["ext"]})</p>\n'
+        
+        if not certifications:
+            certs_html = '<p>No certifications found. Add files to the certifications/ directory.</p>'
+        
+        # Full page HTML
+        page_html = f'''<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Certifications - Randhawa Inc.</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Professional certifications and qualifications of Prabhchintan Randhawa">
+
+<!-- Social Media Meta Tags -->
+<meta property="og:title" content="Certifications - Randhawa Inc.">
+<meta property="og:description" content="Professional certifications and qualifications of Prabhchintan Randhawa">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://prabhchintan.com/certifications">
+<meta property="og:site_name" content="prabhchintan.com">
+<meta property="og:image" content="https://prabhchintan.com/profile.png">
+<meta property="og:image:width" content="400">
+<meta property="og:image:height" content="400">
+
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Certifications - Randhawa Inc.">
+<meta name="twitter:description" content="Professional certifications and qualifications of Prabhchintan Randhawa">
+<meta name="twitter:url" content="https://prabhchintan.com/certifications">
+<meta name="twitter:image" content="https://prabhchintan.com/profile.png">
+
+<!-- Canonical URL -->
+<link rel="canonical" href="https://prabhchintan.com/certifications">
+<style>body{{max-width:600px;margin:0 auto;padding:4em 2em;font-family:Baskerville,"Times New Roman",Times,serif}}.profile-pic{{text-align:center;margin-bottom:2em}}.profile-pic img{{width:80px;height:80px;border-radius:50%;object-fit:cover}}h1{{font-size:2.5em;margin:0 0 1em 0;font-weight:normal}}p{{font-size:1em;margin:1em 0;line-height:1.6}}footer{{text-align:center;margin-top:1em;padding:1em 0;color:#666;font-size:0.9em}}a{{color:#0066cc;text-decoration:none;font-weight:300}}a:hover{{text-decoration:underline}}@media(max-width:768px){{body{{padding:2.5em 1.5em}}h1{{font-size:2.2em}}}}</style>
+</head>
+<body>
+<h1>Certifications</h1>
+
+<p>Professional certifications and qualifications. Click to view full resolution.</p>
+
+{certs_html}
+
+<p><a href="/">← Back to home</a></p>
+
+<footer>© 2025 Randhawa Inc.</footer>
+</body>
+</html>'''
+        
+        with open(self.site_dir / 'certifications.html', 'w', encoding='utf-8') as f:
+            f.write(page_html)
+    
     def validate_urls(self):
         """Basic URL validation to prevent redirect loops"""
         redirects_file = Path('redirects.txt')
@@ -547,10 +621,9 @@ class UltimateBlog:
         self.optimize_index()
         self.copy_assets()
         
-        # Copy certifications page
-        if Path('certifications.html').exists():
-            shutil.copy2('certifications.html', self.site_dir / 'certifications.html')
-            print("✓ Copied certifications page")
+        # Generate certifications page
+        self.generate_certifications_page()
+        print("✓ Generated certifications page")
         
         # Git operations
         subprocess.run(['git', 'add', '.'])
