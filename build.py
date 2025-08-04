@@ -510,7 +510,9 @@ class UltimateBlog:
         # Generate HTML
         certs_html = ''
         for cert in certifications:
-            certs_html += f'<p><a href="/certifications/{cert["filename"]}" target="_blank">{cert["name"]}</a> ({cert["ext"]})</p>\n'
+            # URL-encode the filename for the href
+            url_filename = cert["filename"].replace(' ', '%20')
+            certs_html += f'<p><a href="/certifications/{url_filename}" target="_blank">{cert["name"]}</a> ({cert["ext"]})</p>\n'
         
         if not certifications:
             certs_html = '<p>No certifications found. Add files to the certifications/ directory.</p>'
