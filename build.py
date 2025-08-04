@@ -554,7 +554,7 @@ class UltimateBlog:
         
         # Git operations
         subprocess.run(['git', 'add', '.'])
-        subprocess.run(['git', 'commit', '-m', 'Ultimate blog build'])
+        subprocess.run(['git', 'commit', '-m', 'Cursor Updates'])
         subprocess.run(['git', 'push'])
         
         print(f"✅ Published {len(posts)} posts to GitHub!")
