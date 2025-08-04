@@ -208,6 +208,7 @@ class UltimateBlog:
 <head>
 <title>Blog - Randhawa Inc.</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='white'>ੴ</text></svg>">
 <meta name="description" content="Personal blog by Randhawa Inc. featuring thoughts on technology, design, and life.">
 
 <!-- Social Media Meta Tags -->
@@ -229,6 +230,7 @@ class UltimateBlog:
 
 <!-- Canonical URL -->
 <link rel="canonical" href="https://prabhchintan.com/blog">
+<style>{self.critical_css}</style>
 </head>
 <body>
 <h1>Blog</h1>'''
@@ -306,11 +308,12 @@ class UltimateBlog:
     
     def create_404_page(self):
         """Generate 404 page"""
-        html_404 = '''<!DOCTYPE html>
+        html_404 = f'''<!DOCTYPE html>
 <html lang="en">
 <head>
 <title>404 - Page Not Found</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='white'>ੴ</text></svg>">
 
 <!-- Social Media Meta Tags -->
 <meta property="og:title" content="404 - Page Not Found">
@@ -331,6 +334,7 @@ class UltimateBlog:
 
 <!-- Canonical URL -->
 <link rel="canonical" href="https://prabhchintan.com/404">
+<style>{self.critical_css}</style>
 </head>
 <body>
 <h1>404</h1>
@@ -523,6 +527,7 @@ class UltimateBlog:
 <head>
 <title>Certifications - Randhawa Inc.</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='white'>ੴ</text></svg>">
 <meta name="description" content="Professional certifications and qualifications of Prabhchintan Randhawa">
 
 <!-- Social Media Meta Tags -->
@@ -544,7 +549,7 @@ class UltimateBlog:
 
 <!-- Canonical URL -->
 <link rel="canonical" href="https://prabhchintan.com/certifications">
-<style>body{{max-width:600px;margin:0 auto;padding:4em 2em;font-family:Baskerville,"Times New Roman",Times,serif}}.profile-pic{{text-align:center;margin-bottom:2em}}.profile-pic img{{width:80px;height:80px;border-radius:50%;object-fit:cover}}h1{{font-size:2.5em;margin:0 0 1em 0;font-weight:normal}}p{{font-size:1em;margin:1em 0;line-height:1.6}}footer{{text-align:center;margin-top:1em;padding:1em 0;color:#666;font-size:0.9em}}a{{color:#0066cc;text-decoration:none;font-weight:300}}a:hover{{text-decoration:underline}}@media(max-width:768px){{body{{padding:2.5em 1.5em}}h1{{font-size:2.2em}}}}</style>
+<style>{self.critical_css}</style>
 </head>
 <body>
 <h1>Certifications</h1>
