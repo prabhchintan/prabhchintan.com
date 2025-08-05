@@ -14,6 +14,7 @@ import textwrap
 class UltimateBlog:
     def __init__(self):
         self.posts_dir = Path('posts/')
+        self.pages_dir = Path('pages/')
         self.templates_dir = Path('templates/')
         self.styles_dir = Path('styles/')
         self.site_dir = Path('site/')
@@ -24,7 +25,7 @@ class UltimateBlog:
         
     def setup_dirs(self):
         """Ensure all directories exist"""
-        for dir_path in [self.posts_dir, self.templates_dir, self.styles_dir, self.site_dir, self.drafts_dir]:
+        for dir_path in [self.posts_dir, self.pages_dir, self.templates_dir, self.styles_dir, self.site_dir, self.drafts_dir]:
             dir_path.mkdir(exist_ok=True, parents=True)
     
     def parse_filename(self, filename):
@@ -79,6 +80,99 @@ class UltimateBlog:
             return html_content[:heading_end] + date_html + html_content[heading_end:]
         else:
             return f'<p><em>{date}</em></p>' + html_content
+    
+    def build_post(self, md_file, is_draft=False):
+        """Build individual post with full SEO and performance optimization"""
+        filename = Path(md_file).name
+        date, slug = self.parse_filename(filename)
+        
+        if not date:
+            print(f"Error: {filename} doesn't follow format (YYYY_MM_DD_slug.md)")
+            return None
+        
+        # Read markdown
+        with open(md_file, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        # Convert to HTML with extensions
+        html = markdown.markdown(content, extensions=['codehilite', 'fenced_code'])
+        
+        # Extract metadata
+        metadata = self.extract_metadata(content)
+        
+        # Extract actual heading for title
+        actual_title = self.extract_first_heading(content)
+        if not actual_title:
+            actual_title = slug.replace('_', ' ').title()  # Fallback to slug
+        
+        # Load template
+        template_file = self.templates_dir / 'post.html'
+        if not template_file.exists():
+            self.create_post_template()
+        
+        with open(template_file, 'r', encoding='utf-8') as f:
+            template = f.read()
+    
+    def build_page(self, md_file):
+        """Build standalone page (no date, no blog listing)"""
+        filename = Path(md_file).name
+        slug = filename.replace('.md', '')
+        
+        # Read markdown
+        with open(md_file, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        # Convert to HTML with extensions
+        html = markdown.markdown(content, extensions=['codehilite', 'fenced_code'])
+        
+        # Extract metadata
+        metadata = self.extract_metadata(content)
+        
+        # Extract actual heading for title
+        actual_title = self.extract_first_heading(content)
+        if not actual_title:
+            actual_title = slug.replace('_', ' ').title()  # Fallback to slug
+        
+        # Load template
+        template_file = self.templates_dir / 'post.html'
+        if not template_file.exists():
+            self.create_post_template()
+        
+        with open(template_file, 'r', encoding='utf-8') as f:
+            template = f.read()
+        
+        # Generate content (no date for pages)
+        html_with_date = html  # Pages don't get dates
+        
+        # Replace placeholders
+        page_html = template.replace('{{title}}', actual_title)\
+                           .replace('{{date}}', '')\
+                           .replace('{{content}}', html_with_date)\
+                           .replace('{{slug}}', slug)\
+                           .replace('{{description}}', metadata['description'])\
+                           .replace('{{url}}', f'https://prabhchintan.com/{slug}')\
+                           .replace('{{year}}', '')\
+                           .replace('https://prabhchintan.com/profile.png', 'https://prabhchintan.com/profile.png')
+        
+        # Output to site directory
+        output_file = self.site_dir / f'{slug}.html'
+        
+        # Apply the same minimal CSS as index page
+        page_html = page_html.replace('</head>', f'<style>{self.critical_css}</style></head>')
+        
+        # Apply universal footer
+        page_html = self.apply_universal_footer(page_html)
+        
+        with open(output_file, 'w', encoding='utf-8') as f:
+            f.write(page_html)
+        
+        print(f"✓ Built page: /{slug}")
+        return {
+            'slug': slug,
+            'title': actual_title,
+            'description': metadata['description'],
+            'url': f'/{slug}'
+        }
     
     def build_post(self, md_file, is_draft=False):
         """Build individual post with full SEO and performance optimization"""
@@ -258,7 +352,7 @@ class UltimateBlog:
         
         print(f"✓ Updated blog index with {len(posts)} posts")
     
-    def generate_sitemap(self, posts):
+    def generate_sitemap(self, posts, pages=None):
         """Generate XML sitemap"""
         sitemap = '''<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -269,6 +363,12 @@ class UltimateBlog:
         for post in posts:
             sitemap += f'''
 <url><loc>https://prabhchintan.com{post['url']}</loc><lastmod>{post['date'].strftime('%Y-%m-%d')}</lastmod><priority>0.8</priority></url>'''
+        
+        # Add standalone pages to sitemap
+        if pages:
+            for page in pages:
+                sitemap += f'''
+<url><loc>https://prabhchintan.com{page['url']}</loc><priority>0.7</priority></url>'''
         
         sitemap += '\n</urlset>'
         
@@ -675,13 +775,21 @@ class UltimateBlog:
                 if post_data:
                     posts.append(post_data)
         
+        # Build all standalone pages
+        pages = []
+        for file in self.pages_dir.glob('*.md'):
+            if file.name.endswith('.md'):
+                page_data = self.build_page(str(file))
+                if page_data:
+                    pages.append(page_data)
+        
         # Sort chronologically (newest first)
         posts.sort(key=lambda x: x['date'], reverse=True)
         
         # Generate everything
         self.update_blog_index(posts)
         self.process_redirects()
-        self.generate_sitemap(posts)
+        self.generate_sitemap(posts, pages)
         self.generate_rss(posts)
         self.create_404_page()
         self.optimize_index()
