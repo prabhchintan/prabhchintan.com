@@ -512,38 +512,70 @@ class UltimateBlog:
         print("✓ Copied assets to site/")
     
     def generate_certifications_page(self):
-        """Generate certifications page with static list"""
+        """Generate certifications page with static list organized by organization"""
         certs_dir = Path('certifications/')
-        certifications = []
+        certs_mapping_file = Path('certifications.txt')
         
+        # Load certifications mapping
+        certs_mapping = {}
+        if certs_mapping_file.exists():
+            with open(certs_mapping_file, 'r', encoding='utf-8') as f:
+                for line in f:
+                    line = line.strip()
+                    if not line or '->' not in line:
+                        continue
+                    parts = [part.strip() for part in line.split('->')]
+                    if len(parts) >= 3:
+                        filename, display_name, organization = parts[0], parts[1], parts[2]
+                        certs_mapping[filename] = {
+                            'display_name': display_name,
+                            'organization': organization
+                        }
+        
+        # Collect certifications from files
+        certifications = []
         if certs_dir.exists():
             for cert_file in certs_dir.glob('*'):
                 if cert_file.is_file() and cert_file.suffix.lower() in ['.pdf', '.jpg', '.jpeg', '.png']:
                     filename = cert_file.name
-                    ext = cert_file.suffix.lower()[1:].upper()
-                    # Convert filename to readable name (remove extension, replace underscores/hyphens with spaces, title case)
-                    # Special handling for acronyms to preserve them and add colon
-                    name = filename.replace(cert_file.suffix, '').replace('_', ' ').replace('-', ' ').title()
-                    if 'Rwri' in name:
-                        name = name.replace('Rwri', 'RWRI:')
-                    if 'Necsi' in name:
-                        name = name.replace('Necsi', 'NECSI:')
+                    
+                    # Use mapping if available, otherwise default
+                    if filename in certs_mapping:
+                        display_name = certs_mapping[filename]['display_name']
+                        organization = certs_mapping[filename]['organization']
+                    else:
+                        # Default: convert filename to readable name
+                        display_name = filename.replace(cert_file.suffix, '').replace('_', ' ').replace('-', ' ').title()
+                        organization = 'Misc'
+                    
                     certifications.append({
                         'filename': filename,
-                        'name': name,
-                        'ext': ext
+                        'display_name': display_name,
+                        'organization': organization
                     })
         
-        # Sort by visual length approximation (shortest first) - using word count as secondary sort
-        # This better approximates visual length since shorter words = shorter visual appearance
-        certifications.sort(key=lambda x: (len(x['filename']), len(x['name'].split())))
+        # Group by organization
+        org_groups = {}
+        for cert in certifications:
+            org = cert['organization']
+            if org not in org_groups:
+                org_groups[org] = []
+            org_groups[org].append(cert)
+        
+        # Sort organizations alphabetically
+        sorted_orgs = sorted(org_groups.keys())
         
         # Generate HTML
         certs_html = ''
-        for cert in certifications:
-            # URL-encode the filename for the href
-            url_filename = cert["filename"].replace(' ', '%20')
-            certs_html += f'<p><a href="/certifications/{url_filename}" target="_blank">{cert["name"]}</a></p>\n'
+        for org in sorted_orgs:
+            certs_html += f'<h2>{org}</h2>\n'
+            # Sort certifications within each org by display name length
+            org_certs = sorted(org_groups[org], key=lambda x: len(x['display_name']))
+            for cert in org_certs:
+                # URL-encode the filename for the href
+                url_filename = cert["filename"].replace(' ', '%20')
+                certs_html += f'<p><a href="/certifications/{url_filename}" target="_blank">{cert["display_name"]}</a></p>\n'
+            certs_html += '\n'
         
         if not certifications:
             certs_html = '<p>No certifications found. Add files to the certifications/ directory.</p>'
