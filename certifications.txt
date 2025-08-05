@@ -6,3 +6,5 @@ NECSI_New_England_Complex_Systems_Institute.pdf -> NECSI: New England Complex Sy
 Riskdata_Dynamic_Processes.pdf -> Riskdata: Dynamic Processes -> Riskdata
 Riskdata_Practical_Probability.pdf -> Riskdata: Practical Probability -> Riskdata
 Riskdata_Artificial_Intelligence_and_Machine_Learning.pdf -> Riskdata: Artificial Intelligence and Machine Learning -> Riskdata
+Wolfram_Research_ChatGPT.png -> Wolfram Research: ChatGPT -> Wolfram Research
+Wolfram_Research_Intro_to_ML.png -> Wolfram Research: Introduction to Machine Learning -> Wolfram Research
