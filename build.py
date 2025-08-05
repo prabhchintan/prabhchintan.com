@@ -508,8 +508,8 @@ class UltimateBlog:
                         'ext': ext
                     })
         
-        # Sort by name length (shortest first)
-        certifications.sort(key=lambda x: len(x['name']))
+        # Sort by original filename length (shortest first) for more consistent visual ordering
+        certifications.sort(key=lambda x: len(x['filename']))
         
         # Generate HTML
         certs_html = ''
