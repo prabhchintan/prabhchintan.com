@@ -511,11 +511,6 @@ class UltimateBlog:
         # Sort by original filename length (shortest first) for more consistent visual ordering
         certifications.sort(key=lambda x: len(x['filename']))
         
-        # Debug: print the sorting
-        print("Certifications sorted by filename length:")
-        for cert in certifications:
-            print(f"  {len(cert['filename'])} chars: {cert['filename']} -> {cert['name']}")
-        
         # Generate HTML
         certs_html = ''
         for cert in certifications:
