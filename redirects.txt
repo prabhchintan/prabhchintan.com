@@ -3,3 +3,4 @@ github -> https://github.com/prabhchintan
 youtube -> https://youtube.com/@prab
 twitter -> https://twitter.com/prabhchintan
 x -> https://x.com/prabhchintan
+validator -> https://beaconcha.in/validator/441314s
