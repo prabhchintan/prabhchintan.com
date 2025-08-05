@@ -8,3 +8,4 @@ Riskdata_Practical_Probability.pdf -> Riskdata: Practical Probability -> Riskdat
 Riskdata_Artificial_Intelligence_and_Machine_Learning.pdf -> Riskdata: Artificial Intelligence and Machine Learning -> Riskdata
 Wolfram_Research_ChatGPT.png -> Wolfram Research: ChatGPT -> Wolfram Research
 Wolfram_Research_Intro_to_ML.png -> Wolfram Research: Introduction to Machine Learning -> Wolfram Research
+Wolfram_Research_Tools_for_AI.png -> Wolfram Research: Tools for AI -> Wolfram Research
