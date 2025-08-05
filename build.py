@@ -20,7 +20,7 @@ class UltimateBlog:
         self.drafts_dir = Path('posts/drafts/')
         
         # Critical CSS for single-packet index.html
-        self.critical_css = """body{max-width:600px;margin:0 auto;padding:4em 2em;font-family:Baskerville,"Times New Roman",Times,serif}.profile-pic{text-align:center;margin-bottom:2em}.profile-pic img{width:80px;height:80px;border-radius:50%;object-fit:cover}h1{font-size:2.5em;margin:0 0 1em 0;font-weight:normal}h2{font-size:1.3em;margin:1.5em 0 0.5em 0;font-weight:normal;color:#444;letter-spacing:0.02em}p{font-size:1em;margin:0.8em 0;line-height:1.6}footer{text-align:center;margin-top:1em;padding:1em 0;color:#666;font-size:0.9em}a{color:#0066cc;text-decoration:none;font-weight:300}a:hover{text-decoration:underline}@media(max-width:768px){body{padding:2.5em 1.5em}h1{font-size:2.2em}h2{font-size:1.2em}}"""
+        self.critical_css = """body{max-width:600px;margin:0 auto;padding:4em 2em;font-family:Baskerville,"Times New Roman",Times,serif}.profile-pic{text-align:center;margin-bottom:2em}.profile-pic img{width:80px;height:80px;border-radius:50%;object-fit:cover}h1{font-size:2.5em;margin:0 0 0.8em 0;font-weight:normal}h2{font-size:1.3em;margin:1.2em 0 0.4em 0;font-weight:normal;color:#444;letter-spacing:0.02em}p{font-size:1em;margin:0.8em 0;line-height:1.6}footer{text-align:center;margin-top:1em;padding:1em 0;color:#666;font-size:0.9em}a{color:#0066cc;text-decoration:none;font-weight:300}a:hover{text-decoration:underline}@media(max-width:768px){body{padding:2.5em 1.5em}h1{font-size:2.2em}h2{font-size:1.2em}}"""
         
     def setup_dirs(self):
         """Ensure all directories exist"""

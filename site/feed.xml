@@ -4,7 +4,7 @@
 <title>Randhawa Inc. Blog</title>
 <link>https://prabhchintan.com/blog</link>
 <description>Personal blog featuring thoughts on technology, design, and life.</description>
-<lastBuildDate>Tue, 05 Aug 2025 11:09:17 +0000</lastBuildDate>
+<lastBuildDate>Tue, 05 Aug 2025 11:21:44 +0000</lastBuildDate>
 <item>
 <title>On Epistemology</title>
 <link>https://prabhchintan.com/epistemology</link>
@@ -18,6 +18,13 @@
 <description>This is the first post using our new samurai blogging system. The system is designed to be brutally minimal while providing maximum power and flexibility.</description>
 <pubDate>Wed, 15 Jan 2025 12:00:00 +0000</pubDate>
 <guid>https://prabhchintan.com/samurai_blogging</guid>
+</item>
+<item>
+<title>On Product Management</title>
+<link>https://prabhchintan.com/product</link>
+<description>This post offers an overview of product management, a critical discipline in modern business and technology. Each section provides key insights into differen...</description>
+<pubDate>Mon, 30 Aug 2021 12:00:00 +0000</pubDate>
+<guid>https://prabhchintan.com/product</guid>
 </item>
 <item>
 <title>TF</title>
