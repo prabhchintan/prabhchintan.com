@@ -508,8 +508,9 @@ class UltimateBlog:
                         'ext': ext
                     })
         
-        # Sort by original filename length (shortest first) for more consistent visual ordering
-        certifications.sort(key=lambda x: len(x['filename']))
+        # Sort by visual length approximation (shortest first) - using word count as secondary sort
+        # This better approximates visual length since shorter words = shorter visual appearance
+        certifications.sort(key=lambda x: (len(x['filename']), len(x['name'].split())))
         
         # Generate HTML
         certs_html = ''
