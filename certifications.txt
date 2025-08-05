@@ -1,8 +1,8 @@
-Digital Assets and Tax Law.pdf -> Digital Assets and Tax Law -> Misc
-Guiding the Public on Digital Assets.pdf -> Guiding the Public on Digital Assets -> Misc
+Digital Assets and Tax Law.pdf -> Digital Assets and Tax Law -> U.S. Treasury
+Guiding the Public on Digital Assets.pdf -> Guiding the Public on Digital Assets -> U.S. Treasury
 Scrum Alliance Certificate.pdf -> Scrum Alliance Certificate -> Scrum Alliance
 RWRI_Real_World_Risk_Institute.png -> RWRI: Real World Risk Institute -> RWRI
 NECSI_New_England_Complex_Systems_Institute.pdf -> NECSI: New England Complex Systems Institute -> NECSI
 Riskdata_Dynamic_Processes.pdf -> Riskdata: Dynamic Processes -> Riskdata
 Riskdata_Practical_Probability.pdf -> Riskdata: Practical Probability -> Riskdata
-Riskdata_Artificial_Intelligence_and_Machine_Learning.pdf -> Riskdata: Artificial Intelligence and Machine Learning -> Riskdata 
+Riskdata_Artificial_Intelligence_and_Machine_Learning.pdf -> Riskdata: Artificial Intelligence and Machine Learning -> Riskdata
