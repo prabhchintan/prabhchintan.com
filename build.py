@@ -380,7 +380,7 @@ class UltimateBlog:
             f.write(template)
     
     def optimize_index(self):
-        """Create optimized index.html with critical CSS inlined"""
+        """Create optimized index.html with critical CSS inlined and universal footer"""
         # Read current index.html
         with open('index.html', 'r', encoding='utf-8') as f:
             content = f.read()
@@ -392,6 +392,16 @@ class UltimateBlog:
         # Add the critical CSS directly to the head
         content = content.replace('</head>', f'<style>{self.critical_css}</style></head>')
         
+        # Ensure universal footer is always present
+        universal_footer = '<footer>Randhawa Inc. 1309 Coffeen Ave Ste 1386 Sheridan, WY</footer>'
+        
+        # Replace any existing footer with the universal one
+        content = re.sub(r'<footer>.*?</footer>', universal_footer, content, flags=re.DOTALL)
+        
+        # If no footer exists, add it before closing body tag
+        if universal_footer not in content:
+            content = content.replace('</body>', f'{universal_footer}\n</body>')
+        
         # Write to both site directory and root
         with open(self.site_dir / 'index.html', 'w', encoding='utf-8') as f:
             f.write(content)
@@ -399,7 +409,7 @@ class UltimateBlog:
         with open('index.html', 'w', encoding='utf-8') as f:
             f.write(content)
         
-        print("✓ Optimized index.html for single-packet delivery")
+        print("✓ Optimized index.html for single-packet delivery with universal footer")
     
     def generate_social_image(self, title, slug):
         """Generate academic-looking social media image for blog posts"""
