@@ -576,8 +576,6 @@ class UltimateBlog:
 <body>
 <h1>Certifications</h1>
 
-<p>Professional certifications and qualifications. Click to view full resolution.</p>
-
 {certs_html}
 
 <p><a href="/">← Back to home</a></p>
