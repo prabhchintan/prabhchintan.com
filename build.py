@@ -135,6 +135,9 @@ class UltimateBlog:
         # Apply the same minimal CSS as index page
         post_html = post_html.replace('</head>', f'<style>{self.critical_css}</style></head>')
         
+        # Apply universal footer
+        post_html = self.apply_universal_footer(post_html)
+        
         with open(output_file, 'w', encoding='utf-8') as f:
             f.write(post_html)
         
@@ -195,6 +198,9 @@ class UltimateBlog:
 </body>
 </html>'''
                 
+                # Apply universal footer
+                redirect_html = self.apply_universal_footer(redirect_html)
+                
                 # Write to site directory
                 with open(self.site_dir / f'{source}.html', 'w', encoding='utf-8') as f:
                     f.write(redirect_html)
@@ -241,15 +247,11 @@ class UltimateBlog:
 <em>{post['formatted_date']}</em></p>'''
         
         blog_html += '''
-<footer>© 2025 Randhawa Inc.</footer>
 </body>
 </html>'''
         
-        with open(self.site_dir / 'blog.html', 'w', encoding='utf-8') as f:
-            f.write(blog_html)
-        
-        # Apply the same minimal CSS as index page
-        blog_html = blog_html.replace('</head>', f'<style>{self.critical_css}</style></head>')
+        # Apply universal footer
+        blog_html = self.apply_universal_footer(blog_html)
         
         with open(self.site_dir / 'blog.html', 'w', encoding='utf-8') as f:
             f.write(blog_html)
@@ -339,15 +341,11 @@ class UltimateBlog:
 <body>
 <h1>404</h1>
 <p>Page not found. <a href="/">Go home</a> or check out the <a href="/blog">blog</a>.</p>
-<footer>© 2025 Randhawa Inc.</footer>
 </body>
 </html>'''
         
-        with open(self.site_dir / '404.html', 'w', encoding='utf-8') as f:
-            f.write(html_404)
-        
-        # Apply the same minimal CSS as index page
-        html_404 = html_404.replace('</head>', f'<style>{self.critical_css}</style></head>')
+        # Apply universal footer
+        html_404 = self.apply_universal_footer(html_404)
         
         with open(self.site_dir / '404.html', 'w', encoding='utf-8') as f:
             f.write(html_404)
@@ -410,6 +408,19 @@ class UltimateBlog:
             f.write(content)
         
         print("✓ Optimized index.html for single-packet delivery with universal footer")
+    
+    def apply_universal_footer(self, html_content):
+        """Apply universal footer to any HTML content"""
+        universal_footer = '<footer>Randhawa Inc. 1309 Coffeen Ave Ste 1386 Sheridan, WY</footer>'
+        
+        # Replace any existing footer with the universal one
+        html_content = re.sub(r'<footer>.*?</footer>', universal_footer, html_content, flags=re.DOTALL)
+        
+        # If no footer exists, add it before closing body tag
+        if universal_footer not in html_content:
+            html_content = html_content.replace('</body>', f'{universal_footer}\n</body>')
+        
+        return html_content
     
     def generate_social_image(self, title, slug):
         """Generate academic-looking social media image for blog posts"""
@@ -546,7 +557,7 @@ class UltimateBlog:
 <meta property="og:description" content="Professional certifications and qualifications of Prabhchintan Randhawa">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://prabhchintan.com/certifications">
-<meta property="og:site_name" content="prabhchintan.com">
+<meta property="og:site_name" content="prabhachintan.com">
 <meta property="og:image" content="https://prabhchintan.com/profile.png">
 <meta property="og:image:width" content="400">
 <meta property="og:image:height" content="400">
@@ -571,9 +582,11 @@ class UltimateBlog:
 
 <p><a href="/">← Back to home</a></p>
 
-<footer>© 2025 Randhawa Inc.</footer>
 </body>
 </html>'''
+        
+        # Apply universal footer
+        page_html = self.apply_universal_footer(page_html)
         
         with open(self.site_dir / 'certifications.html', 'w', encoding='utf-8') as f:
             f.write(page_html)
