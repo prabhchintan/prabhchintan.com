@@ -158,9 +158,6 @@ class UltimateBlog:
         # Output to site directory
         output_file = self.site_dir / f'{slug}.html'
         
-        # Apply the same minimal CSS as index page
-        page_html = page_html.replace('</head>', f'<style>{self.critical_css}</style></head>')
-        
         # Apply universal footer
         page_html = self.apply_universal_footer(page_html)
         
