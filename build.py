@@ -522,10 +522,12 @@ class UltimateBlog:
                     filename = cert_file.name
                     ext = cert_file.suffix.lower()[1:].upper()
                     # Convert filename to readable name (remove extension, replace underscores/hyphens with spaces, title case)
-                    # Special handling for RWRI to preserve acronym and add colon
+                    # Special handling for acronyms to preserve them and add colon
                     name = filename.replace(cert_file.suffix, '').replace('_', ' ').replace('-', ' ').title()
                     if 'Rwri' in name:
                         name = name.replace('Rwri', 'RWRI:')
+                    if 'Necsi' in name:
+                        name = name.replace('Necsi', 'NECSI:')
                     certifications.append({
                         'filename': filename,
                         'name': name,
