@@ -508,15 +508,15 @@ class UltimateBlog:
                         'ext': ext
                     })
         
-        # Sort by name
-        certifications.sort(key=lambda x: x['name'])
+        # Sort by name length (shortest first)
+        certifications.sort(key=lambda x: len(x['name']))
         
         # Generate HTML
         certs_html = ''
         for cert in certifications:
             # URL-encode the filename for the href
             url_filename = cert["filename"].replace(' ', '%20')
-            certs_html += f'<p><a href="/certifications/{url_filename}" target="_blank">{cert["name"]}</a> ({cert["ext"]})</p>\n'
+            certs_html += f'<p><a href="/certifications/{url_filename}" target="_blank">{cert["name"]}</a></p>\n'
         
         if not certifications:
             certs_html = '<p>No certifications found. Add files to the certifications/ directory.</p>'
