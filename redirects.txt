@@ -4,3 +4,4 @@ youtube -> https://youtube.com/@prab
 twitter -> https://twitter.com/prabhchintan
 x -> https://x.com/prabhchintan
 validator -> https://beaconcha.in/validator/441314
+linkedin -> https://www.linkedin.com/in/prabhchintan/
