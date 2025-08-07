@@ -6,8 +6,6 @@ import re
 import subprocess
 from pathlib import Path
 import shutil
-from PIL import Image, ImageDraw, ImageFont
-import textwrap
 from urllib.parse import quote
 
 class UltimateBlog:
@@ -181,9 +179,6 @@ class UltimateBlog:
         formatted_date = date.strftime("%B %d, %Y")
         html_with_date = self.insert_date_after_first_heading(html, formatted_date)
         
-        # Generate social media image
-        social_image = self.generate_social_image(actual_title, slug)
-        
         # Replace placeholders
         post_html = template.replace('{{title}}', actual_title)\
                            .replace('{{date}}', formatted_date)\
@@ -192,8 +187,7 @@ class UltimateBlog:
                            .replace('{{description}}', metadata['description'])\
                            .replace('{{url}}', f'https://prabhchintan.com/{slug}')\
                            .replace('{{year}}', str(date.year))\
-                           .replace('{{critical_css}}', self.critical_css)\
-                           .replace('https://prabhchintan.com/profile.png', f'https://prabhchintan.com/{social_image}')
+                           .replace('{{critical_css}}', self.critical_css)
         
         # Output to site directory
         output_file = self.site_dir / f'{slug}.html'
@@ -490,66 +484,6 @@ class UltimateBlog:
         
         return html_content
     
-    def generate_social_image(self, title, slug):
-        """Generate academic-looking social media image for blog posts"""
-        # Create a 1200x630 image (optimal for social media)
-        width, height = 1200, 630
-        img = Image.new('RGB', (width, height), color='#f8f9fa')  # Light gray background
-        
-        draw = ImageDraw.Draw(img)
-        
-        # Try to use a nice font, fallback to default
-        try:
-            # Try to use a serif font for academic look
-            font_large = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSerif-Bold.ttf", 48)
-            font_small = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf", 24)
-        except:
-            try:
-                # Try system fonts
-                font_large = ImageFont.truetype("/System/Library/Fonts/Times.ttc", 48)
-                font_small = ImageFont.truetype("/System/Library/Fonts/Times.ttc", 24)
-            except:
-                # Fallback to default
-                font_large = ImageFont.load_default()
-                font_small = ImageFont.load_default()
-        
-        # Add a subtle border
-        draw.rectangle([(20, 20), (width-20, height-20)], outline='#dee2e6', width=3)
-        
-        # Add title text (wrapped to fit)
-        title_lines = textwrap.wrap(title, width=25)  # Wrap at 25 characters
-        y_position = height // 3
-        
-        for line in title_lines:
-            # Get text size for centering
-            bbox = draw.textbbox((0, 0), line, font=font_large)
-            text_width = bbox[2] - bbox[0]
-            x_position = (width - text_width) // 2
-            
-            # Draw text with shadow effect
-            draw.text((x_position+2, y_position+2), line, font=font_large, fill='#6c757d')
-            draw.text((x_position, y_position), line, font=font_large, fill='#212529')
-            y_position += 60
-        
-        # Add subtitle
-        subtitle = "Randhawa Inc."
-        bbox = draw.textbbox((0, 0), subtitle, font=font_small)
-        text_width = bbox[2] - bbox[0]
-        x_position = (width - text_width) // 2
-        draw.text((x_position, height - 100), subtitle, font=font_small, fill='#6c757d')
-        
-        # Add date
-        date_text = datetime.now().strftime("%B %Y")
-        bbox = draw.textbbox((0, 0), date_text, font=font_small)
-        text_width = bbox[2] - bbox[0]
-        x_position = (width - text_width) // 2
-        draw.text((x_position, height - 70), date_text, font=font_small, fill='#adb5bd')
-        
-        # Save the image
-        image_path = self.site_dir / f'{slug}_social.png'
-        img.save(image_path, 'PNG')
-        
-        return f'{slug}_social.png'
     
     def copy_assets(self):
         """Copy only necessary assets to site directory"""
