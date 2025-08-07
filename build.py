@@ -1,32 +1,35 @@
 #!/usr/bin/env python3
 import markdown
-import os
 import sys
 from datetime import datetime
 import re
 import subprocess
 from pathlib import Path
-import json
 import shutil
 from PIL import Image, ImageDraw, ImageFont
 import textwrap
+from urllib.parse import quote
 
 class UltimateBlog:
     def __init__(self):
         self.posts_dir = Path('posts/')
         self.pages_dir = Path('pages/')
         self.templates_dir = Path('templates/')
-        self.styles_dir = Path('styles/')
         self.site_dir = Path('site/')
-        self.drafts_dir = Path('posts/drafts/')
         
         # Critical CSS for single-packet index.html
         self.critical_css = """body{max-width:600px;margin:0 auto;padding:4em 2em;font-family:Baskerville,"Times New Roman",Times,serif}.profile-pic{text-align:center;margin-bottom:2em}.profile-pic img{width:80px;height:80px;border-radius:50%;object-fit:cover}h1{font-size:2.5em;margin:0 0 0.8em 0;font-weight:normal}h2{font-size:1.3em;margin:1.2em 0 0.4em 0;font-weight:normal;color:#444;letter-spacing:0.02em}h3{font-size:1.1em;margin:1.5em 0 0.5em 0;font-weight:normal;color:#333}p{font-size:1em;margin:0.8em 0;line-height:1.6}footer{text-align:center;margin-top:1em;padding:1em 0;color:#666;font-size:0.9em}a{color:#0066cc;text-decoration:none;font-weight:300}a:hover{text-decoration:underline}@media(max-width:768px){body{padding:2.5em 1.5em}h1{font-size:2.2em}h2{font-size:1.2em}h3{font-size:1em}}"""
         
     def setup_dirs(self):
         """Ensure all directories exist"""
-        for dir_path in [self.posts_dir, self.pages_dir, self.templates_dir, self.styles_dir, self.site_dir, self.drafts_dir]:
+        for dir_path in [self.posts_dir, self.pages_dir, self.templates_dir, self.site_dir]:
             dir_path.mkdir(exist_ok=True, parents=True)
+
+    def clean_site_dir(self):
+        """Remove and recreate site/ to prevent stale artifacts."""
+        if self.site_dir.exists():
+            shutil.rmtree(self.site_dir)
+        self.site_dir.mkdir(exist_ok=True, parents=True)
     
     def parse_filename(self, filename):
         """Extract date and slug from YYYY_MM_DD_slug.md"""
@@ -81,37 +84,7 @@ class UltimateBlog:
         else:
             return f'<p><em>{date}</em></p>' + html_content
     
-    def build_post(self, md_file, is_draft=False):
-        """Build individual post with full SEO and performance optimization"""
-        filename = Path(md_file).name
-        date, slug = self.parse_filename(filename)
-        
-        if not date:
-            print(f"Error: {filename} doesn't follow format (YYYY_MM_DD_slug.md)")
-            return None
-        
-        # Read markdown
-        with open(md_file, 'r', encoding='utf-8') as f:
-            content = f.read()
-        
-        # Convert to HTML with extensions
-        html = markdown.markdown(content, extensions=['codehilite', 'fenced_code'])
-        
-        # Extract metadata
-        metadata = self.extract_metadata(content)
-        
-        # Extract actual heading for title
-        actual_title = self.extract_first_heading(content)
-        if not actual_title:
-            actual_title = slug.replace('_', ' ').title()  # Fallback to slug
-        
-        # Load template
-        template_file = self.templates_dir / 'post.html'
-        if not template_file.exists():
-            self.create_post_template()
-        
-        with open(template_file, 'r', encoding='utf-8') as f:
-            template = f.read()
+    # (Removed duplicate early build_post definition)
     
     def build_page(self, md_file):
         """Build standalone page (no date, no blog listing)"""
@@ -288,8 +261,7 @@ class UltimateBlog:
 </body>
 </html>'''
                 
-                # Apply universal footer
-                redirect_html = self.apply_universal_footer(redirect_html)
+                # Intentionally do not apply site footer to redirect pages
                 
                 # Write to site directory
                 with open(self.site_dir / f'{source}.html', 'w', encoding='utf-8') as f:
@@ -580,18 +552,7 @@ class UltimateBlog:
         return f'{slug}_social.png'
     
     def copy_assets(self):
-        """Copy CSS and other assets to site directory"""
-        # Copy global CSS
-        shutil.copy2(self.styles_dir / 'global.css', self.site_dir / 'global.css')
-        
-        # Copy fonts directory if it exists
-        fonts_dir = Path('fonts/')
-        if fonts_dir.exists():
-            site_fonts_dir = self.site_dir / 'fonts'
-            site_fonts_dir.mkdir(exist_ok=True)
-            for font_file in fonts_dir.glob('*.ttf'):
-                shutil.copy2(font_file, site_fonts_dir / font_file.name)
-        
+        """Copy only necessary assets to site directory"""
         # Copy profile image
         if Path('profile.png').exists():
             shutil.copy2('profile.png', self.site_dir / 'profile.png')
@@ -668,8 +629,8 @@ class UltimateBlog:
             # Sort certifications within each org by display name length
             org_certs = sorted(org_groups[org], key=lambda x: len(x['display_name']))
             for cert in org_certs:
-                # URL-encode the filename for the href
-                url_filename = cert["filename"].replace(' ', '%20')
+                # URL-encode the filename for the href (handle all special characters)
+                url_filename = quote(cert["filename"], safe='')
                 certs_html += f'<p><a href="/certifications/{url_filename}" target="_blank">{cert["display_name"]}</a></p>\n'
             certs_html += '\n'
         
@@ -690,7 +651,7 @@ class UltimateBlog:
 <meta property="og:description" content="Professional certifications and qualifications of Prabhchintan Randhawa">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://prabhchintan.com/certifications">
-<meta property="og:site_name" content="prabhachintan.com">
+<meta property="og:site_name" content="prabhchintan.com">
 <meta property="og:image" content="https://prabhchintan.com/profile.png">
 <meta property="og:image:width" content="400">
 <meta property="og:image:height" content="400">
@@ -755,9 +716,10 @@ class UltimateBlog:
         """Build and publish everything"""
         print("🚀 Building ultimate minimal blog...")
         
-        # Setup
+        # Setup (and clean site dir)
         self.setup_dirs()
-        
+        self.clean_site_dir()
+
         # Validate
         if not self.validate_urls():
             print("❌ URL validation failed. Please fix redirect loops.")
@@ -795,12 +757,15 @@ class UltimateBlog:
         self.generate_certifications_page()
         print("✓ Generated certifications page")
         
-        # Git operations
+        # Git operations (commit only if there are changes)
         subprocess.run(['git', 'add', '.'])
-        subprocess.run(['git', 'commit', '-m', 'Cursor Updates'])
-        subprocess.run(['git', 'push'])
-        
-        print(f"✅ Published {len(posts)} posts to GitHub!")
+        status = subprocess.run(['git', 'status', '--porcelain'], capture_output=True, text=True)
+        if status.stdout.strip():
+            subprocess.run(['git', 'commit', '-m', 'Cursor Updates'])
+            subprocess.run(['git', 'push'])
+            print(f"✅ Published {len(posts)} posts to GitHub!")
+        else:
+            print("✅ No changes to publish.")
         print("🎯 Single-packet index.html ✓")
         print("🎯 SEO optimized ✓")
         print("🎯 Performance optimized ✓")

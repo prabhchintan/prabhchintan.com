@@ -1,4 +1,4 @@
-# On Product Management
+# Product Management
 
 This post offers an overview of product management, a critical discipline in modern business and technology. Each section provides key insights into different aspects of the field, from its historical roots to contemporary practices. While each topic could warrant its own in-depth exploration, this collection provides a foundational understanding of product management's multifaceted nature.
 
