@@ -7,6 +7,7 @@ import subprocess
 from pathlib import Path
 import shutil
 from urllib.parse import quote
+import os
 
 class UltimateBlog:
     def __init__(self):
@@ -135,7 +136,7 @@ class UltimateBlog:
         with open(output_file, 'w', encoding='utf-8') as f:
             f.write(page_html)
         
-        print(f"✓ Built page: /{slug}")
+        print(f"Built page: /{slug}")
         return {
             'slug': slug,
             'title': actual_title,
@@ -198,7 +199,7 @@ class UltimateBlog:
         with open(output_file, 'w', encoding='utf-8') as f:
             f.write(post_html)
         
-        print(f"✓ Built: /{slug}")
+        print(f"Built: /{slug}")
         return {
             'slug': slug,
             'title': actual_title,
@@ -261,7 +262,7 @@ class UltimateBlog:
                 with open(self.site_dir / f'{source}.html', 'w', encoding='utf-8') as f:
                     f.write(redirect_html)
                 
-                print(f"✓ Redirect: /{source} → {target}")
+                print(f"Redirect: /{source} -> {target}")
     
     def update_blog_index(self, posts):
         """Generate blog index with all posts"""
@@ -312,7 +313,7 @@ class UltimateBlog:
         with open(self.site_dir / 'blog.html', 'w', encoding='utf-8') as f:
             f.write(blog_html)
         
-        print(f"✓ Updated blog index with {len(posts)} posts")
+        print(f"Updated blog index with {len(posts)} posts")
     
     def generate_sitemap(self, posts, pages=None):
         """Generate XML sitemap"""
@@ -337,7 +338,7 @@ class UltimateBlog:
         with open(self.site_dir / 'sitemap.xml', 'w', encoding='utf-8') as f:
             f.write(sitemap)
         
-        print("✓ Generated sitemap.xml")
+        print("Generated sitemap.xml")
     
     def generate_rss(self, posts):
         """Generate RSS feed"""
@@ -368,7 +369,7 @@ class UltimateBlog:
         with open(self.site_dir / 'feed.xml', 'w', encoding='utf-8') as f:
             f.write(rss)
         
-        print("✓ Generated RSS feed")
+        print("Generated RSS feed")
     
     def create_404_page(self):
         """Generate 404 page"""
@@ -412,7 +413,7 @@ class UltimateBlog:
         with open(self.site_dir / '404.html', 'w', encoding='utf-8') as f:
             f.write(html_404)
         
-        print("✓ Generated 404 page")
+        print("Generated 404 page")
     
     def create_post_template(self):
         """Create optimized post template if it doesn't exist"""
@@ -469,7 +470,7 @@ class UltimateBlog:
         with open('index.html', 'w', encoding='utf-8') as f:
             f.write(content)
         
-        print("✓ Optimized index.html for single-packet delivery with universal footer")
+        print("Optimized index.html for single-packet delivery with universal footer")
     
     def apply_universal_footer(self, html_content):
         """Apply universal footer to any HTML content"""
@@ -500,7 +501,7 @@ class UltimateBlog:
                 if cert_file.is_file():
                     shutil.copy2(cert_file, site_certs_dir / cert_file.name)
         
-        print("✓ Copied assets to site/")
+        print("Copied assets to site/")
     
     def generate_certifications_page(self):
         """Generate certifications page with static list organized by organization"""
@@ -643,12 +644,12 @@ class UltimateBlog:
                     print(f"⚠️  Warning: Redirect loop detected starting from {source}")
                     return False
         
-        print("✓ URL validation passed")
+        print("URL validation passed")
         return True
     
     def publish(self):
         """Build and publish everything"""
-        print("🚀 Building ultimate minimal blog...")
+        print("Building site...")
         
         # Setup (and clean site dir)
         self.setup_dirs()
@@ -689,21 +690,25 @@ class UltimateBlog:
         
         # Generate certifications page
         self.generate_certifications_page()
-        print("✓ Generated certifications page")
+        print("Generated certifications page")
         
-        # Git operations (commit only if there are changes)
+        # Git operations (optional; commit only if there are changes)
         subprocess.run(['git', 'add', '.'])
         status = subprocess.run(['git', 'status', '--porcelain'], capture_output=True, text=True)
         if status.stdout.strip():
-            subprocess.run(['git', 'commit', '-m', 'Cursor Updates'])
-            subprocess.run(['git', 'push'])
-            print(f"✅ Published {len(posts)} posts to GitHub!")
+            commit_message = os.environ.get('CURSOR_CONTEXT', '').strip()
+            if not commit_message:
+                commit_message = os.environ.get('CI_COMMIT_MESSAGE', '').strip()
+            if not commit_message:
+                # Fallback to a concise default
+                commit_message = f"Site update: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+            subprocess.run(['git', 'commit', '-m', commit_message])
+            # Only push if not explicitly disabled
+            if os.environ.get('SKIP_GIT_PUSH', '0') not in ('1', 'true', 'yes'):
+                subprocess.run(['git', 'push'])
+            print("Published changes to GitHub")
         else:
-            print("✅ No changes to publish.")
-        print("🎯 Single-packet index.html ✓")
-        print("🎯 SEO optimized ✓")
-        print("🎯 Performance optimized ✓")
-        print("🎯 Accessibility ready ✓")
+            print("No changes to publish")
 
 if __name__ == "__main__":
     blog = UltimateBlog()
