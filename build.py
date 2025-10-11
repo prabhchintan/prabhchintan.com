@@ -271,7 +271,9 @@ class UltimateBlog:
 <head>
 <title>Blog - Randhawa Inc.</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='white'>ੴ</text></svg>">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="favicon.ico">
+<link rel="apple-touch-icon" href="favicon.svg">
 <meta name="description" content="Personal blog by Randhawa Inc. featuring thoughts on technology, design, and life.">
 
 <!-- Social Media Meta Tags -->
@@ -378,7 +380,9 @@ class UltimateBlog:
 <head>
 <title>404 - Page Not Found</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='white'>ੴ</text></svg>">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="favicon.ico">
+<link rel="apple-touch-icon" href="favicon.svg">
 
 <!-- Social Media Meta Tags -->
 <meta property="og:title" content="404 - Page Not Found">
@@ -492,6 +496,12 @@ class UltimateBlog:
         if Path('profile.png').exists():
             shutil.copy2('profile.png', self.site_dir / 'profile.png')
         
+        # Copy favicon files
+        if Path('favicon.svg').exists():
+            shutil.copy2('favicon.svg', self.site_dir / 'favicon.svg')
+        if Path('favicon.ico').exists():
+            shutil.copy2('favicon.ico', self.site_dir / 'favicon.ico')
+        
         # Copy certifications directory if it exists
         certs_dir = Path('certifications/')
         if certs_dir.exists():
@@ -578,7 +588,9 @@ class UltimateBlog:
 <head>
 <title>Certifications - Randhawa Inc.</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='white'>ੴ</text></svg>">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="favicon.ico">
+<link rel="apple-touch-icon" href="favicon.svg">
 <meta name="description" content="Professional certifications and qualifications of Prabhchintan Randhawa">
 
 <!-- Social Media Meta Tags -->
