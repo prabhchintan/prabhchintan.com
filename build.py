@@ -19,6 +19,9 @@ class UltimateBlog:
         # Critical CSS for single-packet index.html
         self.critical_css = """body{max-width:600px;margin:0 auto;padding:4em 2em;font-family:Baskerville,"Times New Roman",Times,serif;color:#000;background-color:#fff}.profile-pic{text-align:center;margin-bottom:2em}.profile-pic img{width:80px;height:80px;border-radius:50%;object-fit:cover}h1{font-size:2.5em;margin:0 0 0.8em 0;font-weight:normal}h2{font-size:1.3em;margin:1.2em 0 0.4em 0;font-weight:normal;color:#444;letter-spacing:0.02em}h3{font-size:1.1em;margin:1.5em 0 0.5em 0;font-weight:normal;color:#333}p{font-size:1em;margin:0.8em 0;line-height:1.6}footer{text-align:center;margin-top:1em;padding:1em 0;color:#666;font-size:0.9em}a{color:#0066cc;text-decoration:none;font-weight:300}a:hover{text-decoration:underline}@media(max-width:768px){body{padding:2.5em 1.5em}h1{font-size:2.2em}h2{font-size:1.2em}h3{font-size:1em}}"""
         
+        # Pages that should not appear in search engines (still accessible by URL)
+        self.noindex_slugs = ['product']
+        
     def setup_dirs(self):
         """Ensure all directories exist"""
         for dir_path in [self.posts_dir, self.pages_dir, self.templates_dir, self.site_dir]:
@@ -126,6 +129,10 @@ class UltimateBlog:
                            .replace('{{year}}', '')\
                            .replace('{{critical_css}}', self.critical_css)\
                            .replace('https://prabhchintan.com/profile.png', 'https://prabhchintan.com/profile.png')
+        
+        # Inject noindex meta tag for hidden pages
+        if slug in self.noindex_slugs:
+            page_html = page_html.replace('</head>', '<meta name="robots" content="noindex, nofollow">\n</head>')
         
         # Output to site directory
         output_file = self.site_dir / f'{slug}.html'
@@ -329,9 +336,12 @@ class UltimateBlog:
             sitemap += f'''
 <url><loc>https://prabhchintan.com{post['url']}</loc><lastmod>{post['date'].strftime('%Y-%m-%d')}</lastmod><priority>0.8</priority></url>'''
         
-        # Add standalone pages to sitemap
+        # Add standalone pages to sitemap (excluding noindex pages)
         if pages:
             for page in pages:
+                page_slug = page['url'].strip('/')
+                if page_slug in self.noindex_slugs:
+                    continue
                 sitemap += f'''
 <url><loc>https://prabhchintan.com{page['url']}</loc><priority>0.7</priority></url>'''
         
@@ -488,6 +498,17 @@ class UltimateBlog:
             html_content = html_content.replace('</body>', f'{universal_footer}\n</body>')
         
         return html_content
+    
+    def generate_robots_txt(self):
+        """Generate robots.txt allowing all crawlers with sitemap reference"""
+        robots = '''User-agent: *
+Allow: /
+
+Sitemap: https://prabhchintan.com/sitemap.xml
+'''
+        with open(self.site_dir / 'robots.txt', 'w', encoding='utf-8') as f:
+            f.write(robots)
+        print("Generated robots.txt")
     
     
     def copy_assets(self):
@@ -696,6 +717,7 @@ class UltimateBlog:
         self.process_redirects()
         self.generate_sitemap(posts, pages)
         self.generate_rss(posts)
+        self.generate_robots_txt()
         self.create_404_page()
         self.optimize_index()
         self.copy_assets()
