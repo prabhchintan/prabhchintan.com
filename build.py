@@ -19,8 +19,8 @@ class UltimateBlog:
         # Critical CSS for single-packet index.html
         self.critical_css = """body{max-width:600px;margin:0 auto;padding:4em 2em;font-family:Baskerville,"Times New Roman",Times,serif;color:#000;background-color:#fff}.profile-pic{text-align:center;margin-bottom:2em}.profile-pic img{width:80px;height:80px;border-radius:50%;object-fit:cover}h1{font-size:2.5em;margin:0 0 0.8em 0;font-weight:normal}h2{font-size:1.3em;margin:1.2em 0 0.4em 0;font-weight:normal;color:#444;letter-spacing:0.02em}h3{font-size:1.1em;margin:1.5em 0 0.5em 0;font-weight:normal;color:#333}p{font-size:1em;margin:0.8em 0;line-height:1.6}footer{text-align:center;margin-top:1em;padding:1em 0;color:#666;font-size:0.9em}a{color:#0066cc;text-decoration:none;font-weight:300}a:hover{text-decoration:underline}@media(max-width:768px){body{padding:2.5em 1.5em}h1{font-size:2.2em}h2{font-size:1.2em}h3{font-size:1em}}"""
         
-        # Pages that should not appear in search engines (still accessible by URL)
-        self.noindex_slugs = ['product']
+        # Slugs that should not appear in search engines or listings (still accessible by URL)
+        self.noindex_slugs = ['product', 'freedom', 'epistemology', 'samurai_blogging']
         
     def setup_dirs(self):
         """Ensure all directories exist"""
@@ -197,6 +197,10 @@ class UltimateBlog:
                            .replace('{{year}}', str(date.year))\
                            .replace('{{critical_css}}', self.critical_css)
         
+        # Inject noindex meta tag for hidden posts
+        if slug in self.noindex_slugs:
+            post_html = post_html.replace('</head>', '<meta name="robots" content="noindex, nofollow">\n</head>')
+        
         # Output to site directory
         output_file = self.site_dir / f'{slug}.html'
         
@@ -302,12 +306,15 @@ class UltimateBlog:
 
 <!-- Canonical URL -->
 <link rel="canonical" href="https://prabhchintan.com/blog">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="/feed.xml">
 <style>{self.critical_css}</style>
 </head>
 <body>
 <h1>Blog</h1>'''
         
         for post in posts:
+            if post['slug'] in self.noindex_slugs:
+                continue
             blog_html += f'''
 <p><a href="{post['url']}">{post['title']}</a><br>
 <em>{post['formatted_date']}</em></p>'''
@@ -333,6 +340,8 @@ class UltimateBlog:
 <url><loc>https://prabhchintan.com/certifications</loc><priority>0.8</priority></url>'''
         
         for post in posts:
+            if post['slug'] in self.noindex_slugs:
+                continue
             sitemap += f'''
 <url><loc>https://prabhchintan.com{post['url']}</loc><lastmod>{post['date'].strftime('%Y-%m-%d')}</lastmod><priority>0.8</priority></url>'''
         
@@ -354,17 +363,19 @@ class UltimateBlog:
     
     def generate_rss(self, posts):
         """Generate RSS feed"""
-        latest_posts = posts[:10]  # Last 10 posts
+        # Filter out hidden posts
+        visible_posts = [p for p in posts if p['slug'] not in self.noindex_slugs][:10]
         
         rss = f'''<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
 <title>Randhawa Inc. Blog</title>
 <link>https://prabhchintan.com/blog</link>
+<atom:link href="https://prabhchintan.com/feed.xml" rel="self" type="application/rss+xml"/>
 <description>Personal blog featuring thoughts on technology, design, and life.</description>
 <lastBuildDate>{datetime.now().strftime('%a, %d %b %Y %H:%M:%S +0000')}</lastBuildDate>'''
         
-        for post in latest_posts:
+        for post in visible_posts:
             rss += f'''
 <item>
 <title>{post['title']}</title>
@@ -447,7 +458,7 @@ class UltimateBlog:
 </head>
 <body>
 {{content}}
-<footer>© 2025 Randhawa Inc.</footer>
+<p><a href="/">← Home</a></p>
 </body>
 </html>'''
         
@@ -477,11 +488,8 @@ class UltimateBlog:
         if universal_footer not in content:
             content = content.replace('</body>', f'{universal_footer}\n</body>')
         
-        # Write to both site directory and root
+        # Write to site directory only (do not mutate source index.html)
         with open(self.site_dir / 'index.html', 'w', encoding='utf-8') as f:
-            f.write(content)
-        
-        with open('index.html', 'w', encoding='utf-8') as f:
             f.write(content)
         
         print("Optimized index.html for single-packet delivery with universal footer")
