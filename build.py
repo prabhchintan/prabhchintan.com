@@ -16,8 +16,13 @@ class UltimateBlog:
         self.templates_dir = Path('templates/')
         self.site_dir = Path('site/')
         
-        # Critical CSS for single-packet index.html
-        self.critical_css = """body{max-width:600px;margin:0 auto;padding:4em 2em;font-family:Baskerville,"Times New Roman",Times,serif;color:#000;background-color:#fff}.profile-pic{text-align:center;margin-bottom:2em}.profile-pic img{width:80px;height:80px;border-radius:50%;object-fit:cover}h1{font-size:2.5em;margin:0 0 0.8em 0;font-weight:normal}h2{font-size:1.3em;margin:1.2em 0 0.4em 0;font-weight:normal;color:#444;letter-spacing:0.02em}h3{font-size:1.1em;margin:1.5em 0 0.5em 0;font-weight:normal;color:#333}p{font-size:1em;margin:0.8em 0;line-height:1.6}footer{text-align:center;margin-top:1em;padding:1em 0;color:#666;font-size:0.9em}a{color:#0066cc;text-decoration:none;font-weight:300}a:hover{text-decoration:underline}@media(max-width:768px){body{padding:2.5em 1.5em}h1{font-size:2.2em}h2{font-size:1.2em}h3{font-size:1em}}"""
+        # Critical CSS - read from file
+        try:
+            with open(self.templates_dir / 'critical.css', 'r', encoding='utf-8') as f:
+                self.critical_css = f.read().strip()
+        except FileNotFoundError:
+            print("Warning: templates/critical.css not found, using default")
+            self.critical_css = "body{max-width:600px;margin:0 auto;padding:2em}"
         
         # Slugs that should not appear in search engines or listings (still accessible by URL)
         self.noindex_slugs = ['product', 'freedom', 'epistemology', 'samurai_blogging']
@@ -747,8 +752,12 @@ Sitemap: https://prabhchintan.com/sitemap.xml
             subprocess.run(['git', 'commit', '-m', commit_message])
             # Only push if not explicitly disabled
             if os.environ.get('SKIP_GIT_PUSH', '0') not in ('1', 'true', 'yes'):
-                subprocess.run(['git', 'push'])
-            print("Published changes to GitHub")
+                try:
+                    subprocess.run(['git', 'push'], check=True)
+                    print("Published changes to GitHub")
+                except subprocess.CalledProcessError as e:
+                    print(f"❌ Git push failed with return code {e.returncode}")
+                    print("Please check your git configuration and connection.")
         else:
             print("No changes to publish")
 
