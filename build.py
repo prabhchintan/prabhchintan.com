@@ -24,8 +24,7 @@ class UltimateBlog:
             print("Warning: templates/critical.css not found, using default")
             self.critical_css = "body{max-width:600px;margin:0 auto;padding:2em}"
         
-        # Slugs that should not appear in search engines or listings (still accessible by URL)
-        self.noindex_slugs = ['product', 'freedom', 'epistemology', 'samurai_blogging']
+
         
     def setup_dirs(self):
         """Ensure all directories exist"""
@@ -135,9 +134,7 @@ class UltimateBlog:
                            .replace('{{critical_css}}', self.critical_css)\
                            .replace('https://prabhchintan.com/profile.png', 'https://prabhchintan.com/profile.png')
         
-        # Inject noindex meta tag for hidden pages
-        if slug in self.noindex_slugs:
-            page_html = page_html.replace('</head>', '<meta name="robots" content="noindex, nofollow">\n</head>')
+
         
         # Output to site directory
         output_file = self.site_dir / f'{slug}.html'
@@ -202,9 +199,7 @@ class UltimateBlog:
                            .replace('{{year}}', str(date.year))\
                            .replace('{{critical_css}}', self.critical_css)
         
-        # Inject noindex meta tag for hidden posts
-        if slug in self.noindex_slugs:
-            post_html = post_html.replace('</head>', '<meta name="robots" content="noindex, nofollow">\n</head>')
+
         
         # Output to site directory
         output_file = self.site_dir / f'{slug}.html'
@@ -318,8 +313,6 @@ class UltimateBlog:
 <h1>Blog</h1>'''
         
         for post in posts:
-            if post['slug'] in self.noindex_slugs:
-                continue
             blog_html += f'''
 <p><a href="{post['url']}">{post['title']}</a><br>
 <em>{post['formatted_date']}</em></p>'''
@@ -345,17 +338,12 @@ class UltimateBlog:
 <url><loc>https://prabhchintan.com/certifications</loc><priority>0.8</priority></url>'''
         
         for post in posts:
-            if post['slug'] in self.noindex_slugs:
-                continue
             sitemap += f'''
 <url><loc>https://prabhchintan.com{post['url']}</loc><lastmod>{post['date'].strftime('%Y-%m-%d')}</lastmod><priority>0.8</priority></url>'''
         
         # Add standalone pages to sitemap (excluding noindex pages)
         if pages:
             for page in pages:
-                page_slug = page['url'].strip('/')
-                if page_slug in self.noindex_slugs:
-                    continue
                 sitemap += f'''
 <url><loc>https://prabhchintan.com{page['url']}</loc><priority>0.7</priority></url>'''
         
@@ -369,7 +357,7 @@ class UltimateBlog:
     def generate_rss(self, posts):
         """Generate RSS feed"""
         # Filter out hidden posts
-        visible_posts = [p for p in posts if p['slug'] not in self.noindex_slugs][:10]
+        visible_posts = posts[:10]
         
         rss = f'''<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
