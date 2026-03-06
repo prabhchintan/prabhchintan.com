@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Post - Randhawa Inc.</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <style>
+        {
+                {
+                critical_css
+            }
+        }
+    </style>
+    <style>
+        .post-container {
+            max-width: 100%;
+            margin-top: 2em;
+        }
+
+        .form-group {
+            margin-bottom: 1.5em;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5em;
+            font-family: var(--font-ui);
+            font-weight: 600;
+            color: var(--heading-color);
+        }
+
+        input[type="text"],
+        input[type="password"],
+        textarea {
+            width: 100%;
+            padding: 0.8em;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-family: var(--font-body);
+            font-size: 1em;
+            box-sizing: border-box;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 200px;
+            line-height: 1.5;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--link-color);
+            box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
+        }
+
+        button {
+            background-color: var(--link-color);
+            color: white;
+            border: none;
+            padding: 0.8em 1.5em;
+            font-size: 1em;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: var(--font-ui);
+            font-weight: 600;
+            transition: background-color 0.2s ease;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #0052a3;
+        }
+
+        button:disabled {
+            background-color: var(--meta-color);
+            cursor: not-allowed;
+        }
+
+        #status {
+            margin-top: 1.5em;
+            padding: 1em;
+            border-radius: 4px;
+            display: none;
+            font-family: var(--font-ui);
+            font-size: 0.9em;
+        }
+
+        .success {
+            background-color: #e6f4ea;
+            color: #1e8e3e;
+            border: 1px solid #ceead6;
+        }
+
+        .error {
+            background-color: #fce8e6;
+            color: #d93025;
+            border: 1px solid #fad2cf;
+        }
+
+        /* Minimalistic adjustments */
+        header {
+            margin-bottom: 2em;
+        }
+
+        h1 {
+            margin-bottom: 0.2em;
+        }
+
+        .subtitle {
+            color: var(--meta-color);
+            font-style: italic;
+            margin-top: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>New Post</h1>
+        <p class="subtitle">Drafting on the go.</p>
+    </header>
+
+    <div class="post-container">
+        <form id="postForm">
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" id="title" required placeholder="A brief thought...">
+            </div>
+
+            <div class="form-group">
+                <label for="content">Content (Markdown supported)</label>
+                <textarea id="content" required placeholder="Write your post here..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password (GitHub PAT)</label>
+                <input type="password" id="password" required placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+            </div>
+
+            <button type="submit" id="submitBtn">Publish Post</button>
+        </form>
+
+        <div id="status"></div>
+    </div>
+
+    <script>
+        document.getElementById('postForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const titleInput = document.getElementById('title').value.trim();
+            const contentInput = document.getElementById('content').value.trim();
+            const token = document.getElementById('password').value.trim();
+            const submitBtn = document.getElementById('submitBtn');
+            const statusDiv = document.getElementById('status');
+
+            // UI setup
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Publishing...';
+            statusDiv.style.display = 'none';
+            statusDiv.className = '';
+
+            const REPO_OWNER = 'prabhchintan';
+            const REPO_NAME = 'prabhchintan.com';
+
+            try {
+                // Formatting Date & Slug
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+
+                // create slug
+                let slug = titleInput.toLowerCase()
+                    .replace(/[^a-z0-9]+/g, '-')
+                    .replace(/(^-|-$)/g, '');
+
+                // Default if slug generation fails
+                if (!slug) slug = `post-${year}${month}${day}`;
+
+                const filename = `${year}_${month}_${day}_${slug}.md`;
+
+                // Markdown construction
+                const markdownContent = `# ${titleInput}\n\n${contentInput}`;
+
+                // Format for GitHub API (Base64 encoding)
+                // Need to use utf8 to native btoa workaround for markdown
+                const encodedContent = btoa(unescape(encodeURIComponent(markdownContent)));
+
+                // 1. Get current commit sha for main to create a branch or direct commit
+                // Let's commit directly to main (or the default branch)
+                const apiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/posts/${filename}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: `Mobile publish: ${titleInput}`,
+                        content: encodedContent,
+                        branch: 'main' // Target branch
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Failed to publish post');
+                }
+
+                // Success
+                statusDiv.textContent = 'Success! Post pushed to repository. The site should update via GitHub Actions shortly.';
+                statusDiv.className = 'success';
+                statusDiv.style.display = 'block';
+
+                // Clear form except password
+                document.getElementById('title').value = '';
+                document.getElementById('content').value = '';
+
+            } catch (error) {
+                console.error('Error:', error);
+                statusDiv.textContent = `Error: ${error.message}`;
+                statusDiv.className = 'error';
+                statusDiv.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Publish Post';
+            }
+        });
+    </script>
+</body>
+
+</html>
