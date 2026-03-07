@@ -5,7 +5,14 @@
 <link>https://prabhchintan.com/blog</link>
 <atom:link href="https://prabhchintan.com/feed.xml" rel="self" type="application/rss+xml"/>
 <description>Personal blog featuring thoughts on technology, design, and life.</description>
-<lastBuildDate>Sat, 07 Mar 2026 13:24:56 +0000</lastBuildDate>
+<lastBuildDate>Sat, 07 Mar 2026 19:31:29 +0000</lastBuildDate>
+<item>
+<title>What Analytic Philosophy Sounds Like to Continental Philosophers</title>
+<link>https://prabhchintan.com/analyticphilosophy</link>
+<description><div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;border-radius:8px;margin:1.5em 0"><iframe src="https://www.youtub...</description>
+<pubDate>Sat, 07 Mar 2026 12:00:00 +0000</pubDate>
+<guid>https://prabhchintan.com/analyticphilosophy</guid>
+</item>
 <item>
 <title>What Analytic Philosophy Sounds Like to Continental Philosophers</title>
 <link>https://prabhchintan.com/microservices</link>
