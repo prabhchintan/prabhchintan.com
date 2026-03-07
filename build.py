@@ -52,12 +52,17 @@ class UltimateBlog:
         lines = content.strip().split('\n')
         desc_lines = []
         for line in lines:
-            if line.strip() and not line.startswith('#'):
-                desc_lines.append(line.strip())
+            stripped = line.strip()
+            # Skip headings, empty lines, and HTML blocks
+            if stripped and not stripped.startswith('#') and not stripped.startswith('<'):
+                desc_lines.append(stripped)
                 if len(' '.join(desc_lines)) > 140:
                     break
         
         description = ' '.join(desc_lines)[:157] + '...' if len(' '.join(desc_lines)) > 160 else ' '.join(desc_lines)
+        
+        # Strip any remaining HTML tags from description
+        description = re.sub(r'<[^>]+>', '', description).strip()
         
         return {
             'description': description or 'A blog post by Randhawa Inc.',
