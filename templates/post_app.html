@@ -270,8 +270,27 @@
 
                 const filename = `${year}_${month}_${day}_${slug}.md`;
 
+                // Process plain text to handle URLs and YouTube embeds automatically
+                function processMarkdownFromText(text) {
+                    // Match basic youtube.com and youtu.be links
+                    const ytRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/g;
+
+                    let processed = text.replace(ytRegex, (match, videoId) => {
+                        return `\n\n<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 8px; margin: 1.5em 0;">\n<iframe src="https://www.youtube.com/embed/${videoId}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>\n</div>\n\n`;
+                    });
+
+                    // Simple URL matcher for anything else not already formatted (naive but robust for plain text inputs on mobile)
+                    // It looks for http/https, trying not to match within href="" or src="" from the iframe above
+                    const urlRegex = /(?<!src="|href="|\]\()(https?:\/\/[^\s]+)/ig;
+                    processed = processed.replace(urlRegex, '[$1]($1)');
+
+                    return processed;
+                }
+
+                const processedContent = processMarkdownFromText(contentInput);
+
                 // Markdown construction
-                const markdownContent = `# ${titleInput}\n\n${contentInput}`;
+                const markdownContent = `# ${titleInput}\n\n${processedContent}`;
 
                 // Format for GitHub API (Base64 encoding)
                 // Need to use utf8 to native btoa workaround for markdown
