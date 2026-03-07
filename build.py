@@ -769,6 +769,13 @@ Sitemap: https://prabhchintan.com/sitemap.xml
             # Only push if not explicitly disabled
             if os.environ.get('SKIP_GIT_PUSH', '0') not in ('1', 'true', 'yes'):
                 try:
+                    # Check if we are behind origin/main (usually because of a previous GitHub Action run)
+                    subprocess.run(['git', 'fetch'], check=False)
+                    behind_status = subprocess.run(['git', 'status', '-sb'], capture_output=True, text=True)
+                    if 'behind' in behind_status.stdout:
+                        print("Local branch is behind remote. Syncing with origin/main...")
+                        subprocess.run(['git', 'pull', '--rebase'], check=True)
+                        
                     subprocess.run(['git', 'push'], check=True)
                     print("Published changes to GitHub")
                 except subprocess.CalledProcessError as e:
