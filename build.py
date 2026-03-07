@@ -442,8 +442,9 @@ class UltimateBlog:
         with open(app_file, 'r', encoding='utf-8') as f:
             app_html = f.read()
             
-        # Replace variables
-        app_html = app_html.replace('{{critical_css}}', self.critical_css)
+        # Replace the comment placeholder with a full style block
+        css_block = f'<style>{self.critical_css}</style>'
+        app_html = app_html.replace('<!-- CRITICAL_CSS_PLACEHOLDER -->', css_block)
         
         # Apply universal footer
         app_html = self.apply_universal_footer(app_html)

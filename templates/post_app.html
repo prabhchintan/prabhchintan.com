@@ -6,178 +6,119 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="favicon.svg">
+    <!-- CRITICAL_CSS_PLACEHOLDER -->
     <style>
-        {
-                {
-                critical_css
-            }
-        }
-    </style>
-    <style>
-        /* Premium Post App UI */
-        .post-container {
-            position: relative;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 4em;
-        }
-
-        h1 {
-            font-size: 2.8em;
-            margin-bottom: 0.1em;
-            font-weight: normal;
-            letter-spacing: -0.02em;
-        }
-
-        .subtitle {
-            color: var(--meta-color);
-            font-style: italic;
-            font-size: 1.1em;
-            margin-top: 0;
-        }
-
         .form-group {
-            margin-bottom: 3em;
-            position: relative;
+            margin-bottom: 1.5em
         }
 
         label {
             display: block;
-            margin-bottom: 1em;
-            font-family: var(--font-ui);
-            color: var(--meta-color);
+            margin-bottom: 0.4em;
+            color: #666;
             font-size: 0.8em;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            text-transform: uppercase
         }
 
         input[type="text"] {
             width: 100%;
-            padding: 0.5em 0;
+            padding: 0.4em 0;
             border: none;
-            border-bottom: 1px solid var(--border-color);
-            border-radius: 0;
-            font-family: var(--font-body);
-            font-size: 1.5em;
+            border-bottom: 1px solid #eee;
+            font-family: inherit;
+            font-size: 1.2em;
             box-sizing: border-box;
-            background-color: transparent;
-            color: var(--text-color);
-            transition: border-color 0.4s ease;
+            background: transparent;
+            color: #1a1a1a;
+            transition: border-color 0.3s
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-bottom-color: #1a1a1a
         }
 
         textarea {
             width: 100%;
-            min-height: 400px;
-            padding: 1.5em;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-family: var(--font-body);
-            font-size: 1.15em;
-            line-height: 1.7;
+            min-height: 280px;
+            padding: 1em;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 1em;
+            line-height: 1.6;
             box-sizing: border-box;
-            background-color: transparent;
-            color: var(--text-color);
+            background: transparent;
+            color: #1a1a1a;
             resize: vertical;
-            transition: border-color 0.4s ease, box-shadow 0.4s ease;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.01);
-        }
-
-        input::placeholder,
-        textarea::placeholder {
-            color: #d0d0d0;
-            font-style: italic;
-            opacity: 1;
-        }
-
-        input:focus {
-            outline: none;
-            border-bottom-color: var(--text-color);
+            transition: border-color 0.3s
         }
 
         textarea:focus {
             outline: none;
-            border-color: var(--text-color);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            border-color: #1a1a1a
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #ccc;
+            font-style: italic
         }
 
         button {
-            background-color: var(--text-color);
-            color: var(--bg-color);
-            border: 1px solid var(--text-color);
-            font-size: 1.05em;
-            border-radius: 30px;
+            background: #1a1a1a;
+            color: #fff;
+            border: 1px solid #1a1a1a;
+            font-size: 1em;
+            border-radius: 4px;
             cursor: pointer;
-            font-family: var(--font-ui);
-            transition: all 0.3s ease;
+            font-family: inherit;
+            transition: all 0.2s;
             width: 100%;
-            letter-spacing: 0.03em;
-            margin-top: 1em;
-            padding: 1em;
+            padding: 0.8em;
+            margin-top: 0.5em
         }
 
         button:hover {
-            background-color: transparent;
-            color: var(--text-color);
-            transform: translateY(-1px);
-        }
-
-        button:active {
-            transform: translateY(1px);
+            background: transparent;
+            color: #1a1a1a
         }
 
         button:disabled {
-            background-color: #f9f9f9;
+            background: #f5f5f5;
             color: #bbb;
             border-color: #eee;
-            cursor: not-allowed;
-            transform: none;
+            cursor: not-allowed
         }
 
         #status {
-            margin-top: 2.5em;
-            padding: 1.5em;
-            border-radius: 8px;
-            font-family: var(--font-ui);
-            font-size: 0.95em;
+            margin-top: 1.5em;
+            padding: 1em;
+            border-radius: 4px;
+            font-size: 0.9em;
             text-align: center;
             opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.4s ease, visibility 0.4s, transform 0.4s ease;
-            transform: translateY(10px);
+            transition: opacity 0.3s
         }
 
         #status.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
+            opacity: 1
         }
 
         .success {
-            background-color: #fafdfb;
+            background: #f0f7f0;
             color: #2b703e;
-            border: 1px solid #e1eedb;
+            border: 1px solid #d4e8d4
         }
 
         .error {
-            background-color: #fffaf9;
+            background: #fef0ef;
             color: #a33b32;
-            border: 1px solid #f9e2e1;
-        }
-
-        @media (max-width: 768px) {
-            .post-container {
-                margin: 2em auto;
-            }
-
-            h1 {
-                font-size: 2.2em;
-            }
-
-            input[type="text"] {
-                font-size: 1.3em;
-            }
+            border: 1px solid #f5d5d3
         }
     </style>
 </head>
@@ -187,44 +128,34 @@
         <img src="profile.png" alt="Profile" width="80" height="80">
     </div>
 
-    <header>
-        <h1>Draft</h1>
-        <p class="subtitle">A blank page is a safe space.</p>
-    </header>
+    <h1>Draft</h1>
 
-    <div class="post-container">
-        <form id="postForm">
-            <div class="form-group">
-                <label for="title">Title</label>
-                <input type="text" id="title" required placeholder="A brief thought..." autocomplete="off">
-            </div>
+    <form id="postForm">
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" id="title" required placeholder="A brief thought..." autocomplete="off">
+        </div>
+        <div class="form-group">
+            <label for="customSlug">Custom Slug (Optional)</label>
+            <input type="text" id="customSlug" placeholder="e.g. my-custom-url" autocomplete="off">
+        </div>
+        <div class="form-group">
+            <label for="content">Body</label>
+            <textarea id="content" required placeholder="Just write..."></textarea>
+        </div>
+        <div class="form-group">
+            <label for="password">Authentication</label>
+            <input type="text" id="password" required placeholder="Personal Access Token" autocomplete="off"
+                autocorrect="off" autocapitalize="none">
+        </div>
+        <button type="submit" id="submitBtn">Publish</button>
+    </form>
 
-            <div class="form-group">
-                <label for="customSlug">Custom Slug (Optional)</label>
-                <input type="text" id="customSlug" placeholder="e.g. my-custom-url" autocomplete="off">
-            </div>
-
-            <div class="form-group">
-                <label for="content">Body</label>
-                <textarea id="content" required placeholder="Write your post here... (Markdown supported)"></textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="password">Authentication</label>
-                <input type="text" id="password" required placeholder="Personal Access Token" autocomplete="off"
-                    autocorrect="off" autocapitalize="none">
-            </div>
-
-            <button type="submit" id="submitBtn">Publish Post</button>
-        </form>
-
-        <div id="status"></div>
-    </div>
+    <div id="status"></div>
 
     <script>
         document.getElementById('postForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-
             const titleInput = document.getElementById('title').value.trim();
             const slugInput = document.getElementById('customSlug').value.trim();
             const contentInput = document.getElementById('content').value.trim();
@@ -232,7 +163,6 @@
             const submitBtn = document.getElementById('submitBtn');
             const statusDiv = document.getElementById('status');
 
-            // UI setup
             submitBtn.disabled = true;
             submitBtn.textContent = 'Publishing...';
             statusDiv.className = '';
@@ -241,99 +171,66 @@
             const REPO_NAME = 'prabhchintan.com';
 
             try {
-                // Formatting Date & Slug
                 const now = new Date();
                 const year = now.getFullYear();
                 const month = String(now.getMonth() + 1).padStart(2, '0');
                 const day = String(now.getDate()).padStart(2, '0');
 
-                // create slug
-                let slug = slugInput;
-                if (!slug) {
-                    slug = titleInput;
-                }
-
-                slug = slug.toLowerCase()
-                    .replace(/[^a-z0-9]+/g, '-')
-                    .replace(/(^-|-$)/g, '');
-
-                // Default if slug generation fails
-                if (!slug) slug = `post-${year}${month}${day}${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
-
-                // Add timestamp to ensure uniqueness if posting multiple times a day
-                // Only if it's the auto-generated slug or to prevent conflicts.
-                // Actually, let's keep it pristine if they provide a custom slug,
-                // but if they don't, append a small time code to ensure uniqueness for multiple daily posts.
+                let slug = slugInput || titleInput;
+                slug = slug.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                if (!slug) slug = 'post-' + year + month + day;
                 if (!slugInput) {
-                    slug = `${slug}-${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
+                    slug = slug + '-' + String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0');
                 }
 
-                const filename = `${year}_${month}_${day}_${slug}.md`;
+                const filename = year + '_' + month + '_' + day + '_' + slug + '.md';
 
-                // Process plain text to handle URLs and YouTube embeds automatically
-                function processMarkdownFromText(text) {
-                    // Match basic youtube.com and youtu.be links
-                    const ytRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/g;
-
-                    let processed = text.replace(ytRegex, (match, videoId) => {
-                        return `\n\n<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 8px; margin: 1.5em 0;">\n<iframe src="https://www.youtube.com/embed/${videoId}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>\n</div>\n\n`;
+                function processText(text) {
+                    var ytRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/g;
+                    var result = text.replace(ytRegex, function (match, videoId) {
+                        return '\n\n<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;border-radius:8px;margin:1.5em 0"><iframe src="https://www.youtube.com/embed/' + videoId + '" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0" allowfullscreen></iframe></div>\n\n';
                     });
-
-                    // Simple URL matcher for anything else not already formatted (naive but robust for plain text inputs on mobile)
-                    // It looks for http/https, trying not to match within href="" or src="" from the iframe above
-                    const urlRegex = /(?<!src="|href="|\]\()(https?:\/\/[^\s]+)/ig;
-                    processed = processed.replace(urlRegex, '[$1]($1)');
-
-                    return processed;
+                    var urlRegex = /(?<!src="|href="|\]\()(https?:\/\/[^\s]+)/ig;
+                    result = result.replace(urlRegex, '[$1]($1)');
+                    return result;
                 }
 
-                const processedContent = processMarkdownFromText(contentInput);
+                var processed = processText(contentInput);
+                var markdownContent = '# ' + titleInput + '\n\n' + processed;
+                var encodedContent = btoa(unescape(encodeURIComponent(markdownContent)));
 
-                // Markdown construction
-                const markdownContent = `# ${titleInput}\n\n${processedContent}`;
+                var apiUrl = 'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/posts/' + filename;
 
-                // Format for GitHub API (Base64 encoding)
-                // Need to use utf8 to native btoa workaround for markdown
-                const encodedContent = btoa(unescape(encodeURIComponent(markdownContent)));
-
-                // 1. Get current commit sha for main to create a branch or direct commit
-                // Let's commit directly to main (or the default branch)
-                const apiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/posts/${filename}`;
-
-                const response = await fetch(apiUrl, {
+                var response = await fetch(apiUrl, {
                     method: 'PUT',
                     headers: {
-                        'Authorization': `token ${token}`,
-                        'Content-Type': 'application/json',
+                        'Authorization': 'token ' + token,
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        message: `Mobile publish: ${titleInput}`,
+                        message: 'Mobile publish: ' + titleInput,
                         content: encodedContent,
-                        branch: 'main' // Target branch
+                        branch: 'main'
                     })
                 });
 
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || 'Failed to publish post');
+                    var errorData = await response.json();
+                    throw new Error(errorData.message || 'Failed to publish');
                 }
 
-                // Success
-                statusDiv.innerHTML = `<strong>Success.</strong><br>Post pushed to repository. The site should update via GitHub Actions shortly.`;
+                statusDiv.innerHTML = 'Published. Site updates in ~60 seconds.';
                 statusDiv.className = 'success show';
-
-                // Clear form except password
                 document.getElementById('title').value = '';
                 document.getElementById('customSlug').value = '';
                 document.getElementById('content').value = '';
 
             } catch (error) {
-                console.error('Error:', error);
-                statusDiv.innerHTML = `<strong>Error.</strong><br>${error.message}`;
+                statusDiv.innerHTML = 'Error: ' + error.message;
                 statusDiv.className = 'error show';
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.textContent = 'Publish Post';
+                submitBtn.textContent = 'Publish';
             }
         });
     </script>
