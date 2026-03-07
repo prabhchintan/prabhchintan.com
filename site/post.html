@@ -16,8 +16,6 @@
     <style>
         /* Premium Post App UI */
         .post-container {
-            max-width: 650px;
-            margin: 4em auto;
             position: relative;
         }
 
@@ -55,8 +53,7 @@
             text-transform: uppercase;
         }
 
-        input[type="text"],
-        input[type="password"] {
+        input[type="text"] {
             width: 100%;
             padding: 0.5em 0;
             border: none;
@@ -178,8 +175,7 @@
                 font-size: 2.2em;
             }
 
-            input[type="text"],
-            input[type="password"] {
+            input[type="text"] {
                 font-size: 1.3em;
             }
         }
@@ -187,6 +183,9 @@
 </head>
 
 <body>
+    <div class="profile-pic">
+        <img src="profile.png" alt="Profile" width="80" height="80">
+    </div>
 
     <header>
         <h1>Draft</h1>
@@ -212,7 +211,8 @@
 
             <div class="form-group">
                 <label for="password">Authentication</label>
-                <input type="password" id="password" required placeholder="Personal Access Token">
+                <input type="text" id="password" required placeholder="Personal Access Token" autocomplete="off"
+                    autocorrect="off" autocapitalize="none">
             </div>
 
             <button type="submit" id="submitBtn">Publish Post</button>
