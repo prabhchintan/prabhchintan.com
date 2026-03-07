@@ -201,6 +201,11 @@
             </div>
 
             <div class="form-group">
+                <label for="customSlug">Custom Slug (Optional)</label>
+                <input type="text" id="customSlug" placeholder="e.g. my-custom-url" autocomplete="off">
+            </div>
+
+            <div class="form-group">
                 <label for="content">Body</label>
                 <textarea id="content" required placeholder="Write your post here... (Markdown supported)"></textarea>
             </div>
@@ -219,49 +224,63 @@
     <script>
         document.getElementById('postForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const titleInput = document.getElementById('title').value.trim();
+            const slugInput = document.getElementById('customSlug').value.trim();
             const contentInput = document.getElementById('content').value.trim();
             const token = document.getElementById('password').value.trim();
             const submitBtn = document.getElementById('submitBtn');
             const statusDiv = document.getElementById('status');
-            
+
             // UI setup
             submitBtn.disabled = true;
             submitBtn.textContent = 'Publishing...';
             statusDiv.className = '';
-            
+
             const REPO_OWNER = 'prabhchintan';
             const REPO_NAME = 'prabhchintan.com';
-            
+
             try {
                 // Formatting Date & Slug
                 const now = new Date();
                 const year = now.getFullYear();
                 const month = String(now.getMonth() + 1).padStart(2, '0');
                 const day = String(now.getDate()).padStart(2, '0');
-                
+
                 // create slug
-                let slug = titleInput.toLowerCase()
+                let slug = slugInput;
+                if (!slug) {
+                    slug = titleInput;
+                }
+
+                slug = slug.toLowerCase()
                     .replace(/[^a-z0-9]+/g, '-')
                     .replace(/(^-|-$)/g, '');
-                    
+
                 // Default if slug generation fails
-                if (!slug) slug = `post-${year}${month}${day}`;
-                
+                if (!slug) slug = `post-${year}${month}${day}${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
+
+                // Add timestamp to ensure uniqueness if posting multiple times a day
+                // Only if it's the auto-generated slug or to prevent conflicts.
+                // Actually, let's keep it pristine if they provide a custom slug,
+                // but if they don't, append a small time code to ensure uniqueness for multiple daily posts.
+                if (!slugInput) {
+                    slug = `${slug}-${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
+                }
+
                 const filename = `${year}_${month}_${day}_${slug}.md`;
-                
+
                 // Markdown construction
                 const markdownContent = `# ${titleInput}\n\n${contentInput}`;
-                
+
                 // Format for GitHub API (Base64 encoding)
                 // Need to use utf8 to native btoa workaround for markdown
                 const encodedContent = btoa(unescape(encodeURIComponent(markdownContent)));
-                
+
                 // 1. Get current commit sha for main to create a branch or direct commit
                 // Let's commit directly to main (or the default branch)
                 const apiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/posts/${filename}`;
-                
+
                 const response = await fetch(apiUrl, {
                     method: 'PUT',
                     headers: {
@@ -274,20 +293,21 @@
                         branch: 'main' // Target branch
                     })
                 });
-                
+
                 if (!response.ok) {
                     const errorData = await response.json();
                     throw new Error(errorData.message || 'Failed to publish post');
                 }
-                
+
                 // Success
                 statusDiv.innerHTML = `<strong>Success.</strong><br>Post pushed to repository. The site should update via GitHub Actions shortly.`;
                 statusDiv.className = 'success show';
-                
+
                 // Clear form except password
                 document.getElementById('title').value = '';
+                document.getElementById('customSlug').value = '';
                 document.getElementById('content').value = '';
-                
+
             } catch (error) {
                 console.error('Error:', error);
                 statusDiv.innerHTML = `<strong>Error.</strong><br>${error.message}`;
