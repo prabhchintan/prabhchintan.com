@@ -775,7 +775,7 @@ Sitemap: https://prabhchintan.com/sitemap.xml
                     if 'behind' in behind_status.stdout:
                         print("Local branch is behind remote. Syncing with origin/main (favoring local build)...")
                         # Use 'ours' strategy to avoid conflicts on auto-generated site/ files
-                        subprocess.run(['git', 'pull', '-X', 'ours', '--no-edit'], check=True)
+                        subprocess.run(['git', 'merge', 'origin/main', '--no-edit', '-s', 'recursive', '-X', 'ours'], check=True)
                         
                     subprocess.run(['git', 'push'], check=True)
                     print("Published changes to GitHub")
