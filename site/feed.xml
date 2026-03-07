@@ -5,7 +5,7 @@
 <link>https://prabhchintan.com/blog</link>
 <atom:link href="https://prabhchintan.com/feed.xml" rel="self" type="application/rss+xml"/>
 <description>Personal blog featuring thoughts on technology, design, and life.</description>
-<lastBuildDate>Sat, 07 Mar 2026 14:21:50 +0000</lastBuildDate>
+<lastBuildDate>Sat, 07 Mar 2026 17:35:36 +0000</lastBuildDate>
 <item>
 <title>What Analytic Philosophy Sounds Like to Continental Philosophers</title>
 <link>https://prabhchintan.com/microservices</link>
@@ -19,6 +19,13 @@
 <description>*A letter to my friend, on the occasion of his wedding.* Sat Śri Akāl REDACTED, Many congratulations to you and REDACTED! I wanted to take this opportunity t...</description>
 <pubDate>Sat, 31 Jan 2026 12:00:00 +0000</pubDate>
 <guid>https://prabhchintan.com/khalsa</guid>
+</item>
+<item>
+<title>Afzal Ahsan Randhawa</title>
+<link>https://prabhchintan.com/afzal</link>
+<description>Narration by Sardar Mairaj.</description>
+<pubDate>Sun, 23 Feb 2025 12:00:00 +0000</pubDate>
+<guid>https://prabhchintan.com/afzal</guid>
 </item>
 </channel>
 </rss>
