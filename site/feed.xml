@@ -5,13 +5,20 @@
 <link>https://prabhchintan.com/blog</link>
 <atom:link href="https://prabhchintan.com/feed.xml" rel="self" type="application/rss+xml"/>
 <description>Personal blog featuring thoughts on technology, design, and life.</description>
-<lastBuildDate>Sat, 07 Mar 2026 19:46:49 +0000</lastBuildDate>
+<lastBuildDate>Sat, 07 Mar 2026 14:04:45 +0000</lastBuildDate>
 <item>
 <title>What Analytic Philosophy Sounds Like to Continental Philosophers</title>
 <link>https://prabhchintan.com/microservices</link>
 <description>A blog post by Randhawa Inc.</description>
 <pubDate>Sat, 07 Mar 2026 12:00:00 +0000</pubDate>
 <guid>https://prabhchintan.com/microservices</guid>
+</item>
+<item>
+<title>੦ to ੴ: Computational Khālsā</title>
+<link>https://prabhchintan.com/khalsa</link>
+<description>*A letter to my friend, on the occasion of his wedding.* Sat Śri Akāl REDACTED, Many congratulations to you and REDACTED! I wanted to take this opportunity t...</description>
+<pubDate>Sat, 31 Jan 2026 12:00:00 +0000</pubDate>
+<guid>https://prabhchintan.com/khalsa</guid>
 </item>
 </channel>
 </rss>
