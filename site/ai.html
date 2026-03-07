@@ -1,178 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<title>Artificial Intelligence</title>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="alternate icon" href="favicon.ico">
-<link rel="apple-touch-icon" href="favicon.svg">
-<meta name="description" content="Here is an overview of artificial intelligence, tracing its evolution from early computational theories to the transformative technologies reshaping our worl...">
+    <title>Artificial Intelligence</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="favicon.svg">
+    <meta name="description" content="Here is an overview of artificial intelligence, tracing its evolution from early computational theories to the transformative technologies reshaping our worl...">
 
-<!-- Social Media Meta Tags -->
-<meta property="og:title" content="Artificial Intelligence">
-<meta property="og:description" content="Here is an overview of artificial intelligence, tracing its evolution from early computational theories to the transformative technologies reshaping our worl...">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://prabhchintan.com/ai">
-<meta property="og:site_name" content="prabhchintan.com">
-<meta property="og:image" content="https://prabhchintan.com/profile.png">
-<meta property="og:image:width" content="400">
-<meta property="og:image:height" content="400">
+    <!-- Social Media Meta Tags -->
+    <meta property="og:title" content="Artificial Intelligence">
+    <meta property="og:description" content="Here is an overview of artificial intelligence, tracing its evolution from early computational theories to the transformative technologies reshaping our worl...">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://prabhchintan.com/ai">
+    <meta property="og:site_name" content="prabhchintan.com">
+    <meta property="og:image" content="https://prabhchintan.com/profile.png">
+    <meta property="og:image:width" content="400">
+    <meta property="og:image:height" content="400">
 
-<!-- Twitter Card Meta Tags -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Artificial Intelligence">
-<meta name="twitter:description" content="Here is an overview of artificial intelligence, tracing its evolution from early computational theories to the transformative technologies reshaping our worl...">
-<meta name="twitter:url" content="https://prabhchintan.com/ai">
-<meta name="twitter:image" content="https://prabhchintan.com/profile.png">
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Artificial Intelligence">
+    <meta name="twitter:description" content="Here is an overview of artificial intelligence, tracing its evolution from early computational theories to the transformative technologies reshaping our worl...">
+    <meta name="twitter:url" content="https://prabhchintan.com/ai">
+    <meta name="twitter:image" content="https://prabhchintan.com/profile.png">
 
-<!-- Canonical URL -->
-<link rel="canonical" href="https://prabhchintan.com/ai">
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://prabhchintan.com/ai">
 
-<style>:root {
-    --bg-color: #ffffff;
-    --text-color: #1a1a1a;
-    --heading-color: #111111;
-    --link-color: #0066cc;
-    --meta-color: #666666;
-    --border-color: #eeeeee;
-
-    --font-ui: Baskerville, "Times New Roman", Times, serif;
-    --font-body: Baskerville, "Times New Roman", Times, serif;
-}
-
-
-body {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 4em 1.5em;
-    font-family: var(--font-body);
-    font-size: 1em;
-    line-height: 1.5;
-    color: var(--text-color);
-    background-color: var(--bg-color);
-    -webkit-font-smoothing: antialiased;
-}
-
-.profile-pic {
-    text-align: center;
-    margin-bottom: 2em;
-}
-
-.profile-pic img {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    object-fit: cover;
-    display: block;
-    margin: 0 auto;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    font-family: var(--font-ui);
-    color: var(--heading-color);
-    font-weight: normal;
-    line-height: 1.25;
-}
-
-h1 {
-    font-size: 2em;
-    margin: 0 0 0.8em 0;
-    letter-spacing: -0.02em;
-}
-
-h2 {
-    font-size: 1.4em;
-    margin: 1.5em 0 0.5em 0;
-}
-
-h3 {
-    font-size: 1.15em;
-    margin: 1.4em 0 0.5em 0;
-}
-
-p {
-    margin: 0.9em 0;
-}
-
-a {
-    color: var(--link-color);
-    text-decoration: none;
-    transition: opacity 0.2s ease;
-}
-
-a:hover {
-    text-decoration: none;
-    opacity: 0.7;
-}
-
-ul,
-ol {
-    margin: 0.9em 0;
-    padding-left: 1.5em;
-}
-
-li {
-    margin: 0.4em 0;
-}
-
-blockquote {
-    border-left: 3px solid var(--link-color);
-    margin: 1.5em 0;
-    padding-left: 1em;
-    font-style: italic;
-    color: var(--meta-color);
-}
-
-code {
-    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
-    font-size: 0.9em;
-    background: rgba(127, 127, 127, 0.12);
-    padding: 0.2em 0.4em;
-    border-radius: 3px;
-}
-
-pre {
-    background: rgba(127, 127, 127, 0.08);
-    padding: 1em;
-    overflow-x: auto;
-    border-radius: 6px;
-    margin: 1.5em 0;
-}
-
-pre code {
-    background: none;
-    padding: 0;
-    color: var(--text-color);
-}
-
-footer {
-    text-align: center;
-    margin-top: 3.5em;
-    padding-top: 2em;
-    border-top: 1px solid var(--border-color);
-    color: var(--meta-color);
-    font-size: 0.85em;
-}
-
-@media (max-width: 768px) {
-    body {
-        padding: 2.5em 1.5em;
-    }
-
-    h1 {
-        font-size: 1.8em;
-    }
-}</style>
+    <style>
+        {
+                {
+                critical_css
+            }
+        }
+    </style>
 </head>
+
 <body>
-<h1>Artificial Intelligence</h1>
+    <h1>Artificial Intelligence</h1>
 <p>Here is an overview of artificial intelligence, tracing its evolution from early computational theories to the transformative technologies reshaping our world today. Each section highlights key developments that have shaped AI, providing insights into its historical foundations and contemporary applications. While each topic could warrant its own in-depth exploration, this collection offers a foundational understanding of AI's multifaceted nature and its profound impact on society.</p>
 <h3>1. Early Foundations and Theoretical Beginnings (1940s-1950s)</h3>
 <ul>
@@ -349,7 +217,8 @@ footer {
 <li>The Machine Learning subreddit (r/MachineLearning)</li>
 <li>"Lex Fridman Podcast" for AI discussions and interviews </li>
 </ol>
-<p><a href="/">← Home</a></p>
+    <p><a href="/blog">← Back to Blog</a></p>
 <footer>Randhawa Inc. 1309 Coffeen Ave Ste 1386 Sheridan, WY</footer>
 </body>
+
 </html>

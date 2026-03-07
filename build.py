@@ -323,6 +323,8 @@ class UltimateBlog:
 <em>{post['formatted_date']}</em></p>'''
         
         blog_html += '''
+<br>
+<p><a href="/">← Home</a></p>
 </body>
 </html>'''
         
