@@ -5,7 +5,14 @@
 <link>https://prabhchintan.com/blog</link>
 <atom:link href="https://prabhchintan.com/feed.xml" rel="self" type="application/rss+xml"/>
 <description>Personal blog featuring thoughts on technology, design, and life.</description>
-<lastBuildDate>Sat, 07 Mar 2026 18:03:53 +0000</lastBuildDate>
+<lastBuildDate>Sun, 08 Mar 2026 18:22:22 +0000</lastBuildDate>
+<item>
+<title>Learn to Cope</title>
+<link>https://prabhchintan.com/cope</link>
+<description>Learn to cope.</description>
+<pubDate>Sun, 08 Mar 2026 12:00:00 +0000</pubDate>
+<guid>https://prabhchintan.com/cope</guid>
+</item>
 <item>
 <title>What Analytic Philosophy Sounds Like to Continental Philosophers</title>
 <link>https://prabhchintan.com/microservices</link>
