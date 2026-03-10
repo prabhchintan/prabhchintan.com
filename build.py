@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import markdown
+import logging
 import sys
 from datetime import datetime
 import re
@@ -9,34 +10,98 @@ import shutil
 from urllib.parse import quote
 import os
 
-class UltimateBlog:
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(levelname)s: %(message)s'
+)
+log = logging.getLogger(__name__)
+
+
+class RichEmbedProcessor:
+    """Process rich embeds for YouTube, X/Twitter, Wikipedia, etc."""
+
+    @staticmethod
+    def process(content):
+        """Convert URLs to rich embeds"""
+        # YouTube embed
+        content = RichEmbedProcessor._youtube_embed(content)
+        # X/Twitter embed
+        content = RichEmbedProcessor._twitter_embed(content)
+        # Generic auto-linking (but preserve markdown links)
+        content = RichEmbedProcessor._auto_link(content)
+        return content
+
+    @staticmethod
+    def _youtube_embed(text):
+        """Convert YouTube URLs to responsive embeds"""
+        pattern = r'(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?[^\s]*v=|youtu\.be\/)([a-zA-Z0-9_-]{11})[^\s]*'
+
+        def replace(match):
+            video_id = match.group(1)
+            return f'\n\n<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;border-radius:8px;margin:2em 0"><iframe src="https://www.youtube.com/embed/{video_id}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy"></iframe></div>\n\n'
+
+        return re.sub(pattern, replace, text)
+
+    @staticmethod
+    def _twitter_embed(text):
+        """Convert X/Twitter URLs to embeds"""
+        pattern = r'https?://(?:twitter\.com|x\.com)/([^/]+)/status/(\d+)'
+
+        def replace(match):
+            username, tweet_id = match.groups()
+            # Simple iframe embed for now
+            return f'\n\n<blockquote class="twitter-tweet"><a href="https://x.com/{username}/status/{tweet_id}">View on X</a></blockquote>\n\n'
+
+        return re.sub(pattern, replace, text)
+
+    @staticmethod
+    def _auto_link(text):
+        """Auto-link URLs that aren't already in markdown or HTML"""
+        # Skip URLs already in markdown links or HTML attributes
+        lines = text.split('\n')
+        result = []
+        for line in lines:
+            # Skip if line contains markdown link or HTML attribute
+            if '](http' in line or 'src="http' in line or 'href="http' in line:
+                result.append(line)
+            else:
+                # Auto-link bare URLs
+                line = re.sub(r'(https?:\/\/[^\s]+)', r'[\1](\1)', line)
+                result.append(line)
+        return '\n'.join(result)
+
+
+class BlogBuilder:
     def __init__(self):
         self.posts_dir = Path('posts/')
         self.pages_dir = Path('pages/')
+        self.media_dir = Path('media/')
         self.templates_dir = Path('templates/')
         self.site_dir = Path('site/')
-        
-        # Critical CSS - read from file
+
+        # Load critical CSS
         try:
             with open(self.templates_dir / 'critical.css', 'r', encoding='utf-8') as f:
                 self.critical_css = f.read().strip()
         except FileNotFoundError:
-            print("Warning: templates/critical.css not found, using default")
+            log.warning("critical.css not found, using fallback")
             self.critical_css = "body{max-width:600px;margin:0 auto;padding:2em}"
-        
 
-        
+        self.slug_registry = {}  # Track slugs to detect collisions
+
     def setup_dirs(self):
         """Ensure all directories exist"""
-        for dir_path in [self.posts_dir, self.pages_dir, self.templates_dir, self.site_dir]:
+        for dir_path in [self.posts_dir, self.pages_dir, self.media_dir,
+                         self.templates_dir, self.site_dir]:
             dir_path.mkdir(exist_ok=True, parents=True)
 
     def clean_site_dir(self):
-        """Remove and recreate site/ to prevent stale artifacts."""
+        """Remove and recreate site/ directory"""
         if self.site_dir.exists():
             shutil.rmtree(self.site_dir)
         self.site_dir.mkdir(exist_ok=True, parents=True)
-    
+
     def parse_filename(self, filename):
         """Extract date and slug from YYYY_MM_DD_slug.md"""
         match = re.match(r'(\d{4})_(\d{2})_(\d{2})_(.+)\.md', filename)
@@ -45,243 +110,206 @@ class UltimateBlog:
             date = datetime(int(year), int(month), int(day))
             return date, slug
         return None, None
-    
+
+    def check_slug_collision(self, slug, filename):
+        """Detect and warn about slug collisions"""
+        if slug in self.slug_registry:
+            log.error(f"Slug collision: '{slug}' used in both {self.slug_registry[slug]} and {filename}")
+            log.error("Build aborted. Please rename one of the files.")
+            sys.exit(1)
+        self.slug_registry[slug] = filename
+
     def extract_metadata(self, content):
-        """Extract metadata with smart defaults"""
-        # Extract first paragraph for description
+        """Extract metadata from content"""
         lines = content.strip().split('\n')
         desc_lines = []
+
         for line in lines:
             stripped = line.strip()
-            # Skip headings, empty lines, and HTML blocks
             if stripped and not stripped.startswith('#') and not stripped.startswith('<'):
                 desc_lines.append(stripped)
                 if len(' '.join(desc_lines)) > 140:
                     break
-        
+
         description = ' '.join(desc_lines)[:157] + '...' if len(' '.join(desc_lines)) > 160 else ' '.join(desc_lines)
-        
-        # Strip any remaining HTML tags from description
         description = re.sub(r'<[^>]+>', '', description).strip()
-        
-        return {
-            'description': description or 'A blog post by Randhawa Inc.',
-            'tags': [],
-            'category': None
-        }
-    
-    def extract_first_heading(self, content):
-        """Extract the first heading from markdown content"""
-        lines = content.split('\n')
-        for line in lines:
+
+        return description or 'A blog post by Randhawa Inc.'
+
+    def extract_title(self, content):
+        """Extract first heading from markdown"""
+        for line in content.split('\n'):
             line = line.strip()
             if line.startswith('# '):
-                return line[2:].strip()  # Remove '# ' prefix
+                return line[2:].strip()
             elif line.startswith('## '):
-                return line[3:].strip()  # Remove '## ' prefix
+                return line[3:].strip()
             elif line.startswith('### '):
-                return line[4:].strip()  # Remove '### ' prefix
+                return line[4:].strip()
         return None
 
-    def insert_date_after_first_heading(self, html_content, date):
-        """Insert date after first heading with fallback"""
-        heading_pattern = r'(<h[1-6][^>]*>.*?</h[1-6]>)'
-        match = re.search(heading_pattern, html_content, re.DOTALL)
-        
+    def insert_date_after_heading(self, html, date):
+        """Insert date after first heading"""
+        pattern = r'(<h[1-6][^>]*>.*?</h[1-6]>)'
+        match = re.search(pattern, html, re.DOTALL)
+
         if match:
             heading_end = match.end()
-            date_html = f'<p><em>{date}</em></p>'
-            return html_content[:heading_end] + date_html + html_content[heading_end:]
+            date_html = f'<p class="post-date"><em>{date}</em></p>'
+            return html[:heading_end] + date_html + html[heading_end:]
         else:
-            return f'<p><em>{date}</em></p>' + html_content
-    
-    # (Removed duplicate early build_post definition)
-    
-    def build_page(self, md_file):
-        """Build standalone page (no date, no blog listing)"""
-        filename = Path(md_file).name
-        slug = filename.replace('.md', '')
-        
-        # Read markdown
-        with open(md_file, 'r', encoding='utf-8') as f:
-            content = f.read()
-        
-        # Convert to HTML with extensions
-        html = markdown.markdown(content, extensions=['codehilite', 'fenced_code'])
-        
-        # Extract metadata
-        metadata = self.extract_metadata(content)
-        
-        # Extract actual heading for title
-        actual_title = self.extract_first_heading(content)
-        if not actual_title:
-            actual_title = slug.replace('_', ' ').title()  # Fallback to slug
-        
-        # Load template
-        template_file = self.templates_dir / 'post.html'
-        if not template_file.exists():
-            self.create_post_template()
-        
-        with open(template_file, 'r', encoding='utf-8') as f:
-            template = f.read()
-        
-        # Generate content (no date for pages)
-        html_with_date = html  # Pages don't get dates
-        
-        # Replace placeholders
-        page_html = template.replace('{{title}}', actual_title)\
-                           .replace('{{date}}', '')\
-                           .replace('{{content}}', html_with_date)\
-                           .replace('{{slug}}', slug)\
-                           .replace('{{description}}', metadata['description'])\
-                           .replace('{{url}}', f'https://prabhchintan.com/{slug}')\
-                           .replace('{{year}}', '')\
-                           .replace('{{critical_css}}', self.critical_css)\
-                           .replace('https://prabhchintan.com/profile.png', 'https://prabhchintan.com/profile.png')
-        
+            return f'<p class="post-date"><em>{date}</em></p>' + html
 
-        
-        # Output to site directory
-        output_file = self.site_dir / f'{slug}.html'
-        
-        # Apply universal footer
-        page_html = self.apply_universal_footer(page_html)
-        
-        with open(output_file, 'w', encoding='utf-8') as f:
-            f.write(page_html)
-        
-        print(f"Built page: /{slug}")
-        return {
-            'slug': slug,
-            'title': actual_title,
-            'description': metadata['description'],
-            'url': f'/{slug}'
-        }
-    
-    def build_post(self, md_file, is_draft=False):
-        """Build individual post with full SEO and performance optimization"""
+    def build_post(self, md_file):
+        """Build individual blog post"""
         filename = Path(md_file).name
         date, slug = self.parse_filename(filename)
-        
+
         if not date:
-            print(f"Error: {filename} doesn't follow format (YYYY_MM_DD_slug.md)")
+            log.error(f"{filename} doesn't follow YYYY_MM_DD_slug.md format")
             return None
-        
-        # Read markdown
+
+        # Check for slug collision
+        self.check_slug_collision(slug, filename)
+
+        # Read and process markdown
         with open(md_file, 'r', encoding='utf-8') as f:
             content = f.read()
-        
-        # Convert to HTML with extensions
-        html = markdown.markdown(content, extensions=['codehilite', 'fenced_code'])
-        
-        # Extract metadata
-        metadata = self.extract_metadata(content)
-        
-        # Extract actual heading for title
-        actual_title = self.extract_first_heading(content)
-        if not actual_title:
-            actual_title = slug.replace('_', ' ').title()  # Fallback to slug
-        
-        # Load template
-        template_file = self.templates_dir / 'post.html'
-        if not template_file.exists():
-            self.create_post_template()
-        
-        with open(template_file, 'r', encoding='utf-8') as f:
-            template = f.read()
-        
-        # Generate content
-        formatted_date = date.strftime("%B %d, %Y")
-        html_with_date = self.insert_date_after_first_heading(html, formatted_date)
-        
-        # Replace placeholders
-        post_html = template.replace('{{title}}', actual_title)\
-                           .replace('{{date}}', formatted_date)\
-                           .replace('{{content}}', html_with_date)\
-                           .replace('{{slug}}', slug)\
-                           .replace('{{description}}', metadata['description'])\
-                           .replace('{{url}}', f'https://prabhchintan.com/{slug}')\
-                           .replace('{{year}}', str(date.year))\
-                           .replace('{{critical_css}}', self.critical_css)
-        
 
-        
-        # Output to site directory
-        output_file = self.site_dir / f'{slug}.html'
-        
-        # Apply universal footer
-        post_html = self.apply_universal_footer(post_html)
-        
-        with open(output_file, 'w', encoding='utf-8') as f:
+        # Process rich embeds
+        content = RichEmbedProcessor.process(content)
+
+        # Convert to HTML
+        html = markdown.markdown(content, extensions=['codehilite', 'fenced_code'])
+
+        # Extract metadata
+        description = self.extract_metadata(content)
+        title = self.extract_title(content) or slug.replace('_', ' ').title()
+
+        # Load template
+        with open(self.templates_dir / 'post.html', 'r', encoding='utf-8') as f:
+            template = f.read()
+
+        # Insert date
+        formatted_date = date.strftime("%B %d, %Y")
+        html_with_date = self.insert_date_after_heading(html, formatted_date)
+
+        # Replace placeholders
+        post_html = (template
+            .replace('{{title}}', title)
+            .replace('{{date}}', formatted_date)
+            .replace('{{content}}', html_with_date)
+            .replace('{{slug}}', slug)
+            .replace('{{description}}', description)
+            .replace('{{url}}', f'https://prabhchintan.com/{slug}')
+            .replace('{{year}}', str(date.year))
+            .replace('{{critical_css}}', self.critical_css))
+
+        # Apply footer
+        post_html = self.apply_footer(post_html)
+
+        # Write output
+        with open(self.site_dir / f'{slug}.html', 'w', encoding='utf-8') as f:
             f.write(post_html)
-        
-        print(f"Built: /{slug}")
+
+        log.info(f"Built post: /{slug}")
+
         return {
             'slug': slug,
-            'title': actual_title,
+            'title': title,
             'date': date,
             'formatted_date': formatted_date,
-            'description': metadata['description'],
+            'description': description,
             'url': f'/{slug}'
         }
-    
+
+    def build_page(self, md_file):
+        """Build standalone page"""
+        filename = Path(md_file).name
+        slug = filename.replace('.md', '')
+
+        # Check for slug collision
+        self.check_slug_collision(slug, filename)
+
+        # Read and process markdown
+        with open(md_file, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        # Process rich embeds
+        content = RichEmbedProcessor.process(content)
+
+        # Convert to HTML
+        html = markdown.markdown(content, extensions=['codehilite', 'fenced_code'])
+
+        # Extract metadata
+        description = self.extract_metadata(content)
+        title = self.extract_title(content) or slug.replace('_', ' ').title()
+
+        # Load template
+        with open(self.templates_dir / 'post.html', 'r', encoding='utf-8') as f:
+            template = f.read()
+
+        # Replace placeholders (no date for pages)
+        page_html = (template
+            .replace('{{title}}', title)
+            .replace('{{date}}', '')
+            .replace('{{content}}', html)
+            .replace('{{slug}}', slug)
+            .replace('{{description}}', description)
+            .replace('{{url}}', f'https://prabhchintan.com/{slug}')
+            .replace('{{year}}', '')
+            .replace('{{critical_css}}', self.critical_css))
+
+        # Apply footer with home navigation
+        page_html = self.apply_footer(page_html, is_post=False)
+
+        # Write output
+        with open(self.site_dir / f'{slug}.html', 'w', encoding='utf-8') as f:
+            f.write(page_html)
+
+        log.info(f"Built page: /{slug}")
+
+        return {
+            'slug': slug,
+            'title': title,
+            'description': description,
+            'url': f'/{slug}'
+        }
+
     def process_redirects(self):
-        """Process redirects.txt and generate redirect HTML files"""
+        """Process redirects.txt"""
         redirects_file = Path('redirects.txt')
         if not redirects_file.exists():
             return
-        
+
         with open(redirects_file, 'r', encoding='utf-8') as f:
             for line in f:
                 line = line.strip()
                 if not line or '->' not in line:
                     continue
-                
+
                 source, target = [part.strip() for part in line.split('->', 1)]
-                
-                # Generate redirect HTML
+
                 redirect_html = f'''<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <title>Redirecting...</title>
 <meta http-equiv="refresh" content="0; url={target}">
-
-<!-- Social Media Meta Tags -->
-<meta property="og:title" content="Redirecting...">
-<meta property="og:description" content="Redirecting to {target}">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://prabhchintan.com/{source}">
-<meta property="og:site_name" content="prabhchintan.com">
-<meta property="og:image" content="https://prabhchintan.com/profile.png">
-<meta property="og:image:width" content="400">
-<meta property="og:image:height" content="400">
-
-<!-- Twitter Card Meta Tags -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Redirecting...">
-<meta name="twitter:description" content="Redirecting to {target}">
-<meta name="twitter:url" content="https://prabhchintan.com/{source}">
-<meta name="twitter:image" content="https://prabhchintan.com/profile.png">
-
-<!-- Canonical URL -->
 <link rel="canonical" href="{target}">
 </head>
 <body>
 <p>Redirecting to <a href="{target}">{target}</a>...</p>
 </body>
 </html>'''
-                
-                # Intentionally do not apply site footer to redirect pages
-                
-                # Write to site directory
+
                 with open(self.site_dir / f'{source}.html', 'w', encoding='utf-8') as f:
                     f.write(redirect_html)
-                
-                print(f"Redirect: /{source} -> {target}")
-    
-    def update_blog_index(self, posts):
-        """Generate blog index with all posts"""
+
+                log.info(f"Redirect: /{source} → {target}")
+
+    def build_blog_index(self, posts):
+        """Generate blog index"""
         blog_html = f'''<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -290,82 +318,58 @@ class UltimateBlog:
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="alternate icon" href="favicon.ico">
 <link rel="apple-touch-icon" href="favicon.svg">
-<meta name="description" content="Personal blog by Randhawa Inc. featuring thoughts on technology, design, and life.">
-
-<!-- Social Media Meta Tags -->
+<meta name="description" content="Personal blog by Randhawa Inc.">
 <meta property="og:title" content="Blog - Randhawa Inc.">
-<meta property="og:description" content="Personal blog by Randhawa Inc. featuring thoughts on technology, design, and life.">
+<meta property="og:description" content="Personal blog by Randhawa Inc.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://prabhchintan.com/blog">
-<meta property="og:site_name" content="prabhchintan.com">
 <meta property="og:image" content="https://prabhchintan.com/profile.png">
-<meta property="og:image:width" content="400">
-<meta property="og:image:height" content="400">
-
-<!-- Twitter Card Meta Tags -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Blog - Randhawa Inc.">
-<meta name="twitter:description" content="Personal blog by Randhawa Inc. featuring thoughts on technology, design, and life.">
-<meta name="twitter:url" content="https://prabhchintan.com/blog">
-<meta name="twitter:image" content="https://prabhchintan.com/profile.png">
-
-<!-- Canonical URL -->
 <link rel="canonical" href="https://prabhchintan.com/blog">
 <link rel="alternate" type="application/rss+xml" title="RSS" href="/feed.xml">
 <style>{self.critical_css}</style>
 </head>
 <body>
 <h1>Blog</h1>'''
-        
+
         for post in posts:
             blog_html += f'''
 <p><a href="{post['url']}">{post['title']}</a><br>
 <em>{post['formatted_date']}</em></p>'''
-        
-        blog_html += '''
-<br>
-<p><a href="/">← Home</a></p>
-</body>
-</html>'''
-        
-        # Apply universal footer
-        blog_html = self.apply_universal_footer(blog_html)
-        
+
+        blog_html += '\n<br>\n<p><a href="/">← Home</a></p>\n</body>\n</html>'
+
+        blog_html = self.apply_footer(blog_html)
+
         with open(self.site_dir / 'blog.html', 'w', encoding='utf-8') as f:
             f.write(blog_html)
-        
-        print(f"Updated blog index with {len(posts)} posts")
-    
-    def generate_sitemap(self, posts, pages=None):
+
+        log.info(f"Built blog index with {len(posts)} posts")
+
+    def generate_sitemap(self, posts, pages):
         """Generate XML sitemap"""
         sitemap = '''<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url><loc>https://prabhchintan.com/</loc><priority>1.0</priority></url>
 <url><loc>https://prabhchintan.com/blog</loc><priority>0.9</priority></url>
 <url><loc>https://prabhchintan.com/certifications</loc><priority>0.8</priority></url>'''
-        
+
         for post in posts:
-            sitemap += f'''
-<url><loc>https://prabhchintan.com{post['url']}</loc><lastmod>{post['date'].strftime('%Y-%m-%d')}</lastmod><priority>0.8</priority></url>'''
-        
-        # Add standalone pages to sitemap (excluding noindex pages)
+            sitemap += f'\n<url><loc>https://prabhchintan.com{post["url"]}</loc><lastmod>{post["date"].strftime("%Y-%m-%d")}</lastmod><priority>0.8</priority></url>'
+
         if pages:
             for page in pages:
-                sitemap += f'''
-<url><loc>https://prabhchintan.com{page['url']}</loc><priority>0.7</priority></url>'''
-        
+                sitemap += f'\n<url><loc>https://prabhchintan.com{page["url"]}</loc><priority>0.7</priority></url>'
+
         sitemap += '\n</urlset>'
-        
+
         with open(self.site_dir / 'sitemap.xml', 'w', encoding='utf-8') as f:
             f.write(sitemap)
-        
-        print("Generated sitemap.xml")
-    
+
+        log.info("Generated sitemap.xml")
+
     def generate_rss(self, posts):
         """Generate RSS feed"""
-        # Filter out hidden posts
-        visible_posts = posts[:10]
-        
         rss = f'''<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
@@ -374,8 +378,8 @@ class UltimateBlog:
 <atom:link href="https://prabhchintan.com/feed.xml" rel="self" type="application/rss+xml"/>
 <description>Personal blog featuring thoughts on technology, design, and life.</description>
 <lastBuildDate>{datetime.now().strftime('%a, %d %b %Y %H:%M:%S +0000')}</lastBuildDate>'''
-        
-        for post in visible_posts:
+
+        for post in posts[:10]:
             rss += f'''
 <item>
 <title>{post['title']}</title>
@@ -384,45 +388,22 @@ class UltimateBlog:
 <pubDate>{post['date'].strftime('%a, %d %b %Y 12:00:00 +0000')}</pubDate>
 <guid>https://prabhchintan.com{post['url']}</guid>
 </item>'''
-        
-        rss += '''
-</channel>
-</rss>'''
-        
+
+        rss += '\n</channel>\n</rss>'
+
         with open(self.site_dir / 'feed.xml', 'w', encoding='utf-8') as f:
             f.write(rss)
-        
-        print("Generated RSS feed")
-    
+
+        log.info("Generated RSS feed")
+
     def create_404_page(self):
         """Generate 404 page"""
-        html_404 = f'''<!DOCTYPE html>
+        html = f'''<!DOCTYPE html>
 <html lang="en">
 <head>
 <title>404 - Page Not Found</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="alternate icon" href="favicon.ico">
-<link rel="apple-touch-icon" href="favicon.svg">
-
-<!-- Social Media Meta Tags -->
-<meta property="og:title" content="404 - Page Not Found">
-<meta property="og:description" content="The page you're looking for doesn't exist.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://prabhchintan.com/404">
-<meta property="og:site_name" content="prabhchintan.com">
-<meta property="og:image" content="https://prabhchintan.com/profile.png">
-<meta property="og:image:width" content="400">
-<meta property="og:image:height" content="400">
-
-<!-- Twitter Card Meta Tags -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="404 - Page Not Found">
-<meta name="twitter:description" content="The page you're looking for doesn't exist.">
-<meta name="twitter:url" content="https://prabhchintan.com/404">
-<meta name="twitter:image" content="https://prabhchintan.com/profile.png">
-
-<!-- Canonical URL -->
 <link rel="canonical" href="https://prabhchintan.com/404">
 <style>{self.critical_css}</style>
 </head>
@@ -431,147 +412,73 @@ class UltimateBlog:
 <p>Page not found. <a href="/">Go home</a> or check out the <a href="/blog">blog</a>.</p>
 </body>
 </html>'''
-        
-        # Apply universal footer
-        html_404 = self.apply_universal_footer(html_404)
-        
+
+        html = self.apply_footer(html)
+
         with open(self.site_dir / '404.html', 'w', encoding='utf-8') as f:
-            f.write(html_404)
-        
-        print("Generated 404 page")
-    
-    def create_post_ui(self):
-        """Generate the post UI for mobile blogging"""
-        app_file = self.templates_dir / 'post_app.html'
-        if not app_file.exists():
-            return
-            
-        with open(app_file, 'r', encoding='utf-8') as f:
-            app_html = f.read()
-            
-        # Replace the comment placeholder with a full style block
-        css_block = f'<style>{self.critical_css}</style>'
-        app_html = app_html.replace('<!-- CRITICAL_CSS_PLACEHOLDER -->', css_block)
-        
-        # Apply universal footer
-        app_html = self.apply_universal_footer(app_html)
-        
-        with open(self.site_dir / 'post.html', 'w', encoding='utf-8') as f:
-            f.write(app_html)
-            
-        print("Generated post UI at /post.html")
+            f.write(html)
 
-    def create_delete_ui(self):
-        """Generate the delete UI for removing posts via GitHub API"""
-        app_file = self.templates_dir / 'delete_app.html'
-        if not app_file.exists():
-            return
-        
-        with open(app_file, 'r', encoding='utf-8') as f:
-            app_html = f.read()
-        
-        # Replace the comment placeholder with a full style block
-        css_block = f'<style>{self.critical_css}</style>'
-        app_html = app_html.replace('<!-- CRITICAL_CSS_PLACEHOLDER -->', css_block)
-        
-        # Apply universal footer
-        app_html = self.apply_universal_footer(app_html)
-        
-        with open(self.site_dir / 'delete.html', 'w', encoding='utf-8') as f:
-            f.write(app_html)
-        
-        print("Generated delete UI at /delete.html")
+        log.info("Generated 404 page")
 
-    def create_edit_ui(self):
-        """Generate the edit UI for updating posts via GitHub API"""
-        app_file = self.templates_dir / 'edit_app.html'
-        if not app_file.exists():
+    def create_admin_ui(self, ui_type):
+        """Generate admin UI (post/edit/delete)"""
+        template_file = self.templates_dir / f'{ui_type}_app.html'
+        if not template_file.exists():
+            log.warning(f"{ui_type}_app.html not found, skipping")
             return
-        
-        with open(app_file, 'r', encoding='utf-8') as f:
-            app_html = f.read()
-        
-        # Replace the comment placeholder with a full style block
-        css_block = f'<style>{self.critical_css}</style>'
-        app_html = app_html.replace('<!-- CRITICAL_CSS_PLACEHOLDER -->', css_block)
-        
-        # Apply universal footer
-        app_html = self.apply_universal_footer(app_html)
-        
-        with open(self.site_dir / 'edit.html', 'w', encoding='utf-8') as f:
-            f.write(app_html)
-        
-        print("Generated edit UI at /edit.html")
 
-    def create_post_template(self):
-        """Create optimized post template if it doesn't exist"""
-        template = '''<!DOCTYPE html>
-<html lang="en">
-<head>
-<title>{{title}} - Randhawa Inc.</title>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="{{description}}">
-<meta property="og:title" content="{{title}}">
-<meta property="og:description" content="{{description}}">
-<meta property="og:type" content="article">
-<meta property="og:url" content="{{url}}">
-<meta property="article:published_time" content="{{year}}">
-<link rel="canonical" href="{{url}}">
-</head>
-<body>
-{{content}}
-<p><a href="/">← Home</a></p>
-</body>
-</html>'''
-        
-        with open(self.templates_dir / 'post.html', 'w', encoding='utf-8') as f:
-            f.write(template)
-    
+        with open(template_file, 'r', encoding='utf-8') as f:
+            html = f.read()
+
+        # Inject critical CSS
+        css_block = f'<style>{self.critical_css}</style>'
+        html = html.replace('<!-- CRITICAL_CSS_PLACEHOLDER -->', css_block)
+
+        # Apply footer
+        html = self.apply_footer(html)
+
+        with open(self.site_dir / f'{ui_type}.html', 'w', encoding='utf-8') as f:
+            f.write(html)
+
+        log.info(f"Generated /{ui_type} UI")
+
     def optimize_index(self):
-        """Create optimized index.html with critical CSS inlined and universal footer"""
-        # Read current index.html
+        """Optimize homepage with critical CSS"""
         with open('index.html', 'r', encoding='utf-8') as f:
             content = f.read()
-        
-        # Remove the existing style tag and link to global.css
-        content = re.sub(r'<link rel="stylesheet" href="global\.css">', '', content)
-        content = re.sub(r'<style>.*?</style>', '', content, flags=re.DOTALL)
-        
-        # Add the critical CSS directly to the head
-        content = content.replace('</head>', f'<style>{self.critical_css}</style></head>')
-        
-        # Ensure universal footer is always present
-        universal_footer = '<footer>Randhawa Inc. 1309 Coffeen Ave Ste 1386 Sheridan, WY</footer>'
-        
-        # Replace any existing footer with the universal one
-        content = re.sub(r'<footer>.*?</footer>', universal_footer, content, flags=re.DOTALL)
-        
-        # If no footer exists, add it before closing body tag
-        if universal_footer not in content:
-            content = content.replace('</body>', f'{universal_footer}\n</body>')
-        
-        # Write to site directory only (do not mutate source index.html)
+
+        # Inject critical CSS
+        content = content.replace('</head>', f'<style>{self.critical_css}</style>\n</head>')
+
+        # Apply footer
+        content = self.apply_footer(content)
+
         with open(self.site_dir / 'index.html', 'w', encoding='utf-8') as f:
             f.write(content)
-        
-        print("Optimized index.html for single-packet delivery with universal footer")
-    
-    def apply_universal_footer(self, html_content):
-        """Apply universal footer to any HTML content"""
-        universal_footer = '<footer>Randhawa Inc. 1309 Coffeen Ave Ste 1386 Sheridan, WY</footer>'
-        
-        # Replace any existing footer with the universal one
-        html_content = re.sub(r'<footer>.*?</footer>', universal_footer, html_content, flags=re.DOTALL)
-        
-        # If no footer exists, add it before closing body tag
-        if universal_footer not in html_content:
-            html_content = html_content.replace('</body>', f'{universal_footer}\n</body>')
-        
-        return html_content
-    
+
+        log.info("Optimized index.html")
+
+    def apply_footer(self, html, is_post=True):
+        """Apply universal footer with context-aware navigation"""
+        footer = '<footer>Randhawa Inc. 1309 Coffeen Ave Ste 1386 Sheridan, WY</footer>'
+
+        # Remove existing footer if present
+        html = re.sub(r'<footer>.*?</footer>', '', html, flags=re.DOTALL)
+
+        # Add navigation if not present
+        if is_post and '← Back to Blog' not in html:
+            nav = '<p><a href="/blog">← Back to Blog</a></p>'
+            html = html.replace('</body>', f'{nav}\n{footer}\n</body>')
+        elif not is_post and '← Home' not in html:
+            nav = '<p><a href="/">← Home</a></p>'
+            html = html.replace('</body>', f'{nav}\n{footer}\n</body>')
+        else:
+            html = html.replace('</body>', f'{footer}\n</body>')
+
+        return html
+
     def generate_robots_txt(self):
-        """Generate robots.txt allowing all crawlers with sitemap reference"""
+        """Generate robots.txt"""
         robots = '''User-agent: *
 Allow: /
 
@@ -579,38 +486,41 @@ Sitemap: https://prabhchintan.com/sitemap.xml
 '''
         with open(self.site_dir / 'robots.txt', 'w', encoding='utf-8') as f:
             f.write(robots)
-        print("Generated robots.txt")
-    
-    
+
+        log.info("Generated robots.txt")
+
     def copy_assets(self):
-        """Copy only necessary assets to site directory"""
-        # Copy profile image
-        if Path('profile.png').exists():
-            shutil.copy2('profile.png', self.site_dir / 'profile.png')
-        
-        # Copy favicon files
-        if Path('favicon.svg').exists():
-            shutil.copy2('favicon.svg', self.site_dir / 'favicon.svg')
-        if Path('favicon.ico').exists():
-            shutil.copy2('favicon.ico', self.site_dir / 'favicon.ico')
-        
-        # Copy certifications directory if it exists
+        """Copy assets to site directory"""
+        # Copy images
+        for asset in ['profile.png', 'favicon.svg', 'favicon.ico']:
+            if Path(asset).exists():
+                shutil.copy2(asset, self.site_dir / asset)
+
+        # Copy certifications
         certs_dir = Path('certifications/')
         if certs_dir.exists():
-            site_certs_dir = self.site_dir / 'certifications'
-            site_certs_dir.mkdir(exist_ok=True)
+            site_certs = self.site_dir / 'certifications'
+            site_certs.mkdir(exist_ok=True)
             for cert_file in certs_dir.glob('*'):
-                if cert_file.is_file():
-                    shutil.copy2(cert_file, site_certs_dir / cert_file.name)
-        
-        print("Copied assets to site/")
-    
+                if cert_file.is_file() and cert_file.suffix.lower() in ['.pdf', '.jpg', '.jpeg', '.png']:
+                    shutil.copy2(cert_file, site_certs / cert_file.name)
+
+        # Copy media directory
+        if self.media_dir.exists():
+            site_media = self.site_dir / 'media'
+            site_media.mkdir(exist_ok=True)
+            for media_file in self.media_dir.glob('*'):
+                if media_file.is_file():
+                    shutil.copy2(media_file, site_media / media_file.name)
+
+        log.info("Copied assets to site/")
+
     def generate_certifications_page(self):
-        """Generate certifications page with static list organized by organization"""
-        certs_dir = Path('certifications/')
+        """Generate certifications showcase"""
         certs_mapping_file = Path('certifications.txt')
-        
-        # Load certifications mapping
+        certs_dir = Path('certifications/')
+
+        # Load mapping
         certs_mapping = {}
         if certs_mapping_file.exists():
             with open(certs_mapping_file, 'r', encoding='utf-8') as f:
@@ -625,29 +535,27 @@ Sitemap: https://prabhchintan.com/sitemap.xml
                             'display_name': display_name,
                             'organization': organization
                         }
-        
-        # Collect certifications from files
+
+        # Collect certifications
         certifications = []
         if certs_dir.exists():
             for cert_file in certs_dir.glob('*'):
                 if cert_file.is_file() and cert_file.suffix.lower() in ['.pdf', '.jpg', '.jpeg', '.png']:
                     filename = cert_file.name
-                    
-                    # Use mapping if available, otherwise default
+
                     if filename in certs_mapping:
                         display_name = certs_mapping[filename]['display_name']
                         organization = certs_mapping[filename]['organization']
                     else:
-                        # Default: convert filename to readable name
-                        display_name = filename.replace(cert_file.suffix, '').replace('_', ' ').replace('-', ' ').title()
+                        display_name = filename.replace(cert_file.suffix, '').replace('_', ' ').title()
                         organization = 'Misc'
-                    
+
                     certifications.append({
                         'filename': filename,
                         'display_name': display_name,
                         'organization': organization
                     })
-        
+
         # Group by organization
         org_groups = {}
         for cert in certifications:
@@ -655,54 +563,30 @@ Sitemap: https://prabhchintan.com/sitemap.xml
             if org not in org_groups:
                 org_groups[org] = []
             org_groups[org].append(cert)
-        
-        # Sort organizations alphabetically
-        sorted_orgs = sorted(org_groups.keys())
-        
+
         # Generate HTML
         certs_html = ''
-        for org in sorted_orgs:
+        for org in sorted(org_groups.keys()):
             certs_html += f'<h2>{org}</h2>\n'
-            # Sort certifications within each org by display name length
             org_certs = sorted(org_groups[org], key=lambda x: len(x['display_name']))
             for cert in org_certs:
-                # URL-encode the filename for the href (handle all special characters)
                 url_filename = quote(cert["filename"], safe='')
                 certs_html += f'<p><a href="/certifications/{url_filename}" target="_blank">{cert["display_name"]}</a></p>\n'
             certs_html += '\n'
-        
+
         if not certifications:
-            certs_html = '<p>No certifications found. Add files to the certifications/ directory.</p>'
-        
-        # Full page HTML
+            certs_html = '<p>No certifications found.</p>'
+
+        # Full page
         page_html = f'''<!DOCTYPE html>
 <html lang="en">
 <head>
 <title>Certifications - Randhawa Inc.</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="alternate icon" href="favicon.ico">
-<link rel="apple-touch-icon" href="favicon.svg">
-<meta name="description" content="Professional certifications and qualifications of Prabhchintan Randhawa">
-
-<!-- Social Media Meta Tags -->
+<meta name="description" content="Professional certifications of Prabhchintan Randhawa">
 <meta property="og:title" content="Certifications - Randhawa Inc.">
-<meta property="og:description" content="Professional certifications and qualifications of Prabhchintan Randhawa">
-<meta property="og:type" content="website">
 <meta property="og:url" content="https://prabhchintan.com/certifications">
-<meta property="og:site_name" content="prabhchintan.com">
-<meta property="og:image" content="https://prabhchintan.com/profile.png">
-<meta property="og:image:width" content="400">
-<meta property="og:image:height" content="400">
-
-<!-- Twitter Card Meta Tags -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Certifications - Randhawa Inc.">
-<meta name="twitter:description" content="Professional certifications and qualifications of Prabhchintan Randhawa">
-<meta name="twitter:url" content="https://prabhchintan.com/certifications">
-<meta name="twitter:image" content="https://prabhchintan.com/profile.png">
-
-<!-- Canonical URL -->
 <link rel="canonical" href="https://prabhchintan.com/certifications">
 <style>{self.critical_css}</style>
 </head>
@@ -711,23 +595,22 @@ Sitemap: https://prabhchintan.com/sitemap.xml
 
 {certs_html}
 
-<p><a href="/">← Back to home</a></p>
-
 </body>
 </html>'''
-        
-        # Apply universal footer
-        page_html = self.apply_universal_footer(page_html)
-        
+
+        page_html = self.apply_footer(page_html, is_post=False)
+
         with open(self.site_dir / 'certifications.html', 'w', encoding='utf-8') as f:
             f.write(page_html)
-    
-    def validate_urls(self):
-        """Basic URL validation to prevent redirect loops"""
+
+        log.info("Generated certifications page")
+
+    def validate_redirects(self):
+        """Validate redirect configuration"""
         redirects_file = Path('redirects.txt')
         if not redirects_file.exists():
             return True
-        
+
         redirects = {}
         with open(redirects_file, 'r', encoding='utf-8') as f:
             for line in f:
@@ -736,7 +619,7 @@ Sitemap: https://prabhchintan.com/sitemap.xml
                     continue
                 source, target = [part.strip() for part in line.split('->', 1)]
                 redirects[source] = target
-        
+
         # Check for loops
         for source in redirects:
             visited = set()
@@ -745,102 +628,92 @@ Sitemap: https://prabhchintan.com/sitemap.xml
                 visited.add(current)
                 current = redirects[current]
                 if current == source:
-                    print(f"⚠️  Warning: Redirect loop detected starting from {source}")
+                    log.error(f"Redirect loop detected: {source}")
                     return False
-        
-        print("URL validation passed")
+
+        log.info("Redirect validation passed")
         return True
-    
-    def publish(self):
-        """Build and publish everything"""
-        print("Building site...")
-        
-        # Setup (and clean site dir)
+
+    def git_commit_and_push(self):
+        """Commit and push changes if not in CI"""
+        if os.environ.get('SKIP_GIT_PUSH', '0').lower() in ('1', 'true', 'yes'):
+            log.info("Skipping git operations (CI mode)")
+            return
+
+        subprocess.run(['git', 'add', '.'], check=False)
+        status = subprocess.run(['git', 'status', '--porcelain'], capture_output=True, text=True)
+
+        if not status.stdout.strip():
+            log.info("No changes to commit")
+            return
+
+        # Commit message
+        commit_msg = f"Site update: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        subprocess.run(['git', 'commit', '-m', commit_msg], check=False)
+
+        try:
+            # Sync with remote
+            subprocess.run(['git', 'fetch'], check=False)
+            behind_status = subprocess.run(['git', 'status', '-sb'], capture_output=True, text=True)
+
+            if 'behind' in behind_status.stdout:
+                log.info("Syncing with remote...")
+                subprocess.run(['git', 'pull', '--rebase'], check=True)
+
+            subprocess.run(['git', 'push'], check=True)
+            log.info("Published to GitHub")
+        except subprocess.CalledProcessError as e:
+            log.error(f"Git push failed: {e}")
+
+    def build(self):
+        """Main build pipeline"""
+        log.info("Building site...")
+
         self.setup_dirs()
         self.clean_site_dir()
 
-        # Validate
-        if not self.validate_urls():
-            print("❌ URL validation failed. Please fix redirect loops.")
-            return
-        
-        # Build all posts
+        if not self.validate_redirects():
+            log.error("Build aborted due to redirect errors")
+            sys.exit(1)
+
+        # Build posts
         posts = []
-        for file in self.posts_dir.glob('*.md'):
-            if file.name.endswith('.md'):
-                post_data = self.build_post(str(file))
-                if post_data:
-                    posts.append(post_data)
-        
-        # Build all standalone pages
+        for file in sorted(self.posts_dir.glob('*.md')):
+            post_data = self.build_post(str(file))
+            if post_data:
+                posts.append(post_data)
+
+        # Build pages
         pages = []
-        for file in self.pages_dir.glob('*.md'):
-            if file.name.endswith('.md'):
-                page_data = self.build_page(str(file))
-                if page_data:
-                    pages.append(page_data)
-        
-        # Sort chronologically (newest first)
+        for file in sorted(self.pages_dir.glob('*.md')):
+            page_data = self.build_page(str(file))
+            if page_data:
+                pages.append(page_data)
+
+        # Sort posts by date (newest first)
         posts.sort(key=lambda x: x['date'], reverse=True)
-        
+
         # Generate everything
-        self.update_blog_index(posts)
+        self.build_blog_index(posts)
         self.process_redirects()
         self.generate_sitemap(posts, pages)
         self.generate_rss(posts)
         self.generate_robots_txt()
         self.create_404_page()
         self.optimize_index()
-        self.copy_assets()
-        
-        # Generate certifications page
         self.generate_certifications_page()
-        print("Generated certifications page")
-        
-        self.create_post_ui()
-        self.create_delete_ui()
-        self.create_edit_ui()
-        
-        # Git operations (optional; commit only if there are changes)
-        # When running in CI with SKIP_GIT_PUSH set, we skip all git operations here
-        # and let the GitHub Actions workflow handle commit/push explicitly.
-        if os.environ.get('SKIP_GIT_PUSH', '0').lower() in ('1', 'true', 'yes'):
-            print("Skipping git commit and push (SKIP_GIT_PUSH is set; assuming CI will handle git).")
-        else:
-            subprocess.run(['git', 'add', '.'])
-            status = subprocess.run(['git', 'status', '--porcelain'], capture_output=True, text=True)
-            if status.stdout.strip():
-                commit_message = os.environ.get('CURSOR_CONTEXT', '').strip()
-                if not commit_message:
-                    commit_message = os.environ.get('CI_COMMIT_MESSAGE', '').strip()
-                if not commit_message:
-                    # Fallback to a concise default
-                    commit_message = f"Site update: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
-                subprocess.run(['git', 'commit', '-m', commit_message])
-                try:
-                    # Check if we are behind origin/main (usually because of a previous GitHub Action run)
-                    subprocess.run(['git', 'fetch'], check=False)
-                    behind_status = subprocess.run(['git', 'status', '-sb'], capture_output=True, text=True)
-                    if 'behind' in behind_status.stdout:
-                        print("Local branch is behind remote. Syncing with origin/main (favoring local build)...")
-                        # Use 'ours' strategy to avoid conflicts on auto-generated site/ files
-                        subprocess.run(['git', 'merge', 'origin/main', '--no-edit', '-s', 'recursive', '-X', 'ours'], check=True)
-                        
-                    subprocess.run(['git', 'push'], check=True)
-                    print("Published changes to GitHub")
-                except subprocess.CalledProcessError as e:
-                    print(f"❌ Git push failed with return code {e.returncode}")
-                    print("Please check your git configuration and connection.")
-            else:
-                print("No changes to publish")
+        self.copy_assets()
+
+        # Generate admin UIs
+        for ui_type in ['post', 'edit', 'delete']:
+            self.create_admin_ui(ui_type)
+
+        # Git operations
+        self.git_commit_and_push()
+
+        log.info("✓ Build complete")
+
 
 if __name__ == "__main__":
-    blog = UltimateBlog()
-    if len(sys.argv) > 1:
-        if sys.argv[1] == 'draft':
-            # Handle draft posts in future
-            pass
-        else:
-            blog.build_post(sys.argv[1])
-    else:
-        blog.publish() 
+    builder = BlogBuilder()
+    builder.build()

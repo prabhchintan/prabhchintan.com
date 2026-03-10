@@ -6,9 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
-    <link rel="icon" href="favicon.svg" type="image/svg+xml">
-    <link rel="alternate icon" href="favicon.ico">
-    <link rel="apple-touch-icon" href="favicon.svg">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <!-- CRITICAL_CSS_PLACEHOLDER -->
     <style>
         .form-group {
@@ -18,38 +16,39 @@
         label {
             display: block;
             margin-bottom: 0.4em;
-            color: #666;
+            color: var(--meta-color);
             font-size: 0.8em;
             letter-spacing: 0.08em;
             text-transform: uppercase
         }
 
-        input[type="text"] {
+        input[type="text"],
+        input[type="password"] {
             width: 100%;
             padding: 0.4em 0;
             border: none;
-            border-bottom: 1px solid #eee;
-            font-family: inherit;
-            font-size: 1em;
+            border-bottom: 1px solid var(--border-color);
+            font-family: var(--font-body);
+            font-size: 1.2em;
             box-sizing: border-box;
             background: transparent;
-            color: #1a1a1a;
+            color: var(--text-color);
             transition: border-color 0.3s
         }
 
-        input[type="text"]:focus {
+        input:focus {
             outline: none;
-            border-bottom-color: #1a1a1a
+            border-bottom-color: var(--text-color)
         }
 
         button {
-            background: #1a1a1a;
-            color: #fff;
-            border: 1px solid #1a1a1a;
+            background: var(--text-color);
+            color: var(--bg-color);
+            border: 1px solid var(--text-color);
             font-size: 1em;
             border-radius: 4px;
             cursor: pointer;
-            font-family: inherit;
+            font-family: var(--font-body);
             transition: all 0.2s;
             width: 100%;
             padding: 0.8em;
@@ -58,28 +57,69 @@
 
         button:hover {
             background: transparent;
-            color: #1a1a1a
+            color: var(--text-color)
         }
 
         button:disabled {
-            background: #f5f5f5;
-            color: #bbb;
-            border-color: #eee;
+            opacity: 0.4;
             cursor: not-allowed
         }
 
+        button.danger {
+            background: #a33b32;
+            border-color: #a33b32;
+            color: white
+        }
+
+        button.danger:hover {
+            background: transparent;
+            color: #a33b32
+        }
+
+        #matches {
+            margin: 1em 0
+        }
+
+        .match-item {
+            padding: 0.8em;
+            margin: 0.5em 0;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s
+        }
+
+        .match-item:hover {
+            border-color: var(--text-color);
+            background: rgba(0, 0, 0, 0.02)
+        }
+
+        .match-item.selected {
+            border-color: #a33b32;
+            background: rgba(163, 59, 50, 0.05)
+        }
+
+        .match-title {
+            font-weight: bold;
+            margin-bottom: 0.3em
+        }
+
+        .match-meta {
+            font-size: 0.85em;
+            color: var(--meta-color)
+        }
+
         #status {
-            margin-top: 1.5em;
+            margin-top: 1em;
             padding: 1em;
             border-radius: 4px;
             font-size: 0.9em;
             text-align: center;
-            opacity: 0;
-            transition: opacity 0.3s
+            display: none
         }
 
         #status.show {
-            opacity: 1
+            display: block
         }
 
         .success {
@@ -98,111 +138,173 @@
 
 <body>
     <div class="profile-pic">
-        <img src="profile.png" alt="Profile" width="80" height="80">
+        <img src="/profile.png" alt="Profile" width="80" height="80">
     </div>
 
     <h1>Delete Post</h1>
 
-    <form id="deleteForm">
-        <div class="form-group">
-            <label for="filename">Filename to delete</label>
-            <input type="text" id="filename" required placeholder="2026_03_10_americano.md" autocomplete="off">
-        </div>
-        <div class="form-group">
-            <label for="password">Authentication</label>
-            <input type="text" id="password" required placeholder="Personal Access Token" autocomplete="off"
-                autocorrect="off" autocapitalize="none">
-        </div>
-        <button type="submit" id="submitBtn">Delete</button>
-    </form>
+    <div class="form-group">
+        <label for="search">Search</label>
+        <input type="text" id="search" placeholder="Type to search posts..." autocomplete="off">
+    </div>
+
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" required placeholder="Admin password" autocomplete="off">
+    </div>
+
+    <button id="searchBtn">Search Posts</button>
+
+    <div id="matches"></div>
+
+    <button id="deleteBtn" class="danger" style="display:none" disabled>Delete Selected Post</button>
 
     <div id="status"></div>
 
     <script>
-        document.getElementById('deleteForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const filenameInput = document.getElementById('filename').value.trim();
-            const token = document.getElementById('password').value.trim();
-            const submitBtn = document.getElementById('submitBtn');
+        const API = '/api';
+        let allPosts = [];
+        let selectedPost = null;
+
+        // Fuzzy search function
+        function fuzzyMatch(query, text) {
+            query = query.toLowerCase();
+            text = text.toLowerCase();
+            let queryIndex = 0;
+            for (let i = 0; i < text.length && queryIndex < query.length; i++) {
+                if (text[i] === query[queryIndex]) queryIndex++;
+            }
+            return queryIndex === query.length;
+        }
+
+        // Search handler
+        document.getElementById('searchBtn').addEventListener('click', async () => {
+            const password = document.getElementById('password').value;
+            const searchQuery = document.getElementById('search').value.trim();
+            const matchesDiv = document.getElementById('matches');
             const statusDiv = document.getElementById('status');
 
-            if (!filenameInput) {
-                statusDiv.innerHTML = 'Please enter a filename.';
+            if (!password) {
+                statusDiv.innerHTML = '✗ Please enter password';
                 statusDiv.className = 'error show';
                 return;
             }
 
-            if (!confirm('Are you sure you want to delete ' + filenameInput + '?')) {
-                return;
-            }
-
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Deleting...';
-            statusDiv.className = '';
-
-            const REPO_OWNER = 'prabhchintan';
-            const REPO_NAME = 'prabhchintan.com';
+            statusDiv.style.display = 'none';
+            matchesDiv.innerHTML = '<p>Loading posts...</p>';
 
             try {
-                const apiBase = 'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/posts/';
-                const fileUrl = apiBase + encodeURIComponent(filenameInput);
+                const response = await fetch(`${API}/posts`);
+                const result = await response.json();
 
-                // First, fetch the file to get its SHA
-                let response = await fetch(fileUrl, {
-                    headers: {
-                        'Authorization': 'token ' + token,
-                        'Accept': 'application/vnd.github+json'
-                    }
-                });
+                if (!response.ok) {
+                    throw new Error(result.error || 'Failed to load posts');
+                }
 
-                if (response.status === 404) {
-                    statusDiv.innerHTML = 'File not found. Double-check the filename.';
-                    statusDiv.className = 'error show';
+                allPosts = result.posts;
+
+                // Filter posts if search query provided
+                let filtered = allPosts;
+                if (searchQuery) {
+                    filtered = allPosts.filter(post =>
+                        fuzzyMatch(searchQuery, post.slug) ||
+                        fuzzyMatch(searchQuery, post.filename) ||
+                        post.date.includes(searchQuery)
+                    );
+                }
+
+                if (filtered.length === 0) {
+                    matchesDiv.innerHTML = '<p>No posts found.</p>';
                     return;
                 }
 
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({}));
-                    throw new Error(errorData.message || 'Failed to fetch file metadata');
-                }
+                // Display matches
+                matchesDiv.innerHTML = filtered.map((post, idx) => `
+                    <div class="match-item" data-idx="${idx}" data-filename="${post.filename}">
+                        <div class="match-title">${post.slug}</div>
+                        <div class="match-meta">${post.date} • ${post.filename}</div>
+                    </div>
+                `).join('');
 
-                const fileData = await response.json();
-                const sha = fileData.sha;
-
-                // Now send the DELETE request
-                response = await fetch(fileUrl, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': 'token ' + token,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/vnd.github+json'
-                    },
-                    body: JSON.stringify({
-                        message: 'Mobile delete: ' + filenameInput,
-                        sha: sha,
-                        branch: 'main'
-                    })
+                // Add click handlers
+                document.querySelectorAll('.match-item').forEach(item => {
+                    item.addEventListener('click', () => selectPost(item.dataset.filename));
                 });
 
+            } catch (error) {
+                matchesDiv.innerHTML = '';
+                statusDiv.innerHTML = '✗ ' + error.message;
+                statusDiv.className = 'error show';
+            }
+        });
+
+        // Select post for deletion
+        function selectPost(filename) {
+            selectedPost = filename;
+
+            // Update UI
+            document.querySelectorAll('.match-item').forEach(item => {
+                item.classList.toggle('selected', item.dataset.filename === filename);
+            });
+
+            // Show delete button
+            const deleteBtn = document.getElementById('deleteBtn');
+            deleteBtn.style.display = 'block';
+            deleteBtn.disabled = false;
+        }
+
+        // Delete handler
+        document.getElementById('deleteBtn').addEventListener('click', async () => {
+            if (!selectedPost) return;
+
+            const password = document.getElementById('password').value;
+            const deleteBtn = document.getElementById('deleteBtn');
+            const statusDiv = document.getElementById('status');
+
+            if (!confirm(`⚠️ Permanently delete ${selectedPost}?\n\nThis action cannot be undone.`)) {
+                return;
+            }
+
+            deleteBtn.disabled = true;
+            deleteBtn.textContent = 'Deleting...';
+            statusDiv.style.display = 'none';
+
+            try {
+                const response = await fetch(`${API}/delete`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password, filename: selectedPost })
+                });
+
+                const result = await response.json();
+
                 if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({}));
-                    throw new Error(errorData.message || 'Failed to delete file');
+                    throw new Error(result.error || 'Delete failed');
                 }
 
-                statusDiv.innerHTML = 'Deleted. Site updates in ~60 seconds.';
-                statusDiv.className = 'success show';
-                document.getElementById('filename').value = '';
+                // Remove from UI
+                document.querySelector(`[data-filename="${selectedPost}"]`).remove();
 
+                statusDiv.innerHTML = '✓ Deleted. Site updates in ~60 seconds.';
+                statusDiv.className = 'success show';
+
+                selectedPost = null;
+                deleteBtn.style.display = 'none';
             } catch (error) {
-                statusDiv.innerHTML = 'Error: ' + error.message;
+                statusDiv.innerHTML = '✗ ' + error.message;
                 statusDiv.className = 'error show';
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Delete';
+                deleteBtn.disabled = false;
+                deleteBtn.textContent = 'Delete Selected Post';
+            }
+        });
+
+        // Real-time fuzzy search
+        document.getElementById('search').addEventListener('input', () => {
+            if (allPosts.length > 0) {
+                document.getElementById('searchBtn').click();
             }
         });
     </script>
 </body>
 
 </html>
-

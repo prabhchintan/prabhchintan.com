@@ -2,13 +2,11 @@
 <html lang="en">
 
 <head>
-    <title>Post - Randhawa Inc.</title>
+    <title>Draft - Randhawa Inc.</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
-    <link rel="icon" href="favicon.svg" type="image/svg+xml">
-    <link rel="alternate icon" href="favicon.ico">
-    <link rel="apple-touch-icon" href="favicon.svg">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <style>:root {
     --bg-color: #ffffff;
     --text-color: #1a1a1a;
@@ -16,11 +14,9 @@
     --link-color: #0066cc;
     --meta-color: #666666;
     --border-color: #eeeeee;
-
     --font-ui: Baskerville, "Times New Roman", Times, serif;
     --font-body: Baskerville, "Times New Roman", Times, serif;
 }
-
 
 body {
     max-width: 600px;
@@ -28,7 +24,7 @@ body {
     padding: 4em 1.5em;
     font-family: var(--font-body);
     font-size: 1em;
-    line-height: 1.5;
+    line-height: 1.6;
     color: var(--text-color);
     background-color: var(--bg-color);
     -webkit-font-smoothing: antialiased;
@@ -46,15 +42,16 @@ body {
     object-fit: cover;
     display: block;
     margin: 0 auto;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .site-headline {
     font-family: var(--font-body);
-    font-size: 2em;
+    font-size: 2.5em;
     font-weight: normal;
     text-align: center;
     margin: 0 0 0.8em 0;
+    letter-spacing: -0.01em;
 }
 
 h1,
@@ -66,27 +63,32 @@ h6 {
     font-family: var(--font-ui);
     color: var(--heading-color);
     font-weight: normal;
-    line-height: 1.25;
+    line-height: 1.3;
 }
 
 h1 {
     font-size: 2em;
-    margin: 0 0 0.8em 0;
+    margin: 0 0 0.5em 0;
     letter-spacing: -0.02em;
 }
 
 h2 {
     font-size: 1.4em;
-    margin: 1.5em 0 0.5em 0;
+    margin: 1.8em 0 0.6em 0;
 }
 
 h3 {
     font-size: 1.15em;
-    margin: 1.4em 0 0.5em 0;
+    margin: 1.6em 0 0.5em 0;
 }
 
 p {
-    margin: 0.9em 0;
+    margin: 1em 0;
+}
+
+.post-date {
+    margin-top: -0.5em;
+    margin-bottom: 2em;
 }
 
 a {
@@ -96,42 +98,42 @@ a {
 }
 
 a:hover {
-    text-decoration: none;
     opacity: 0.7;
 }
 
 ul,
 ol {
-    margin: 0.9em 0;
-    padding-left: 1.5em;
+    margin: 1em 0;
+    padding-left: 1.8em;
 }
 
 li {
-    margin: 0.4em 0;
+    margin: 0.5em 0;
 }
 
 blockquote {
     border-left: 3px solid var(--link-color);
     margin: 1.5em 0;
-    padding-left: 1em;
+    padding-left: 1.2em;
     font-style: italic;
     color: var(--meta-color);
 }
 
 code {
-    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
     font-size: 0.9em;
-    background: rgba(127, 127, 127, 0.12);
+    background: rgba(0, 0, 0, 0.05);
     padding: 0.2em 0.4em;
     border-radius: 3px;
 }
 
 pre {
-    background: rgba(127, 127, 127, 0.08);
-    padding: 1em;
+    background: rgba(0, 0, 0, 0.04);
+    padding: 1.2em;
     overflow-x: auto;
     border-radius: 6px;
-    margin: 1.5em 0;
+    margin: 1.8em 0;
+    border: 1px solid var(--border-color);
 }
 
 pre code {
@@ -140,9 +142,23 @@ pre code {
     color: var(--text-color);
 }
 
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 2em auto;
+    border-radius: 4px;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 3em 0;
+}
+
 footer {
     text-align: center;
-    margin-top: 3.5em;
+    margin-top: 4em;
     padding-top: 2em;
     border-top: 1px solid var(--border-color);
     color: var(--meta-color);
@@ -158,6 +174,14 @@ footer {
     h1 {
         font-size: 1.8em;
     }
+
+    h2 {
+        font-size: 1.3em;
+    }
+
+    h3 {
+        font-size: 1.1em;
+    }
 }</style>
     <style>
         .form-group {
@@ -167,65 +191,60 @@ footer {
         label {
             display: block;
             margin-bottom: 0.4em;
-            color: #666;
+            color: var(--meta-color);
             font-size: 0.8em;
             letter-spacing: 0.08em;
             text-transform: uppercase
         }
 
-        input[type="text"] {
+        input[type="text"],
+        input[type="password"] {
             width: 100%;
             padding: 0.4em 0;
             border: none;
-            border-bottom: 1px solid #eee;
-            font-family: inherit;
+            border-bottom: 1px solid var(--border-color);
+            font-family: var(--font-body);
             font-size: 1.2em;
             box-sizing: border-box;
             background: transparent;
-            color: #1a1a1a;
+            color: var(--text-color);
             transition: border-color 0.3s
         }
 
-        input[type="text"]:focus {
+        input:focus {
             outline: none;
-            border-bottom-color: #1a1a1a
+            border-bottom-color: var(--text-color)
         }
 
         textarea {
             width: 100%;
             min-height: 280px;
             padding: 1em;
-            border: 1px solid #eee;
+            border: 1px solid var(--border-color);
             border-radius: 4px;
-            font-family: inherit;
+            font-family: var(--font-body);
             font-size: 1em;
             line-height: 1.6;
             box-sizing: border-box;
             background: transparent;
-            color: #1a1a1a;
+            color: var(--text-color);
             resize: vertical;
             transition: border-color 0.3s
         }
 
         textarea:focus {
             outline: none;
-            border-color: #1a1a1a
-        }
-
-        input::placeholder,
-        textarea::placeholder {
-            color: #ccc;
-            font-style: italic
+            border-color: var(--text-color)
         }
 
         button {
-            background: #1a1a1a;
-            color: #fff;
-            border: 1px solid #1a1a1a;
+            background: var(--text-color);
+            color: var(--bg-color);
+            border: 1px solid var(--text-color);
             font-size: 1em;
             border-radius: 4px;
             cursor: pointer;
-            font-family: inherit;
+            font-family: var(--font-body);
             transition: all 0.2s;
             width: 100%;
             padding: 0.8em;
@@ -234,28 +253,39 @@ footer {
 
         button:hover {
             background: transparent;
-            color: #1a1a1a
+            color: var(--text-color)
         }
 
         button:disabled {
-            background: #f5f5f5;
-            color: #bbb;
-            border-color: #eee;
+            opacity: 0.4;
             cursor: not-allowed
         }
 
+        .media-upload {
+            margin: 1em 0;
+            padding: 1em;
+            border: 2px dashed var(--border-color);
+            border-radius: 4px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s
+        }
+
+        .media-upload:hover {
+            border-color: var(--text-color)
+        }
+
         #status {
-            margin-top: 1.5em;
+            margin-top: 1em;
             padding: 1em;
             border-radius: 4px;
             font-size: 0.9em;
             text-align: center;
-            opacity: 0;
-            transition: opacity 0.3s
+            display: none
         }
 
         #status.show {
-            opacity: 1
+            display: block
         }
 
         .success {
@@ -269,12 +299,40 @@ footer {
             color: #a33b32;
             border: 1px solid #f5d5d3
         }
+
+        .warning {
+            background: #fff9e6;
+            color: #8b6914;
+            border: 1px solid #f5e5b3
+        }
+
+        .slug-preview {
+            margin-top: 0.5em;
+            padding: 0.5em;
+            font-size: 0.85em;
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.02);
+            color: var(--meta-color);
+            font-family: monospace;
+        }
+
+        .slug-collision {
+            background: #fef0ef;
+            color: #a33b32;
+            border: 1px solid #f5d5d3;
+        }
+
+        .slug-available {
+            background: #f0f7f0;
+            color: #2b703e;
+            border: 1px solid #d4e8d4;
+        }
     </style>
 </head>
 
 <body>
     <div class="profile-pic">
-        <img src="profile.png" alt="Profile" width="80" height="80">
+        <img src="/profile.png" alt="Profile" width="80" height="80">
     </div>
 
     <h1>Draft</h1>
@@ -284,98 +342,184 @@ footer {
             <label for="title">Title</label>
             <input type="text" id="title" required placeholder="A brief thought..." autocomplete="off">
         </div>
+
         <div class="form-group">
-            <label for="customSlug">Custom Slug (Optional)</label>
-            <input type="text" id="customSlug" placeholder="e.g. my-custom-url" autocomplete="off">
+            <label for="slug">Custom Slug (Optional)</label>
+            <input type="text" id="slug" placeholder="custom-url" autocomplete="off">
+            <div id="slugPreview" class="slug-preview" style="display:none"></div>
         </div>
+
         <div class="form-group">
             <label for="content">Body</label>
             <textarea id="content" required placeholder="Just write..."></textarea>
         </div>
-        <div class="form-group">
-            <label for="password">Authentication</label>
-            <input type="text" id="password" required placeholder="Personal Access Token" autocomplete="off"
-                autocorrect="off" autocapitalize="none">
+
+        <div class="media-upload" onclick="document.getElementById('mediaFile').click()">
+            <input type="file" id="mediaFile" style="display:none" accept="image/*,video/*,audio/*">
+            <p>📎 Attach Media</p>
+            <small id="uploadStatus"></small>
         </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" required placeholder="Admin password" autocomplete="off">
+        </div>
+
         <button type="submit" id="submitBtn">Publish</button>
     </form>
 
     <div id="status"></div>
 
     <script>
+        const API = '/api';
+        let existingSlugs = new Set();
+
+        // Load existing posts on page load
+        async function loadExistingSlugs() {
+            try {
+                const response = await fetch(`${API}/posts`);
+                const result = await response.json();
+                if (response.ok && result.posts) {
+                    existingSlugs = new Set(result.posts.map(p => p.slug));
+                }
+            } catch (error) {
+                console.log('Could not load existing posts for collision detection');
+            }
+        }
+
+        // Generate slug from text
+        function generateSlug(text) {
+            return text.toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/(^-|-$)/g, '');
+        }
+
+        // Check slug and show preview
+        function checkSlugCollision() {
+            const title = document.getElementById('title').value.trim();
+            const customSlug = document.getElementById('slug').value.trim();
+            const preview = document.getElementById('slugPreview');
+
+            if (!title && !customSlug) {
+                preview.style.display = 'none';
+                return;
+            }
+
+            // Generate what the slug would be
+            let computedSlug = customSlug || generateSlug(title);
+
+            // Add timestamp if no custom slug (matching server logic)
+            if (!customSlug && title) {
+                const now = new Date();
+                const time = String(now.getHours()).padStart(2, '0') +
+                           String(now.getMinutes()).padStart(2, '0');
+                computedSlug = `${computedSlug}-${time}`;
+            }
+
+            preview.style.display = 'block';
+
+            // Check for collision
+            if (existingSlugs.has(computedSlug)) {
+                preview.className = 'slug-preview slug-collision';
+                preview.innerHTML = `⚠️ Slug collision: <code>${computedSlug}</code> already exists<br>` +
+                                  `<small>Choose a different title or add a custom slug</small>`;
+                document.getElementById('submitBtn').disabled = true;
+            } else {
+                preview.className = 'slug-preview slug-available';
+                preview.innerHTML = `✓ Will be published as: <code>/${computedSlug}</code>`;
+                document.getElementById('submitBtn').disabled = false;
+            }
+        }
+
+        // Initialize
+        loadExistingSlugs();
+
+        // Real-time slug checking
+        document.getElementById('title').addEventListener('input', checkSlugCollision);
+        document.getElementById('slug').addEventListener('input', checkSlugCollision);
+
+        // Media upload handler
+        document.getElementById('mediaFile').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const password = document.getElementById('password').value;
+            if (!password) {
+                alert('Please enter password first');
+                return;
+            }
+
+            const uploadStatus = document.getElementById('uploadStatus');
+            uploadStatus.textContent = 'Uploading...';
+
+            try {
+                const formData = new FormData();
+                formData.append('password', password);
+                formData.append('file', file);
+
+                const response = await fetch(`${API}/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'Upload failed');
+                }
+
+                // Insert markdown at cursor position
+                const textarea = document.getElementById('content');
+                const cursorPos = textarea.selectionStart;
+                const textBefore = textarea.value.substring(0, cursorPos);
+                const textAfter = textarea.value.substring(cursorPos);
+                textarea.value = textBefore + '\n\n' + result.markdown + '\n\n' + textAfter;
+
+                uploadStatus.textContent = '✓ Uploaded';
+                setTimeout(() => uploadStatus.textContent = '', 2000);
+            } catch (error) {
+                uploadStatus.textContent = '✗ ' + error.message;
+            }
+        });
+
+        // Post form handler
         document.getElementById('postForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const titleInput = document.getElementById('title').value.trim();
-            const slugInput = document.getElementById('customSlug').value.trim();
-            const contentInput = document.getElementById('content').value.trim();
-            const token = document.getElementById('password').value.trim();
+
+            const title = document.getElementById('title').value.trim();
+            const slug = document.getElementById('slug').value.trim();
+            const content = document.getElementById('content').value.trim();
+            const password = document.getElementById('password').value;
             const submitBtn = document.getElementById('submitBtn');
             const statusDiv = document.getElementById('status');
 
             submitBtn.disabled = true;
             submitBtn.textContent = 'Publishing...';
             statusDiv.className = '';
-
-            const REPO_OWNER = 'prabhchintan';
-            const REPO_NAME = 'prabhchintan.com';
+            statusDiv.style.display = 'none';
 
             try {
-                const now = new Date();
-                const year = now.getFullYear();
-                const month = String(now.getMonth() + 1).padStart(2, '0');
-                const day = String(now.getDate()).padStart(2, '0');
-
-                let slug = slugInput || titleInput;
-                slug = slug.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-                if (!slug) slug = 'post-' + year + month + day;
-                if (!slugInput) {
-                    slug = slug + '-' + String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0');
-                }
-
-                const filename = year + '_' + month + '_' + day + '_' + slug + '.md';
-
-                function processText(text) {
-                    var ytRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?[^\s]*v=|youtu\.be\/)([a-zA-Z0-9_-]{11})[^\s]*/g;
-                    var result = text.replace(ytRegex, function (match, videoId) {
-                        return '\n\n<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;border-radius:8px;margin:1.5em 0"><iframe src="https://www.youtube.com/embed/' + videoId + '" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0" allowfullscreen></iframe></div>\n\n';
-                    });
-                    var urlRegex = /(?<!src="|href="|\]\()(https?:\/\/[^\s]+)/ig;
-                    result = result.replace(urlRegex, '[$1]($1)');
-                    return result;
-                }
-
-                var processed = processText(contentInput);
-                var markdownContent = '# ' + titleInput + '\n\n' + processed;
-                var encodedContent = btoa(unescape(encodeURIComponent(markdownContent)));
-
-                var apiUrl = 'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/posts/' + filename;
-
-                var response = await fetch(apiUrl, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': 'token ' + token,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message: 'Mobile publish: ' + titleInput,
-                        content: encodedContent,
-                        branch: 'main'
-                    })
+                const response = await fetch(`${API}/publish`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password, title, slug, content })
                 });
 
+                const result = await response.json();
+
                 if (!response.ok) {
-                    var errorData = await response.json();
-                    throw new Error(errorData.message || 'Failed to publish');
+                    throw new Error(result.error || 'Publish failed');
                 }
 
-                statusDiv.innerHTML = 'Published. Site updates in ~60 seconds.';
+                statusDiv.innerHTML = `✓ Published as ${result.filename}<br>Site updates in ~60 seconds.`;
                 statusDiv.className = 'success show';
-                document.getElementById('title').value = '';
-                document.getElementById('customSlug').value = '';
-                document.getElementById('content').value = '';
 
+                // Clear form
+                document.getElementById('title').value = '';
+                document.getElementById('slug').value = '';
+                document.getElementById('content').value = '';
             } catch (error) {
-                statusDiv.innerHTML = 'Error: ' + error.message;
+                statusDiv.innerHTML = '✗ ' + error.message;
                 statusDiv.className = 'error show';
             } finally {
                 submitBtn.disabled = false;
@@ -383,6 +527,7 @@ footer {
             }
         });
     </script>
+<p><a href="/blog">← Back to Blog</a></p>
 <footer>Randhawa Inc. 1309 Coffeen Ave Ste 1386 Sheridan, WY</footer>
 </body>
 
