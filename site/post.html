@@ -263,16 +263,112 @@ footer {
 
         .media-upload {
             margin: 1em 0;
-            padding: 1em;
+            padding: 1.5em;
             border: 2px dashed var(--border-color);
-            border-radius: 4px;
+            border-radius: 8px;
             text-align: center;
             cursor: pointer;
-            transition: border-color 0.3s
+            transition: all 0.3s;
+            background: rgba(0, 0, 0, 0.01)
         }
 
         .media-upload:hover {
-            border-color: var(--text-color)
+            border-color: var(--text-color);
+            background: rgba(0, 0, 0, 0.02)
+        }
+
+        .media-upload.dragover {
+            border-color: var(--link-color);
+            background: rgba(0, 102, 204, 0.05)
+        }
+
+        .media-upload-icon {
+            font-size: 2em;
+            margin-bottom: 0.3em
+        }
+
+        .media-upload-text {
+            color: var(--meta-color);
+            font-size: 0.9em
+        }
+
+        .attached-files {
+            margin: 1em 0;
+            padding: 0;
+            list-style: none
+        }
+
+        .attached-file {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.8em;
+            margin: 0.5em 0;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.01)
+        }
+
+        .attached-file-info {
+            display: flex;
+            align-items: center;
+            gap: 0.8em;
+            flex: 1
+        }
+
+        .attached-file-preview {
+            width: 50px;
+            height: 50px;
+            border-radius: 4px;
+            object-fit: cover;
+            background: rgba(0, 0, 0, 0.05)
+        }
+
+        .attached-file-name {
+            font-size: 0.9em;
+            color: var(--text-color)
+        }
+
+        .attached-file-size {
+            font-size: 0.8em;
+            color: var(--meta-color)
+        }
+
+        .remove-file {
+            background: transparent;
+            border: none;
+            color: #a33b32;
+            cursor: pointer;
+            font-size: 1.2em;
+            padding: 0.2em 0.5em;
+            width: auto
+        }
+
+        .remove-file:hover {
+            background: rgba(163, 59, 50, 0.1)
+        }
+
+        .slug-preview {
+            margin-top: 0.5em;
+            padding: 0.8em;
+            font-size: 0.85em;
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.02);
+            color: var(--meta-color);
+            font-family: monospace;
+            display: none
+        }
+
+        .slug-collision {
+            background: #fef0ef;
+            color: #a33b32;
+            border: 1px solid #f5d5d3
+        }
+
+        .slug-available {
+            background: #f0f7f0;
+            color: #2b703e;
+            border: 1px solid #d4e8d4
         }
 
         #status {
@@ -300,32 +396,10 @@ footer {
             border: 1px solid #f5d5d3
         }
 
-        .warning {
-            background: #fff9e6;
-            color: #8b6914;
-            border: 1px solid #f5e5b3
-        }
-
-        .slug-preview {
-            margin-top: 0.5em;
-            padding: 0.5em;
-            font-size: 0.85em;
-            border-radius: 4px;
-            background: rgba(0, 0, 0, 0.02);
-            color: var(--meta-color);
-            font-family: monospace;
-        }
-
-        .slug-collision {
-            background: #fef0ef;
-            color: #a33b32;
-            border: 1px solid #f5d5d3;
-        }
-
-        .slug-available {
-            background: #f0f7f0;
-            color: #2b703e;
-            border: 1px solid #d4e8d4;
+        .info {
+            background: #f0f7ff;
+            color: #0066cc;
+            border: 1px solid #d4e8f5
         }
     </style>
 </head>
@@ -346,7 +420,7 @@ footer {
         <div class="form-group">
             <label for="slug">Custom Slug (Optional)</label>
             <input type="text" id="slug" placeholder="custom-url" autocomplete="off">
-            <div id="slugPreview" class="slug-preview" style="display:none"></div>
+            <div id="slugPreview" class="slug-preview"></div>
         </div>
 
         <div class="form-group">
@@ -354,14 +428,19 @@ footer {
             <textarea id="content" required placeholder="Just write..."></textarea>
         </div>
 
-        <div class="media-upload" onclick="document.getElementById('mediaFile').click()">
-            <input type="file" id="mediaFile" style="display:none" accept="image/*,video/*,audio/*">
-            <p>📎 Attach Media</p>
-            <small id="uploadStatus"></small>
+        <div class="media-upload" id="mediaUpload">
+            <input type="file" id="mediaFile" style="display:none" accept="image/*,video/*,audio/*" multiple>
+            <div class="media-upload-icon">📎</div>
+            <div class="media-upload-text">
+                <strong>Attach Media</strong><br>
+                <small>Click or drag files here (images, videos, audio)</small>
+            </div>
         </div>
 
+        <ul id="attachedFiles" class="attached-files"></ul>
+
         <div class="form-group">
-            <label for="password">Password</label>
+            <label for="password">Password (required to publish)</label>
             <input type="password" id="password" required placeholder="Admin password" autocomplete="off">
         </div>
 
@@ -373,8 +452,10 @@ footer {
     <script>
         const API = '/api';
         let existingSlugs = new Set();
+        let attachedFiles = [];
+        let uploadedMediaUrls = [];
 
-        // Load existing posts on page load
+        // Load existing posts for collision detection
         async function loadExistingSlugs() {
             try {
                 const response = await fetch(`${API}/posts`);
@@ -383,18 +464,14 @@ footer {
                     existingSlugs = new Set(result.posts.map(p => p.slug));
                 }
             } catch (error) {
-                console.log('Could not load existing posts for collision detection');
+                console.log('Could not load existing posts');
             }
         }
 
-        // Generate slug from text
         function generateSlug(text) {
-            return text.toLowerCase()
-                .replace(/[^a-z0-9]+/g, '-')
-                .replace(/(^-|-$)/g, '');
+            return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
         }
 
-        // Check slug and show preview
         function checkSlugCollision() {
             const title = document.getElementById('title').value.trim();
             const customSlug = document.getElementById('slug').value.trim();
@@ -405,24 +482,19 @@ footer {
                 return;
             }
 
-            // Generate what the slug would be
             let computedSlug = customSlug || generateSlug(title);
 
-            // Add timestamp if no custom slug (matching server logic)
             if (!customSlug && title) {
                 const now = new Date();
-                const time = String(now.getHours()).padStart(2, '0') +
-                           String(now.getMinutes()).padStart(2, '0');
+                const time = String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0');
                 computedSlug = `${computedSlug}-${time}`;
             }
 
             preview.style.display = 'block';
 
-            // Check for collision
             if (existingSlugs.has(computedSlug)) {
                 preview.className = 'slug-preview slug-collision';
-                preview.innerHTML = `⚠️ Slug collision: <code>${computedSlug}</code> already exists<br>` +
-                                  `<small>Choose a different title or add a custom slug</small>`;
+                preview.innerHTML = `⚠️ Slug collision: <code>${computedSlug}</code> already exists<br><small>Choose a different title or add a custom slug</small>`;
                 document.getElementById('submitBtn').disabled = true;
             } else {
                 preview.className = 'slug-preview slug-available';
@@ -431,56 +503,93 @@ footer {
             }
         }
 
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+
+        function addFileToList(file) {
+            const filesList = document.getElementById('attachedFiles');
+            const li = document.createElement('li');
+            li.className = 'attached-file';
+            li.dataset.filename = file.name;
+
+            const info = document.createElement('div');
+            info.className = 'attached-file-info';
+
+            // Show image preview if it's an image
+            if (file.type.startsWith('image/')) {
+                const preview = document.createElement('img');
+                preview.className = 'attached-file-preview';
+                preview.src = URL.createObjectURL(file);
+                info.appendChild(preview);
+            }
+
+            const details = document.createElement('div');
+            const name = document.createElement('div');
+            name.className = 'attached-file-name';
+            name.textContent = file.name;
+            const size = document.createElement('div');
+            size.className = 'attached-file-size';
+            size.textContent = formatFileSize(file.size);
+            details.appendChild(name);
+            details.appendChild(size);
+
+            info.appendChild(details);
+            li.appendChild(info);
+
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'remove-file';
+            removeBtn.innerHTML = '×';
+            removeBtn.type = 'button';
+            removeBtn.onclick = () => {
+                attachedFiles = attachedFiles.filter(f => f.name !== file.name);
+                li.remove();
+            };
+            li.appendChild(removeBtn);
+
+            filesList.appendChild(li);
+        }
+
+        // Drag and drop support
+        const uploadArea = document.getElementById('mediaUpload');
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = Array.from(e.dataTransfer.files);
+            files.forEach(file => {
+                attachedFiles.push(file);
+                addFileToList(file);
+            });
+        });
+
+        uploadArea.addEventListener('click', () => {
+            document.getElementById('mediaFile').click();
+        });
+
+        document.getElementById('mediaFile').addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            files.forEach(file => {
+                attachedFiles.push(file);
+                addFileToList(file);
+            });
+        });
+
         // Initialize
         loadExistingSlugs();
-
-        // Real-time slug checking
         document.getElementById('title').addEventListener('input', checkSlugCollision);
         document.getElementById('slug').addEventListener('input', checkSlugCollision);
-
-        // Media upload handler
-        document.getElementById('mediaFile').addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const password = document.getElementById('password').value;
-            if (!password) {
-                alert('Please enter password first');
-                return;
-            }
-
-            const uploadStatus = document.getElementById('uploadStatus');
-            uploadStatus.textContent = 'Uploading...';
-
-            try {
-                const formData = new FormData();
-                formData.append('password', password);
-                formData.append('file', file);
-
-                const response = await fetch(`${API}/upload`, {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const result = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(result.error || 'Upload failed');
-                }
-
-                // Insert markdown at cursor position
-                const textarea = document.getElementById('content');
-                const cursorPos = textarea.selectionStart;
-                const textBefore = textarea.value.substring(0, cursorPos);
-                const textAfter = textarea.value.substring(cursorPos);
-                textarea.value = textBefore + '\n\n' + result.markdown + '\n\n' + textAfter;
-
-                uploadStatus.textContent = '✓ Uploaded';
-                setTimeout(() => uploadStatus.textContent = '', 2000);
-            } catch (error) {
-                uploadStatus.textContent = '✗ ' + error.message;
-            }
-        });
 
         // Post form handler
         document.getElementById('postForm').addEventListener('submit', async (e) => {
@@ -499,10 +608,51 @@ footer {
             statusDiv.style.display = 'none';
 
             try {
+                // Upload media files first
+                let finalContent = content;
+
+                if (attachedFiles.length > 0) {
+                    statusDiv.innerHTML = `Uploading ${attachedFiles.length} file(s)...`;
+                    statusDiv.className = 'info show';
+
+                    for (let i = 0; i < attachedFiles.length; i++) {
+                        const file = attachedFiles[i];
+
+                        // Check file size (100MB GitHub limit, but warn at 25MB for Cloudflare)
+                        if (file.size > 25 * 1024 * 1024) {
+                            throw new Error(`${file.name} is too large (${formatFileSize(file.size)}). Maximum size: 25MB. For larger files, use external hosting.`);
+                        }
+
+                        statusDiv.innerHTML = `Uploading ${i + 1}/${attachedFiles.length}: ${file.name}...`;
+
+                        const formData = new FormData();
+                        formData.append('password', password);
+                        formData.append('file', file);
+
+                        const uploadResponse = await fetch(`${API}/upload`, {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                        const uploadResult = await uploadResponse.json();
+
+                        if (!uploadResponse.ok) {
+                            throw new Error(`Failed to upload ${file.name}: ${uploadResult.error}`);
+                        }
+
+                        // Add markdown to content
+                        finalContent += '\n\n' + uploadResult.markdown;
+                        uploadedMediaUrls.push(uploadResult.url);
+                    }
+                }
+
+                // Now publish the post
+                statusDiv.innerHTML = 'Publishing post...';
+
                 const response = await fetch(`${API}/publish`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ password, title, slug, content })
+                    body: JSON.stringify({ password, title, slug, content: finalContent })
                 });
 
                 const result = await response.json();
@@ -518,6 +668,11 @@ footer {
                 document.getElementById('title').value = '';
                 document.getElementById('slug').value = '';
                 document.getElementById('content').value = '';
+                document.getElementById('password').value = '';
+                attachedFiles = [];
+                document.getElementById('attachedFiles').innerHTML = '';
+                document.getElementById('slugPreview').style.display = 'none';
+
             } catch (error) {
                 statusDiv.innerHTML = '✗ ' + error.message;
                 statusDiv.className = 'error show';
@@ -527,7 +682,7 @@ footer {
             }
         });
     </script>
-<p><a href="/blog">← Back to Blog</a></p>
+<p><a href="/blog">← Blog</a></p>
 <footer>Randhawa Inc. 1309 Coffeen Ave Ste 1386 Sheridan, WY</footer>
 </body>
 

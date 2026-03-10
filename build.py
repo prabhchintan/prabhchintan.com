@@ -39,7 +39,7 @@ class RichEmbedProcessor:
 
         def replace(match):
             video_id = match.group(1)
-            return f'\n\n<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;border-radius:8px;margin:2em 0"><iframe src="https://www.youtube.com/embed/{video_id}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy"></iframe></div>\n\n'
+            return f'\n\n<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;border-radius:8px;margin:2em 0"><iframe src="https://www.youtube-nocookie.com/embed/{video_id}?rel=0" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" title="YouTube video"></iframe></div>\n\n'
 
         return re.sub(pattern, replace, text)
 
@@ -339,7 +339,8 @@ class BlogBuilder:
 
         blog_html += '\n<br>\n<p><a href="/">← Home</a></p>\n</body>\n</html>'
 
-        blog_html = self.apply_footer(blog_html)
+        # Apply footer but mark this as blog index (not a post, not a page)
+        blog_html = self.apply_footer(blog_html, is_post=False)
 
         with open(self.site_dir / 'blog.html', 'w', encoding='utf-8') as f:
             f.write(blog_html)
@@ -465,11 +466,14 @@ class BlogBuilder:
         # Remove existing footer if present
         html = re.sub(r'<footer>.*?</footer>', '', html, flags=re.DOTALL)
 
+        # Remove any existing navigation to avoid duplication
+        html = re.sub(r'<p><a href="[^"]*">← (?:Back to Blog|Home)</a></p>\s*', '', html)
+
         # Add navigation if not present
-        if is_post and '← Back to Blog' not in html:
-            nav = '<p><a href="/blog">← Back to Blog</a></p>'
+        if is_post:
+            nav = '<p><a href="/blog">← Blog</a></p>'
             html = html.replace('</body>', f'{nav}\n{footer}\n</body>')
-        elif not is_post and '← Home' not in html:
+        elif '← Home' not in html:
             nav = '<p><a href="/">← Home</a></p>'
             html = html.replace('</body>', f'{nav}\n{footer}\n</body>')
         else:
