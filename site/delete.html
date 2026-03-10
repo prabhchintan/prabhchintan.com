@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Delete Post - Randhawa Inc.</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="favicon.svg">
+    <style>:root {
+    --bg-color: #ffffff;
+    --text-color: #1a1a1a;
+    --heading-color: #111111;
+    --link-color: #0066cc;
+    --meta-color: #666666;
+    --border-color: #eeeeee;
+
+    --font-ui: Baskerville, "Times New Roman", Times, serif;
+    --font-body: Baskerville, "Times New Roman", Times, serif;
+}
+
+
+body {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 4em 1.5em;
+    font-family: var(--font-body);
+    font-size: 1em;
+    line-height: 1.5;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    -webkit-font-smoothing: antialiased;
+}
+
+.profile-pic {
+    text-align: center;
+    margin-bottom: 2em;
+}
+
+.profile-pic img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.site-headline {
+    font-family: var(--font-body);
+    font-size: 2em;
+    font-weight: normal;
+    text-align: center;
+    margin: 0 0 0.8em 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-ui);
+    color: var(--heading-color);
+    font-weight: normal;
+    line-height: 1.25;
+}
+
+h1 {
+    font-size: 2em;
+    margin: 0 0 0.8em 0;
+    letter-spacing: -0.02em;
+}
+
+h2 {
+    font-size: 1.4em;
+    margin: 1.5em 0 0.5em 0;
+}
+
+h3 {
+    font-size: 1.15em;
+    margin: 1.4em 0 0.5em 0;
+}
+
+p {
+    margin: 0.9em 0;
+}
+
+a {
+    color: var(--link-color);
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+a:hover {
+    text-decoration: none;
+    opacity: 0.7;
+}
+
+ul,
+ol {
+    margin: 0.9em 0;
+    padding-left: 1.5em;
+}
+
+li {
+    margin: 0.4em 0;
+}
+
+blockquote {
+    border-left: 3px solid var(--link-color);
+    margin: 1.5em 0;
+    padding-left: 1em;
+    font-style: italic;
+    color: var(--meta-color);
+}
+
+code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    font-size: 0.9em;
+    background: rgba(127, 127, 127, 0.12);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+}
+
+pre {
+    background: rgba(127, 127, 127, 0.08);
+    padding: 1em;
+    overflow-x: auto;
+    border-radius: 6px;
+    margin: 1.5em 0;
+}
+
+pre code {
+    background: none;
+    padding: 0;
+    color: var(--text-color);
+}
+
+footer {
+    text-align: center;
+    margin-top: 3.5em;
+    padding-top: 2em;
+    border-top: 1px solid var(--border-color);
+    color: var(--meta-color);
+    font-size: 0.85em;
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 2.5em 1.5em;
+    }
+
+    .site-headline,
+    h1 {
+        font-size: 1.8em;
+    }
+}</style>
+    <style>
+        .form-group {
+            margin-bottom: 1.5em
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.4em;
+            color: #666;
+            font-size: 0.8em;
+            letter-spacing: 0.08em;
+            text-transform: uppercase
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 0.4em 0;
+            border: none;
+            border-bottom: 1px solid #eee;
+            font-family: inherit;
+            font-size: 1em;
+            box-sizing: border-box;
+            background: transparent;
+            color: #1a1a1a;
+            transition: border-color 0.3s
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-bottom-color: #1a1a1a
+        }
+
+        button {
+            background: #1a1a1a;
+            color: #fff;
+            border: 1px solid #1a1a1a;
+            font-size: 1em;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+            width: 100%;
+            padding: 0.8em;
+            margin-top: 0.5em
+        }
+
+        button:hover {
+            background: transparent;
+            color: #1a1a1a
+        }
+
+        button:disabled {
+            background: #f5f5f5;
+            color: #bbb;
+            border-color: #eee;
+            cursor: not-allowed
+        }
+
+        #status {
+            margin-top: 1.5em;
+            padding: 1em;
+            border-radius: 4px;
+            font-size: 0.9em;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s
+        }
+
+        #status.show {
+            opacity: 1
+        }
+
+        .success {
+            background: #f0f7f0;
+            color: #2b703e;
+            border: 1px solid #d4e8d4
+        }
+
+        .error {
+            background: #fef0ef;
+            color: #a33b32;
+            border: 1px solid #f5d5d3
+        }
+    </style>
+</head>
+
+<body>
+    <div class="profile-pic">
+        <img src="profile.png" alt="Profile" width="80" height="80">
+    </div>
+
+    <h1>Delete Post</h1>
+
+    <form id="deleteForm">
+        <div class="form-group">
+            <label for="filename">Filename to delete</label>
+            <input type="text" id="filename" required placeholder="2026_03_10_americano.md" autocomplete="off">
+        </div>
+        <div class="form-group">
+            <label for="password">Authentication</label>
+            <input type="text" id="password" required placeholder="Personal Access Token" autocomplete="off"
+                autocorrect="off" autocapitalize="none">
+        </div>
+        <button type="submit" id="submitBtn">Delete</button>
+    </form>
+
+    <div id="status"></div>
+
+    <script>
+        document.getElementById('deleteForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const filenameInput = document.getElementById('filename').value.trim();
+            const token = document.getElementById('password').value.trim();
+            const submitBtn = document.getElementById('submitBtn');
+            const statusDiv = document.getElementById('status');
+
+            if (!filenameInput) {
+                statusDiv.innerHTML = 'Please enter a filename.';
+                statusDiv.className = 'error show';
+                return;
+            }
+
+            if (!confirm('Are you sure you want to delete ' + filenameInput + '?')) {
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Deleting...';
+            statusDiv.className = '';
+
+            const REPO_OWNER = 'prabhchintan';
+            const REPO_NAME = 'prabhchintan.com';
+
+            try {
+                const apiBase = 'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/posts/';
+                const fileUrl = apiBase + encodeURIComponent(filenameInput);
+
+                // First, fetch the file to get its SHA
+                let response = await fetch(fileUrl, {
+                    headers: {
+                        'Authorization': 'token ' + token,
+                        'Accept': 'application/vnd.github+json'
+                    }
+                });
+
+                if (response.status === 404) {
+                    statusDiv.innerHTML = 'File not found. Double-check the filename.';
+                    statusDiv.className = 'error show';
+                    return;
+                }
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || 'Failed to fetch file metadata');
+                }
+
+                const fileData = await response.json();
+                const sha = fileData.sha;
+
+                // Now send the DELETE request
+                response = await fetch(fileUrl, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': 'token ' + token,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/vnd.github+json'
+                    },
+                    body: JSON.stringify({
+                        message: 'Mobile delete: ' + filenameInput,
+                        sha: sha,
+                        branch: 'main'
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || 'Failed to delete file');
+                }
+
+                statusDiv.innerHTML = 'Deleted. Site updates in ~60 seconds.';
+                statusDiv.className = 'success show';
+                document.getElementById('filename').value = '';
+
+            } catch (error) {
+                statusDiv.innerHTML = 'Error: ' + error.message;
+                statusDiv.className = 'error show';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Delete';
+            }
+        });
+    </script>
+<footer>Randhawa Inc. 1309 Coffeen Ave Ste 1386 Sheridan, WY</footer>
+</body>
+
+</html>
+
