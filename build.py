@@ -106,6 +106,47 @@ class BlogBuilder:
 
         self.slug_registry = {}  # Track slugs to detect collisions
 
+        # Shared drop cap JS — randomizes font and color on each page load
+        self.drop_cap_js = """<script>
+    (function(){
+        var d=document.querySelector('.drop-cap');
+        if(!d)return;
+        var colors=[
+            'rgba(0,102,204,0.45)',   'rgba(20,80,180,0.48)',   'rgba(40,100,200,0.42)',
+            'rgba(10,70,160,0.5)',    'rgba(30,90,190,0.44)',   'rgba(50,110,210,0.46)',
+            'rgba(153,50,50,0.48)',   'rgba(170,60,60,0.45)',   'rgba(130,40,55,0.5)',
+            'rgba(185,45,45,0.42)',   'rgba(145,55,65,0.47)',   'rgba(160,40,50,0.44)',
+            'rgba(60,120,80,0.45)',   'rgba(45,130,70,0.42)',   'rgba(70,140,90,0.48)',
+            'rgba(55,145,75,0.46)',   'rgba(40,110,65,0.5)',    'rgba(75,135,85,0.44)',
+            'rgba(140,90,40,0.48)',   'rgba(160,100,30,0.45)',  'rgba(120,80,50,0.5)',
+            'rgba(175,115,35,0.42)',  'rgba(150,95,45,0.46)',   'rgba(135,85,55,0.44)',
+            'rgba(100,60,140,0.45)',  'rgba(120,70,160,0.42)',  'rgba(90,50,130,0.48)',
+            'rgba(110,65,150,0.46)',  'rgba(85,55,125,0.5)',    'rgba(130,75,170,0.44)',
+            'rgba(50,120,130,0.45)',  'rgba(40,130,140,0.42)',  'rgba(60,110,120,0.48)',
+            'rgba(45,140,135,0.46)',  'rgba(55,125,145,0.5)',   'rgba(65,115,125,0.44)',
+            'rgba(180,70,90,0.42)',   'rgba(160,55,80,0.45)',   'rgba(140,65,100,0.48)',
+            'rgba(170,60,85,0.46)',   'rgba(150,50,75,0.5)',    'rgba(190,75,95,0.44)',
+            'rgba(80,100,60,0.45)',   'rgba(90,110,50,0.42)',   'rgba(70,90,70,0.48)',
+            'rgba(85,105,55,0.46)',   'rgba(75,95,65,0.5)',     'rgba(95,115,45,0.44)',
+            'rgba(110,80,110,0.45)',  'rgba(130,70,90,0.42)',   'rgba(95,85,120,0.48)',
+            'rgba(120,75,105,0.46)',  'rgba(105,90,115,0.5)',   'rgba(115,80,100,0.44)',
+            'rgba(170,110,50,0.42)',  'rgba(180,120,60,0.48)',  'rgba(165,105,40,0.46)',
+            'rgba(60,90,150,0.45)',   'rgba(70,80,140,0.42)',   'rgba(50,100,160,0.48)',
+            'rgba(140,50,70,0.45)',   'rgba(90,130,100,0.42)',  'rgba(110,100,140,0.45)'
+        ];
+        var fonts=[
+            'AcornInitials','AngloText','ApexLake','CamelotCaps',
+            'DecoratedRoman','DejaVu','EileenCaps','ElzevierCaps',
+            'FleurCornerCaps','FlowerInitials','GothicFlourish',
+            'GoudyInitialen','PaulusFranck','Romantik','Tenderleaf',
+            'TypographerCaps','VictorianInitials','WoodcutInitials',
+            'ZallmanCaps'
+        ];
+        d.style.setProperty('--drop-cap-color',colors[Math.floor(Math.random()*colors.length)]);
+        d.style.setProperty('--drop-cap-font',fonts[Math.floor(Math.random()*fonts.length)]);
+    })();
+    </script>"""
+
     def setup_dirs(self):
         """Ensure all directories exist"""
         for dir_path in [self.posts_dir, self.pages_dir, self.media_dir,
@@ -260,7 +301,8 @@ class BlogBuilder:
             .replace('{{description}}', description)
             .replace('{{url}}', f'https://prabhchintan.com/{slug}')
             .replace('{{year}}', str(date.year))
-            .replace('{{critical_css}}', self.critical_css))
+            .replace('{{critical_css}}', self.critical_css)
+            .replace('{{drop_cap_js}}', self.drop_cap_js))
 
         # Apply footer
         post_html = self.apply_footer(post_html)
@@ -315,7 +357,8 @@ class BlogBuilder:
             .replace('{{description}}', description)
             .replace('{{url}}', f'https://prabhchintan.com/{slug}')
             .replace('{{year}}', '')
-            .replace('{{critical_css}}', self.critical_css))
+            .replace('{{critical_css}}', self.critical_css)
+            .replace('{{drop_cap_js}}', self.drop_cap_js))
 
         # Apply footer with home navigation
         page_html = self.apply_footer(page_html, is_post=False)
@@ -539,33 +582,7 @@ class BlogBuilder:
         content = self.add_drop_cap_index(content)
 
         # Add drop cap JS before </body>
-        drop_cap_js = """<script>
-    (function(){
-        var d=document.querySelector('.drop-cap');
-        if(!d)return;
-        var colors=[
-            'rgba(0,102,204,0.45)',    'rgba(20,80,180,0.48)',    'rgba(40,100,200,0.42)',
-            'rgba(153,50,50,0.48)',    'rgba(170,60,60,0.45)',    'rgba(130,40,55,0.5)',
-            'rgba(60,120,80,0.45)',    'rgba(45,130,70,0.42)',    'rgba(70,140,90,0.48)',
-            'rgba(140,90,40,0.48)',    'rgba(160,100,30,0.45)',   'rgba(120,80,50,0.5)',
-            'rgba(100,60,140,0.45)',   'rgba(120,70,160,0.42)',   'rgba(90,50,130,0.48)',
-            'rgba(50,120,130,0.45)',   'rgba(40,130,140,0.42)',   'rgba(60,110,120,0.48)',
-            'rgba(180,70,90,0.42)',    'rgba(160,55,80,0.45)',    'rgba(140,65,100,0.48)',
-            'rgba(80,100,60,0.45)',    'rgba(90,110,50,0.42)',    'rgba(70,90,70,0.48)',
-            'rgba(110,80,110,0.45)',   'rgba(130,70,90,0.42)',    'rgba(95,85,120,0.48)',
-            'rgba(170,110,50,0.42)',   'rgba(150,95,45,0.45)',    'rgba(180,120,60,0.48)',
-            'rgba(60,90,150,0.45)',    'rgba(70,80,140,0.42)',    'rgba(50,100,160,0.48)',
-            'rgba(140,50,70,0.45)',    'rgba(90,130,100,0.42)',   'rgba(110,100,140,0.45)'
-        ];
-        var fonts=[
-            'FlowerInitials','WoodcutInitials','FleurCornerCaps',
-            'AngloText','DejaVu','CamelotCaps'
-        ];
-        d.style.setProperty('--drop-cap-color',colors[Math.floor(Math.random()*colors.length)]);
-        d.style.setProperty('--drop-cap-font',fonts[Math.floor(Math.random()*fonts.length)]);
-    })();
-    </script>"""
-        content = content.replace('</body>', f'{drop_cap_js}\n</body>')
+        content = content.replace('</body>', f'{self.drop_cap_js}\n</body>')
 
         # Apply footer (no nav — homepage is the top level)
         content = self.apply_footer(content, is_post=None)

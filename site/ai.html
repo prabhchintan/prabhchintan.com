@@ -41,12 +41,25 @@
     --font-body: Baskerville, "Times New Roman", Times, serif;
 }
 
-@font-face { font-family: 'FlowerInitials'; src: url('/fonts/FlowerInitials.woff2') format('woff2'); font-display: swap; }
-@font-face { font-family: 'WoodcutInitials'; src: url('/fonts/WoodcutInitials.woff2') format('woff2'); font-display: swap; }
-@font-face { font-family: 'FleurCornerCaps'; src: url('/fonts/FleurCornerCaps.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'AcornInitials'; src: url('/fonts/AcornInitials.woff2') format('woff2'); font-display: swap; }
 @font-face { font-family: 'AngloText'; src: url('/fonts/AngloText.woff2') format('woff2'); font-display: swap; }
-@font-face { font-family: 'DejaVu'; src: url('/fonts/DejaVu.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'ApexLake'; src: url('/fonts/ApexLake.woff2') format('woff2'); font-display: swap; }
 @font-face { font-family: 'CamelotCaps'; src: url('/fonts/CamelotCaps.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'DecoratedRoman'; src: url('/fonts/DecoratedRoman.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'DejaVu'; src: url('/fonts/DejaVu.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'EileenCaps'; src: url('/fonts/EileenCaps.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'ElzevierCaps'; src: url('/fonts/ElzevierCaps.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'FleurCornerCaps'; src: url('/fonts/FleurCornerCaps.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'FlowerInitials'; src: url('/fonts/FlowerInitials.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'GothicFlourish'; src: url('/fonts/GothicFlourish.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'GoudyInitialen'; src: url('/fonts/GoudyInitialen.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'PaulusFranck'; src: url('/fonts/PaulusFranck.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'Romantik'; src: url('/fonts/Romantik.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'Tenderleaf'; src: url('/fonts/Tenderleaf.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'TypographerCaps'; src: url('/fonts/TypographerCaps.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'VictorianInitials'; src: url('/fonts/VictorianInitials.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'WoodcutInitials'; src: url('/fonts/WoodcutInitials.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'ZallmanCaps'; src: url('/fonts/ZallmanCaps.woff2') format('woff2'); font-display: swap; }
 
 body {
     max-width: 600px;
@@ -414,22 +427,35 @@ footer {
         var d=document.querySelector('.drop-cap');
         if(!d)return;
         var colors=[
-            'rgba(0,102,204,0.45)',    'rgba(20,80,180,0.48)',    'rgba(40,100,200,0.42)',
-            'rgba(153,50,50,0.48)',    'rgba(170,60,60,0.45)',    'rgba(130,40,55,0.5)',
-            'rgba(60,120,80,0.45)',    'rgba(45,130,70,0.42)',    'rgba(70,140,90,0.48)',
-            'rgba(140,90,40,0.48)',    'rgba(160,100,30,0.45)',   'rgba(120,80,50,0.5)',
-            'rgba(100,60,140,0.45)',   'rgba(120,70,160,0.42)',   'rgba(90,50,130,0.48)',
-            'rgba(50,120,130,0.45)',   'rgba(40,130,140,0.42)',   'rgba(60,110,120,0.48)',
-            'rgba(180,70,90,0.42)',    'rgba(160,55,80,0.45)',    'rgba(140,65,100,0.48)',
-            'rgba(80,100,60,0.45)',    'rgba(90,110,50,0.42)',    'rgba(70,90,70,0.48)',
-            'rgba(110,80,110,0.45)',   'rgba(130,70,90,0.42)',    'rgba(95,85,120,0.48)',
-            'rgba(170,110,50,0.42)',   'rgba(150,95,45,0.45)',    'rgba(180,120,60,0.48)',
-            'rgba(60,90,150,0.45)',    'rgba(70,80,140,0.42)',    'rgba(50,100,160,0.48)',
-            'rgba(140,50,70,0.45)',    'rgba(90,130,100,0.42)',   'rgba(110,100,140,0.45)'
+            'rgba(0,102,204,0.45)',   'rgba(20,80,180,0.48)',   'rgba(40,100,200,0.42)',
+            'rgba(10,70,160,0.5)',    'rgba(30,90,190,0.44)',   'rgba(50,110,210,0.46)',
+            'rgba(153,50,50,0.48)',   'rgba(170,60,60,0.45)',   'rgba(130,40,55,0.5)',
+            'rgba(185,45,45,0.42)',   'rgba(145,55,65,0.47)',   'rgba(160,40,50,0.44)',
+            'rgba(60,120,80,0.45)',   'rgba(45,130,70,0.42)',   'rgba(70,140,90,0.48)',
+            'rgba(55,145,75,0.46)',   'rgba(40,110,65,0.5)',    'rgba(75,135,85,0.44)',
+            'rgba(140,90,40,0.48)',   'rgba(160,100,30,0.45)',  'rgba(120,80,50,0.5)',
+            'rgba(175,115,35,0.42)',  'rgba(150,95,45,0.46)',   'rgba(135,85,55,0.44)',
+            'rgba(100,60,140,0.45)',  'rgba(120,70,160,0.42)',  'rgba(90,50,130,0.48)',
+            'rgba(110,65,150,0.46)',  'rgba(85,55,125,0.5)',    'rgba(130,75,170,0.44)',
+            'rgba(50,120,130,0.45)',  'rgba(40,130,140,0.42)',  'rgba(60,110,120,0.48)',
+            'rgba(45,140,135,0.46)',  'rgba(55,125,145,0.5)',   'rgba(65,115,125,0.44)',
+            'rgba(180,70,90,0.42)',   'rgba(160,55,80,0.45)',   'rgba(140,65,100,0.48)',
+            'rgba(170,60,85,0.46)',   'rgba(150,50,75,0.5)',    'rgba(190,75,95,0.44)',
+            'rgba(80,100,60,0.45)',   'rgba(90,110,50,0.42)',   'rgba(70,90,70,0.48)',
+            'rgba(85,105,55,0.46)',   'rgba(75,95,65,0.5)',     'rgba(95,115,45,0.44)',
+            'rgba(110,80,110,0.45)',  'rgba(130,70,90,0.42)',   'rgba(95,85,120,0.48)',
+            'rgba(120,75,105,0.46)',  'rgba(105,90,115,0.5)',   'rgba(115,80,100,0.44)',
+            'rgba(170,110,50,0.42)',  'rgba(180,120,60,0.48)',  'rgba(165,105,40,0.46)',
+            'rgba(60,90,150,0.45)',   'rgba(70,80,140,0.42)',   'rgba(50,100,160,0.48)',
+            'rgba(140,50,70,0.45)',   'rgba(90,130,100,0.42)',  'rgba(110,100,140,0.45)'
         ];
         var fonts=[
-            'FlowerInitials','WoodcutInitials','FleurCornerCaps',
-            'AngloText','DejaVu','CamelotCaps'
+            'AcornInitials','AngloText','ApexLake','CamelotCaps',
+            'DecoratedRoman','DejaVu','EileenCaps','ElzevierCaps',
+            'FleurCornerCaps','FlowerInitials','GothicFlourish',
+            'GoudyInitialen','PaulusFranck','Romantik','Tenderleaf',
+            'TypographerCaps','VictorianInitials','WoodcutInitials',
+            'ZallmanCaps'
         ];
         d.style.setProperty('--drop-cap-color',colors[Math.floor(Math.random()*colors.length)]);
         d.style.setProperty('--drop-cap-font',fonts[Math.floor(Math.random()*fonts.length)]);
