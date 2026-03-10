@@ -182,7 +182,7 @@ class BlogBuilder:
         Rules:
         - Must be after the post-date element
         - Skip paragraphs that are entirely italic/emphasis (subtitles)
-        - Skip paragraphs shorter than 80 characters of text
+        - Skip paragraphs shorter than 150 characters of text
         - Only apply to the first qualifying paragraph
         """
         # Find the post-date marker
@@ -204,7 +204,7 @@ class BlogBuilder:
 
             # Get plain text length (strip HTML tags)
             plain_text = re.sub(r'<[^>]+>', '', inner).strip()
-            if len(plain_text) < 80:
+            if len(plain_text) < 150:
                 continue
 
             # This paragraph qualifies — add the drop-cap class
@@ -500,6 +500,33 @@ class BlogBuilder:
 
         log.info(f"Generated /{ui_type} UI")
 
+    def add_drop_cap_index(self, html):
+        """Add drop-cap class to the first qualifying paragraph on the homepage.
+
+        Similar to add_drop_cap but starts after the site-headline h1 instead of post-date.
+        """
+        # Find the site-headline h1
+        headline_match = re.search(r'<h1[^>]*class="site-headline"[^>]*>.*?</h1>', html, re.DOTALL)
+        if not headline_match:
+            return html
+
+        search_start = headline_match.end()
+
+        for p_match in re.finditer(r'<p>(.*?)</p>', html[search_start:], re.DOTALL):
+            inner = p_match.group(1).strip()
+            if re.match(r'^<em>.*</em>$', inner, re.DOTALL):
+                continue
+            if re.match(r'^<strong>.*</strong>$', inner, re.DOTALL):
+                continue
+            plain_text = re.sub(r'<[^>]+>', '', inner).strip()
+            if len(plain_text) < 150:
+                continue
+            abs_start = search_start + p_match.start()
+            html = html[:abs_start] + '<p class="drop-cap">' + html[abs_start + 3:]
+            break
+
+        return html
+
     def optimize_index(self):
         """Optimize homepage with critical CSS"""
         with open('index.html', 'r', encoding='utf-8') as f:
@@ -507,6 +534,38 @@ class BlogBuilder:
 
         # Inject critical CSS
         content = content.replace('</head>', f'<style>{self.critical_css}</style>\n</head>')
+
+        # Add drop cap to first qualifying paragraph
+        content = self.add_drop_cap_index(content)
+
+        # Add drop cap JS before </body>
+        drop_cap_js = """<script>
+    (function(){
+        var d=document.querySelector('.drop-cap');
+        if(!d)return;
+        var colors=[
+            'rgba(0,102,204,0.45)',    'rgba(20,80,180,0.48)',    'rgba(40,100,200,0.42)',
+            'rgba(153,50,50,0.48)',    'rgba(170,60,60,0.45)',    'rgba(130,40,55,0.5)',
+            'rgba(60,120,80,0.45)',    'rgba(45,130,70,0.42)',    'rgba(70,140,90,0.48)',
+            'rgba(140,90,40,0.48)',    'rgba(160,100,30,0.45)',   'rgba(120,80,50,0.5)',
+            'rgba(100,60,140,0.45)',   'rgba(120,70,160,0.42)',   'rgba(90,50,130,0.48)',
+            'rgba(50,120,130,0.45)',   'rgba(40,130,140,0.42)',   'rgba(60,110,120,0.48)',
+            'rgba(180,70,90,0.42)',    'rgba(160,55,80,0.45)',    'rgba(140,65,100,0.48)',
+            'rgba(80,100,60,0.45)',    'rgba(90,110,50,0.42)',    'rgba(70,90,70,0.48)',
+            'rgba(110,80,110,0.45)',   'rgba(130,70,90,0.42)',    'rgba(95,85,120,0.48)',
+            'rgba(170,110,50,0.42)',   'rgba(150,95,45,0.45)',    'rgba(180,120,60,0.48)',
+            'rgba(60,90,150,0.45)',    'rgba(70,80,140,0.42)',    'rgba(50,100,160,0.48)',
+            'rgba(140,50,70,0.45)',    'rgba(90,130,100,0.42)',   'rgba(110,100,140,0.45)'
+        ];
+        var fonts=[
+            'FlowerInitials','WoodcutInitials','FleurCornerCaps',
+            'AngloText','DejaVu','CamelotCaps'
+        ];
+        d.style.setProperty('--drop-cap-color',colors[Math.floor(Math.random()*colors.length)]);
+        d.style.setProperty('--drop-cap-font',fonts[Math.floor(Math.random()*fonts.length)]);
+    })();
+    </script>"""
+        content = content.replace('</body>', f'{drop_cap_js}\n</body>')
 
         # Apply footer (no nav — homepage is the top level)
         content = self.apply_footer(content, is_post=None)
@@ -573,6 +632,15 @@ Sitemap: https://prabhchintan.com/sitemap.xml
             for media_file in self.media_dir.glob('*'):
                 if media_file.is_file():
                     shutil.copy2(media_file, site_media / media_file.name)
+
+        # Copy fonts directory
+        fonts_dir = Path('fonts/')
+        if fonts_dir.exists():
+            site_fonts = self.site_dir / 'fonts'
+            site_fonts.mkdir(exist_ok=True)
+            for font_file in fonts_dir.glob('*'):
+                if font_file.is_file() and font_file.suffix.lower() in ['.woff2', '.woff', '.ttf', '.otf']:
+                    shutil.copy2(font_file, site_fonts / font_file.name)
 
         log.info("Copied assets to site/")
 
