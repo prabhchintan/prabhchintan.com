@@ -6,6 +6,7 @@ export async function onRequestPost(context) {
         const formData = await request.formData();
         const password = formData.get('password');
         const file = formData.get('file');
+        const requestedFilename = formData.get('filename'); // Client can specify exact filename
 
         // Verify password
         if (password !== env.ADMIN_PASSWORD) {
@@ -22,15 +23,20 @@ export async function onRequestPost(context) {
             });
         }
 
-        // Generate filename with date prefix
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
-        const timestamp = Date.now();
-        const ext = file.name.split('.').pop();
-        const cleanName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-        const filename = `${year}_${month}_${day}_${timestamp}_${cleanName}`;
+        // Use requested filename if provided, otherwise generate one
+        let filename;
+        if (requestedFilename) {
+            filename = requestedFilename;
+        } else {
+            // Fallback: Generate filename with date prefix
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const timestamp = Date.now();
+            const cleanName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+            filename = `${year}_${month}_${day}_${timestamp}_${cleanName}`;
+        }
 
         // Read file as base64
         const arrayBuffer = await file.arrayBuffer();

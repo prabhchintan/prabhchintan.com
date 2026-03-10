@@ -279,6 +279,7 @@
         let existingSlugs = new Set();
         let attachedFiles = [];
         let uploadedMediaUrls = [];
+        let fileMarkdownMap = new Map(); // Track which markdown belongs to which file
 
         // Load existing posts for collision detection
         async function loadExistingSlugs() {
@@ -334,8 +335,44 @@
             return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
         }
 
+        function generateMediaFilename(file) {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const timestamp = Date.now();
+            return `${year}_${month}_${day}_${timestamp}_${file.name}`;
+        }
+
+        function getMarkdownForFile(file, mediaFilename) {
+            const mediaPath = `/media/${mediaFilename}`;
+            if (file.type.startsWith('image/')) {
+                return `\n\n![${file.name}](${mediaPath})`;
+            } else if (file.type.startsWith('video/')) {
+                return `\n\n<video controls src="${mediaPath}"></video>`;
+            } else if (file.type.startsWith('audio/')) {
+                return `\n\n<audio controls src="${mediaPath}"></audio>`;
+            } else {
+                return `\n\n[${file.name}](${mediaPath})`;
+            }
+        }
+
         function addFileToList(file) {
             const filesList = document.getElementById('attachedFiles');
+            const contentTextarea = document.getElementById('content');
+
+            // Generate expected filename
+            const mediaFilename = generateMediaFilename(file);
+
+            // Generate markdown for this file
+            const markdown = getMarkdownForFile(file, mediaFilename);
+
+            // Immediately append markdown to textarea
+            contentTextarea.value += markdown;
+
+            // Store mapping
+            fileMarkdownMap.set(file, { markdown, mediaFilename });
+
             const li = document.createElement('li');
             li.className = 'attached-file';
             li.dataset.filename = file.name;
@@ -369,7 +406,13 @@
             removeBtn.innerHTML = '×';
             removeBtn.type = 'button';
             removeBtn.onclick = () => {
-                attachedFiles = attachedFiles.filter(f => f.name !== file.name);
+                // Remove markdown from textarea
+                const fileData = fileMarkdownMap.get(file);
+                if (fileData) {
+                    contentTextarea.value = contentTextarea.value.replace(fileData.markdown, '');
+                    fileMarkdownMap.delete(file);
+                }
+                attachedFiles = attachedFiles.filter(f => f !== file);
                 li.remove();
             };
             li.appendChild(removeBtn);
@@ -433,7 +476,7 @@
             statusDiv.style.display = 'none';
 
             try {
-                // Upload media files first
+                // Content already has markdown references from when files were attached
                 let finalContent = content;
 
                 if (attachedFiles.length > 0) {
@@ -450,9 +493,14 @@
 
                         statusDiv.innerHTML = `Uploading ${i + 1}/${attachedFiles.length}: ${file.name}...`;
 
+                        // Get the pre-determined filename for this file
+                        const fileData = fileMarkdownMap.get(file);
+                        const expectedFilename = fileData ? fileData.mediaFilename : generateMediaFilename(file);
+
                         const formData = new FormData();
                         formData.append('password', password);
                         formData.append('file', file);
+                        formData.append('filename', expectedFilename); // Tell server what filename to use
 
                         const uploadResponse = await fetch(`${API}/upload`, {
                             method: 'POST',
@@ -465,8 +513,6 @@
                             throw new Error(`Failed to upload ${file.name}: ${uploadResult.error}`);
                         }
 
-                        // Add markdown to content
-                        finalContent += '\n\n' + uploadResult.markdown;
                         uploadedMediaUrls.push(uploadResult.url);
                     }
                 }
@@ -495,6 +541,7 @@
                 document.getElementById('content').value = '';
                 document.getElementById('password').value = '';
                 attachedFiles = [];
+                fileMarkdownMap.clear();
                 document.getElementById('attachedFiles').innerHTML = '';
                 document.getElementById('slugPreview').style.display = 'none';
 

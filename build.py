@@ -42,19 +42,20 @@ class RichEmbedProcessor:
 
         def replace_old_iframe(match):
             video_id = match.group(1)
-            # Return properly formatted iframe
-            return f'<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;border-radius:8px;margin:2em 0"><iframe src="https://www.youtube-nocookie.com/embed/{video_id}?rel=0" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" title="YouTube video"></iframe></div>'
+            # Return properly formatted iframe using YouTube's standard embed format
+            return f'<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;border-radius:8px;margin:2em 0"><iframe width="560" height="315" src="https://www.youtube.com/embed/{video_id}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;border:0"></iframe></div>'
 
         return re.sub(old_iframe_pattern, replace_old_iframe, text)
 
     @staticmethod
     def _youtube_embed(text):
-        """Convert YouTube URLs to responsive embeds"""
+        """Convert YouTube URLs to responsive embeds using YouTube's standard format"""
         pattern = r'(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?[^\s]*v=|youtu\.be\/)([a-zA-Z0-9_-]{11})[^\s]*'
 
         def replace(match):
             video_id = match.group(1)
-            return f'\n\n<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;border-radius:8px;margin:2em 0"><iframe src="https://www.youtube-nocookie.com/embed/{video_id}?rel=0" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" title="YouTube video"></iframe></div>\n\n'
+            # Using YouTube's official embed code format
+            return f'\n\n<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;border-radius:8px;margin:2em 0"><iframe width="560" height="315" src="https://www.youtube.com/embed/{video_id}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;border:0"></iframe></div>\n\n'
 
         return re.sub(pattern, replace, text)
 
