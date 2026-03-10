@@ -1,5 +1,25 @@
 name: Build Blog (Manual Only)
 
+# PERFORMANCE NOTE:
+# This workflow is MANUAL ONLY (workflow_dispatch) to avoid duplicate builds.
+# Here's how the build system works:
+#
+# 1. Local Development:
+#    - Run `python3 build.py` locally
+#    - Commits and pushes site/ changes to GitHub
+#
+# 2. Cloudflare Pages:
+#    - Auto-detects pushes to main branch
+#    - Deploys site/ directory (no build needed - it's pre-built)
+#    - Deploy time: ~30 seconds
+#
+# 3. This GitHub Action:
+#    - Only runs when manually triggered
+#    - Useful for debugging build issues in CI environment
+#    - Not used in normal workflow
+#
+# Result: ONE build (local) + ONE deploy (Cloudflare) = Fast, no redundancy ✅
+
 on:
   # Only allow manual runs; Cloudflare Pages handles automatic builds/deploys
   workflow_dispatch:

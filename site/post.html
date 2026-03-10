@@ -515,20 +515,33 @@ footer {
             const year = now.getFullYear();
             const month = String(now.getMonth() + 1).padStart(2, '0');
             const day = String(now.getDate()).padStart(2, '0');
-            const timestamp = Date.now();
-            return `${year}_${month}_${day}_${timestamp}_${file.name}`;
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+
+            // Extract extension (handle multiple dots, spaces, special chars)
+            const ext = file.name.split('.').pop().toLowerCase().replace(/[^a-z0-9]/g, '');
+
+            // Count existing files to generate index
+            const index = String(attachedFiles.length + 1).padStart(3, '0');
+
+            // Clean format: YYYYMMDD_HHMMSS_001.ext
+            return `${year}${month}${day}_${hours}${minutes}${seconds}_${index}.${ext}`;
         }
 
         function getMarkdownForFile(file, mediaFilename) {
             const mediaPath = `/media/${mediaFilename}`;
+            // Use clean filename as alt text (without path)
+            const altText = mediaFilename.split('/').pop();
+
             if (file.type.startsWith('image/')) {
-                return `\n\n![${file.name}](${mediaPath})`;
+                return `\n\n![${altText}](${mediaPath})`;
             } else if (file.type.startsWith('video/')) {
                 return `\n\n<video controls src="${mediaPath}"></video>`;
             } else if (file.type.startsWith('audio/')) {
                 return `\n\n<audio controls src="${mediaPath}"></audio>`;
             } else {
-                return `\n\n[${file.name}](${mediaPath})`;
+                return `\n\n[${altText}](${mediaPath})`;
             }
         }
 

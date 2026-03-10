@@ -503,9 +503,24 @@ footer {
                     throw new Error(result.error || 'Save failed');
                 }
 
-                statusDiv.innerHTML = '✓ Saved. Site updates in ~60 seconds.';
+                statusDiv.innerHTML = `✓ Saved ${selectedPost.filename}<br>Site updates in ~60 seconds.`;
                 statusDiv.className = 'success show';
+
+                // Clear form on success
+                document.getElementById('content').value = '';
+                document.getElementById('content').disabled = true;
+                document.getElementById('search').value = '';
+                editorSection.style.display = 'none';
+                saveBtn.style.display = 'none';
+                selectedPost = null;
+
+                // Clear matches and show fresh state
+                document.getElementById('matchesDiv').innerHTML = '';
+                document.querySelectorAll('.match-item').forEach(item => {
+                    item.classList.remove('selected');
+                });
             } catch (error) {
+                // On error, keep form intact so user can fix and retry
                 statusDiv.innerHTML = '✗ ' + error.message;
                 statusDiv.className = 'error show';
             } finally {
