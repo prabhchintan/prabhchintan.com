@@ -758,18 +758,21 @@ Sitemap: https://prabhchintan.com/sitemap.xml
         self.create_post_ui()
         
         # Git operations (optional; commit only if there are changes)
-        subprocess.run(['git', 'add', '.'])
-        status = subprocess.run(['git', 'status', '--porcelain'], capture_output=True, text=True)
-        if status.stdout.strip():
-            commit_message = os.environ.get('CURSOR_CONTEXT', '').strip()
-            if not commit_message:
-                commit_message = os.environ.get('CI_COMMIT_MESSAGE', '').strip()
-            if not commit_message:
-                # Fallback to a concise default
-                commit_message = f"Site update: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
-            subprocess.run(['git', 'commit', '-m', commit_message])
-            # Only push if not explicitly disabled
-            if os.environ.get('SKIP_GIT_PUSH', '0') not in ('1', 'true', 'yes'):
+        # When running in CI with SKIP_GIT_PUSH set, we skip all git operations here
+        # and let the GitHub Actions workflow handle commit/push explicitly.
+        if os.environ.get('SKIP_GIT_PUSH', '0').lower() in ('1', 'true', 'yes'):
+            print("Skipping git commit and push (SKIP_GIT_PUSH is set; assuming CI will handle git).")
+        else:
+            subprocess.run(['git', 'add', '.'])
+            status = subprocess.run(['git', 'status', '--porcelain'], capture_output=True, text=True)
+            if status.stdout.strip():
+                commit_message = os.environ.get('CURSOR_CONTEXT', '').strip()
+                if not commit_message:
+                    commit_message = os.environ.get('CI_COMMIT_MESSAGE', '').strip()
+                if not commit_message:
+                    # Fallback to a concise default
+                    commit_message = f"Site update: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+                subprocess.run(['git', 'commit', '-m', commit_message])
                 try:
                     # Check if we are behind origin/main (usually because of a previous GitHub Action run)
                     subprocess.run(['git', 'fetch'], check=False)
@@ -784,8 +787,8 @@ Sitemap: https://prabhchintan.com/sitemap.xml
                 except subprocess.CalledProcessError as e:
                     print(f"❌ Git push failed with return code {e.returncode}")
                     print("Please check your git configuration and connection.")
-        else:
-            print("No changes to publish")
+            else:
+                print("No changes to publish")
 
 if __name__ == "__main__":
     blog = UltimateBlog()
