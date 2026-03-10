@@ -467,8 +467,8 @@ class BlogBuilder:
         # Inject critical CSS
         content = content.replace('</head>', f'<style>{self.critical_css}</style>\n</head>')
 
-        # Apply footer
-        content = self.apply_footer(content)
+        # Apply footer (no nav — homepage is the top level)
+        content = self.apply_footer(content, is_post=None)
 
         with open(self.site_dir / 'index.html', 'w', encoding='utf-8') as f:
             f.write(content)
@@ -486,10 +486,10 @@ class BlogBuilder:
         html = re.sub(r'<p><a href="[^"]*">← (?:Back to Blog|Home)</a></p>\s*', '', html)
 
         # Add navigation if not present
-        if is_post:
+        if is_post is True:
             nav = '<p><a href="/blog">← Blog</a></p>'
             html = html.replace('</body>', f'{nav}\n{footer}\n</body>')
-        elif '← Home' not in html:
+        elif is_post is False and '← Home' not in html:
             nav = '<p><a href="/">← Home</a></p>'
             html = html.replace('</body>', f'{nav}\n{footer}\n</body>')
         else:
