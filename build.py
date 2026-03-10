@@ -461,6 +461,27 @@ class UltimateBlog:
             
         print("Generated post UI at /post.html")
 
+    def create_delete_ui(self):
+        """Generate the delete UI for removing posts via GitHub API"""
+        app_file = self.templates_dir / 'delete_app.html'
+        if not app_file.exists():
+            return
+        
+        with open(app_file, 'r', encoding='utf-8') as f:
+            app_html = f.read()
+        
+        # Replace the comment placeholder with a full style block
+        css_block = f'<style>{self.critical_css}</style>'
+        app_html = app_html.replace('<!-- CRITICAL_CSS_PLACEHOLDER -->', css_block)
+        
+        # Apply universal footer
+        app_html = self.apply_universal_footer(app_html)
+        
+        with open(self.site_dir / 'delete.html', 'w', encoding='utf-8') as f:
+            f.write(app_html)
+        
+        print("Generated delete UI at /delete.html")
+
     def create_post_template(self):
         """Create optimized post template if it doesn't exist"""
         template = '''<!DOCTYPE html>
@@ -756,6 +777,7 @@ Sitemap: https://prabhchintan.com/sitemap.xml
         print("Generated certifications page")
         
         self.create_post_ui()
+        self.create_delete_ui()
         
         # Git operations (optional; commit only if there are changes)
         # When running in CI with SKIP_GIT_PUSH set, we skip all git operations here

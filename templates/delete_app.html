@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Delete Post - Randhawa Inc.</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="favicon.svg">
+    <!-- CRITICAL_CSS_PLACEHOLDER -->
+    <style>
+        .form-group {
+            margin-bottom: 1.5em
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.4em;
+            color: #666;
+            font-size: 0.8em;
+            letter-spacing: 0.08em;
+            text-transform: uppercase
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 0.4em 0;
+            border: none;
+            border-bottom: 1px solid #eee;
+            font-family: inherit;
+            font-size: 1em;
+            box-sizing: border-box;
+            background: transparent;
+            color: #1a1a1a;
+            transition: border-color 0.3s
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-bottom-color: #1a1a1a
+        }
+
+        button {
+            background: #1a1a1a;
+            color: #fff;
+            border: 1px solid #1a1a1a;
+            font-size: 1em;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+            width: 100%;
+            padding: 0.8em;
+            margin-top: 0.5em
+        }
+
+        button:hover {
+            background: transparent;
+            color: #1a1a1a
+        }
+
+        button:disabled {
+            background: #f5f5f5;
+            color: #bbb;
+            border-color: #eee;
+            cursor: not-allowed
+        }
+
+        #status {
+            margin-top: 1.5em;
+            padding: 1em;
+            border-radius: 4px;
+            font-size: 0.9em;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s
+        }
+
+        #status.show {
+            opacity: 1
+        }
+
+        .success {
+            background: #f0f7f0;
+            color: #2b703e;
+            border: 1px solid #d4e8d4
+        }
+
+        .error {
+            background: #fef0ef;
+            color: #a33b32;
+            border: 1px solid #f5d5d3
+        }
+    </style>
+</head>
+
+<body>
+    <div class="profile-pic">
+        <img src="profile.png" alt="Profile" width="80" height="80">
+    </div>
+
+    <h1>Delete Post</h1>
+
+    <form id="deleteForm">
+        <div class="form-group">
+            <label for="filename">Filename to delete</label>
+            <input type="text" id="filename" required placeholder="2026_03_10_americano.md" autocomplete="off">
+        </div>
+        <div class="form-group">
+            <label for="password">Authentication</label>
+            <input type="text" id="password" required placeholder="Personal Access Token" autocomplete="off"
+                autocorrect="off" autocapitalize="none">
+        </div>
+        <button type="submit" id="submitBtn">Delete</button>
+    </form>
+
+    <div id="status"></div>
+
+    <script>
+        document.getElementById('deleteForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const filenameInput = document.getElementById('filename').value.trim();
+            const token = document.getElementById('password').value.trim();
+            const submitBtn = document.getElementById('submitBtn');
+            const statusDiv = document.getElementById('status');
+
+            if (!filenameInput) {
+                statusDiv.innerHTML = 'Please enter a filename.';
+                statusDiv.className = 'error show';
+                return;
+            }
+
+            if (!confirm('Are you sure you want to delete ' + filenameInput + '?')) {
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Deleting...';
+            statusDiv.className = '';
+
+            const REPO_OWNER = 'prabhchintan';
+            const REPO_NAME = 'prabhchintan.com';
+
+            try {
+                const apiBase = 'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/posts/';
+                const fileUrl = apiBase + encodeURIComponent(filenameInput);
+
+                // First, fetch the file to get its SHA
+                let response = await fetch(fileUrl, {
+                    headers: {
+                        'Authorization': 'token ' + token,
+                        'Accept': 'application/vnd.github+json'
+                    }
+                });
+
+                if (response.status === 404) {
+                    statusDiv.innerHTML = 'File not found. Double-check the filename.';
+                    statusDiv.className = 'error show';
+                    return;
+                }
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || 'Failed to fetch file metadata');
+                }
+
+                const fileData = await response.json();
+                const sha = fileData.sha;
+
+                // Now send the DELETE request
+                response = await fetch(fileUrl, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': 'token ' + token,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/vnd.github+json'
+                    },
+                    body: JSON.stringify({
+                        message: 'Mobile delete: ' + filenameInput,
+                        sha: sha,
+                        branch: 'main'
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || 'Failed to delete file');
+                }
+
+                statusDiv.innerHTML = 'Deleted. Site updates in ~60 seconds.';
+                statusDiv.className = 'success show';
+                document.getElementById('filename').value = '';
+
+            } catch (error) {
+                statusDiv.innerHTML = 'Error: ' + error.message;
+                statusDiv.className = 'error show';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Delete';
+            }
+        });
+    </script>
+</body>
+
+</html>
+
