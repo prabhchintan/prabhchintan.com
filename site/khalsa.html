@@ -212,9 +212,9 @@ footer {
     float: left;
     font-family: var(--drop-cap-font, Baskerville), Baskerville, "Times New Roman", Times, serif;
     font-size: 3.4em;
-    line-height: 0.75;
-    padding: 0.02em 0.1em 0 0;
-    margin-top: -0.05em;
+    line-height: 0.68;
+    padding: 0.08em 0.1em 0 0;
+    margin-top: 0.05em;
     color: var(--drop-cap-color, rgba(0, 102, 204, 0.5));
     font-weight: normal;
     font-style: normal;
@@ -256,6 +256,7 @@ footer {
 <p>My bold conjecture is that what we refer to as “Metaphysics”, which are explanations of the yet-to-be-observed behaviors underlying our experiences and reality, will increasingly be described in formal, replicable, computational terms. This trend is observable in conjectures such as the “Church–Turing–Deutsch principle”, or the “Physicalization of Metamathematics”, and like in the past, will continually challenge previous systems in that process. I wish for us to be prepared for, embrace and partake in these new computational paradigms, and construct new systems of knowledge with it; enabling both ourselves and those around us in the process.</p>
 <p>I am sending a book that influenced me in expressing some of these thoughts, and hope to continue our conversations with time discussing these fuzzily expressed ideas. A seed phrase to REDACTED BTC is also attached to this letter, as a fun experiment for us to look back and laugh about some time. I hope to meet you soon in REDACTED.</p>
 <p>May Waheguru bless you and REDACTED with a very prosperous life ahead.</p>
+    <style>.drop-cap::first-letter {visibility:hidden}</style>
     <script>
     (function(){
         var d=document.querySelector('.drop-cap');
@@ -293,6 +294,8 @@ footer {
         ];
         d.style.setProperty('--drop-cap-color',colors[Math.floor(Math.random()*colors.length)]);
         d.style.setProperty('--drop-cap-font',fonts[Math.floor(Math.random()*fonts.length)]);
+        d.style.setProperty('visibility','visible');
+        var s=document.querySelector('style');if(s&&s.textContent.indexOf('visibility:hidden')!==-1)s.remove();
     })();
     </script>
 <p><a href="/blog">← Blog</a></p>

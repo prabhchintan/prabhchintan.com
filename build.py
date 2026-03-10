@@ -106,12 +106,8 @@ class BlogBuilder:
 
         self.slug_registry = {}  # Track slugs to detect collisions
 
-        # Shared drop cap JS — randomizes font and color on each page load
-        self.drop_cap_js = """<script>
-    (function(){
-        var d=document.querySelector('.drop-cap');
-        if(!d)return;
-        var colors=[
+        # Color palette shared between blog and index drop cap JS
+        self._drop_cap_colors = """[
             'rgba(0,102,204,0.45)',   'rgba(20,80,180,0.48)',   'rgba(40,100,200,0.42)',
             'rgba(10,70,160,0.5)',    'rgba(30,90,190,0.44)',   'rgba(50,110,210,0.46)',
             'rgba(153,50,50,0.48)',   'rgba(170,60,60,0.45)',   'rgba(130,40,55,0.5)',
@@ -133,7 +129,15 @@ class BlogBuilder:
             'rgba(170,110,50,0.42)',  'rgba(180,120,60,0.48)',  'rgba(165,105,40,0.46)',
             'rgba(60,90,150,0.45)',   'rgba(70,80,140,0.42)',   'rgba(50,100,160,0.48)',
             'rgba(140,50,70,0.45)',   'rgba(90,130,100,0.42)',  'rgba(110,100,140,0.45)'
-        ];
+        ]"""
+
+        # Blog drop cap JS — hides letter until font+color are set, preventing fallback flash
+        self.drop_cap_js = f"""<style>.drop-cap::first-letter {{visibility:hidden}}</style>
+    <script>
+    (function(){{
+        var d=document.querySelector('.drop-cap');
+        if(!d)return;
+        var colors={self._drop_cap_colors};
         var fonts=[
             'AcornInitials','AngloText','ApexLake','CamelotCaps',
             'DecoratedRoman','DejaVu','EileenCaps','ElzevierCaps',
@@ -144,7 +148,19 @@ class BlogBuilder:
         ];
         d.style.setProperty('--drop-cap-color',colors[Math.floor(Math.random()*colors.length)]);
         d.style.setProperty('--drop-cap-font',fonts[Math.floor(Math.random()*fonts.length)]);
-    })();
+        d.style.setProperty('visibility','visible');
+        var s=document.querySelector('style');if(s&&s.textContent.indexOf('visibility:hidden')!==-1)s.remove();
+    }})();
+    </script>"""
+
+        # Index drop cap JS — color only, no fancy fonts, no hide/show needed
+        self.drop_cap_js_index = f"""<script>
+    (function(){{
+        var d=document.querySelector('.drop-cap');
+        if(!d)return;
+        var colors={self._drop_cap_colors};
+        d.style.setProperty('--drop-cap-color',colors[Math.floor(Math.random()*colors.length)]);
+    }})();
     </script>"""
 
     def setup_dirs(self):
@@ -581,8 +597,8 @@ class BlogBuilder:
         # Add drop cap to first qualifying paragraph
         content = self.add_drop_cap_index(content)
 
-        # Add drop cap JS before </body>
-        content = content.replace('</body>', f'{self.drop_cap_js}\n</body>')
+        # Add drop cap JS before </body> (index: color only, no fancy fonts)
+        content = content.replace('</body>', f'{self.drop_cap_js_index}\n</body>')
 
         # Apply footer (no nav — homepage is the top level)
         content = self.apply_footer(content, is_post=None)

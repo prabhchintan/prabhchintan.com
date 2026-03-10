@@ -212,9 +212,9 @@ footer {
     float: left;
     font-family: var(--drop-cap-font, Baskerville), Baskerville, "Times New Roman", Times, serif;
     font-size: 3.4em;
-    line-height: 0.75;
-    padding: 0.02em 0.1em 0 0;
-    margin-top: -0.05em;
+    line-height: 0.68;
+    padding: 0.08em 0.1em 0 0;
+    margin-top: 0.05em;
     color: var(--drop-cap-color, rgba(0, 102, 204, 0.5));
     font-weight: normal;
     font-style: normal;
@@ -249,6 +249,7 @@ footer {
 <p class="drop-cap">I keep realizing the genius of an Americano the older I get. When I moved to America as a teenager, my first job was at a Walmart in Houston. It’s where I first saw the trademark American drip coffee. It neither registered nor made much sense.</p>
 <p>Then I worked at an oil refinery a few years later, and I saw again people drinking loads of black coffee there. It's where I realized that drip coffee is the American worker’s coffee.</p>
 <p>An “Americano” is watered down black coffee. The gentleman-laborer’s drink.</p>
+    <style>.drop-cap::first-letter {visibility:hidden}</style>
     <script>
     (function(){
         var d=document.querySelector('.drop-cap');
@@ -286,6 +287,8 @@ footer {
         ];
         d.style.setProperty('--drop-cap-color',colors[Math.floor(Math.random()*colors.length)]);
         d.style.setProperty('--drop-cap-font',fonts[Math.floor(Math.random()*fonts.length)]);
+        d.style.setProperty('visibility','visible');
+        var s=document.querySelector('style');if(s&&s.textContent.indexOf('visibility:hidden')!==-1)s.remove();
     })();
     </script>
 <p><a href="/blog">← Blog</a></p>

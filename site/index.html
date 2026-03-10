@@ -211,9 +211,9 @@ footer {
     float: left;
     font-family: var(--drop-cap-font, Baskerville), Baskerville, "Times New Roman", Times, serif;
     font-size: 3.4em;
-    line-height: 0.75;
-    padding: 0.02em 0.1em 0 0;
-    margin-top: -0.05em;
+    line-height: 0.68;
+    padding: 0.08em 0.1em 0 0;
+    margin-top: 0.05em;
     color: var(--drop-cap-color, rgba(0, 102, 204, 0.5));
     font-weight: normal;
     font-style: normal;
@@ -308,16 +308,7 @@ footer {
             'rgba(60,90,150,0.45)',   'rgba(70,80,140,0.42)',   'rgba(50,100,160,0.48)',
             'rgba(140,50,70,0.45)',   'rgba(90,130,100,0.42)',  'rgba(110,100,140,0.45)'
         ];
-        var fonts=[
-            'AcornInitials','AngloText','ApexLake','CamelotCaps',
-            'DecoratedRoman','DejaVu','EileenCaps','ElzevierCaps',
-            'FleurCornerCaps','FlowerInitials','GothicFlourish',
-            'GoudyInitialen','PaulusFranck','Romantik','Tenderleaf',
-            'TypographerCaps','VictorianInitials','WoodcutInitials',
-            'ZallmanCaps'
-        ];
         d.style.setProperty('--drop-cap-color',colors[Math.floor(Math.random()*colors.length)]);
-        d.style.setProperty('--drop-cap-font',fonts[Math.floor(Math.random()*fonts.length)]);
     })();
     </script>
 <footer>Randhawa Inc. 1309 Coffeen Ave Ste 1386 Sheridan, WY</footer>
