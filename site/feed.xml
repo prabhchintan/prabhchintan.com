@@ -5,13 +5,20 @@
 <link>https://prabhchintan.com/blog</link>
 <atom:link href="https://prabhchintan.com/feed.xml" rel="self" type="application/rss+xml"/>
 <description>Personal blog featuring thoughts on technology, design, and life.</description>
-<lastBuildDate>Tue, 10 Mar 2026 08:07:17 +0000</lastBuildDate>
+<lastBuildDate>Tue, 10 Mar 2026 08:23:22 +0000</lastBuildDate>
 <item>
 <title>Americano</title>
 <link>https://prabhchintan.com/americano</link>
 <description>I keep realizing the genius of an Americano the older I get. When I moved to America, my first job as a teenager was at a Walmart in Houston. It’s where I fi...</description>
 <pubDate>Tue, 10 Mar 2026 12:00:00 +0000</pubDate>
 <guid>https://prabhchintan.com/americano</guid>
+</item>
+<item>
+<title>An experiment to delete</title>
+<link>https://prabhchintan.com/an-experiment-to-delete-0755</link>
+<description>Lalala</description>
+<pubDate>Tue, 10 Mar 2026 12:00:00 +0000</pubDate>
+<guid>https://prabhchintan.com/an-experiment-to-delete-0755</guid>
 </item>
 <item>
 <title>Troubleshooting the Blog</title>
