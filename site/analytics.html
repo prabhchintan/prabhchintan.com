@@ -188,6 +188,18 @@ footer {
     font-size: 0.85em;
 }
 
+.drop-cap::first-letter {
+    float: left;
+    font-family: Baskerville, "Times New Roman", Times, serif;
+    font-size: 3.4em;
+    line-height: 0.8;
+    padding: 0.05em 0.1em 0 0;
+    margin-top: 0.05em;
+    color: var(--drop-cap-color, rgba(0, 102, 204, 0.4));
+    font-weight: normal;
+    font-style: normal;
+}
+
 @media (max-width: 768px) {
     body {
         padding: 2.5em 1.5em;
@@ -204,6 +216,10 @@ footer {
 
     h3 {
         font-size: 1.1em;
+    }
+
+    .drop-cap::first-letter {
+        font-size: 2.8em;
     }
 }</style>
 </head>
@@ -302,6 +318,21 @@ footer {
 <li>The Data Science subreddit (r/datascience)</li>
 <li>"Data Skeptic" podcast by Kyle Polich</li>
 </ol>
+    <script>
+    (function(){
+        var d=document.querySelector('.drop-cap');
+        if(!d)return;
+        var c=[
+            'rgba(0,102,204,0.35)',
+            'rgba(153,50,50,0.4)',
+            'rgba(60,120,80,0.35)',
+            'rgba(140,90,40,0.38)',
+            'rgba(100,60,140,0.35)',
+            'rgba(50,120,130,0.35)'
+        ];
+        d.style.setProperty('--drop-cap-color',c[Math.floor(Math.random()*c.length)]);
+    })();
+    </script>
 <p><a href="/">← Home</a></p>
 <footer>Randhawa Inc. 1309 Coffeen Ave Ste 1386 Sheridan, WY</footer>
 </body>

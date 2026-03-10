@@ -176,6 +176,44 @@ class BlogBuilder:
         else:
             return f'<p class="post-date"><em>{date}</em></p>' + html
 
+    def add_drop_cap(self, html):
+        """Add drop-cap class to the first qualifying body paragraph.
+
+        Rules:
+        - Must be after the post-date element
+        - Skip paragraphs that are entirely italic/emphasis (subtitles)
+        - Skip paragraphs shorter than 80 characters of text
+        - Only apply to the first qualifying paragraph
+        """
+        # Find the post-date marker
+        date_match = re.search(r'<p class="post-date">.*?</p>', html)
+        if not date_match:
+            return html
+
+        search_start = date_match.end()
+
+        # Find all <p> tags after the date
+        for p_match in re.finditer(r'<p>(.*?)</p>', html[search_start:], re.DOTALL):
+            inner = p_match.group(1).strip()
+
+            # Skip if entirely wrapped in <em> or <strong> (subtitle pattern)
+            if re.match(r'^<em>.*</em>$', inner, re.DOTALL):
+                continue
+            if re.match(r'^<strong>.*</strong>$', inner, re.DOTALL):
+                continue
+
+            # Get plain text length (strip HTML tags)
+            plain_text = re.sub(r'<[^>]+>', '', inner).strip()
+            if len(plain_text) < 80:
+                continue
+
+            # This paragraph qualifies — add the drop-cap class
+            abs_start = search_start + p_match.start()
+            html = html[:abs_start] + '<p class="drop-cap">' + html[abs_start + 3:]
+            break
+
+        return html
+
     def build_post(self, md_file):
         """Build individual blog post"""
         filename = Path(md_file).name
@@ -209,6 +247,9 @@ class BlogBuilder:
         # Insert date
         formatted_date = date.strftime("%B %d, %Y")
         html_with_date = self.insert_date_after_heading(html, formatted_date)
+
+        # Add drop cap to first qualifying paragraph
+        html_with_date = self.add_drop_cap(html_with_date)
 
         # Replace placeholders
         post_html = (template

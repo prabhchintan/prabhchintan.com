@@ -35,6 +35,21 @@
 
 <body>
     {{content}}
+    <script>
+    (function(){
+        var d=document.querySelector('.drop-cap');
+        if(!d)return;
+        var c=[
+            'rgba(0,102,204,0.35)',
+            'rgba(153,50,50,0.4)',
+            'rgba(60,120,80,0.35)',
+            'rgba(140,90,40,0.38)',
+            'rgba(100,60,140,0.35)',
+            'rgba(50,120,130,0.35)'
+        ];
+        d.style.setProperty('--drop-cap-color',c[Math.floor(Math.random()*c.length)]);
+    })();
+    </script>
 </body>
 
 </html>

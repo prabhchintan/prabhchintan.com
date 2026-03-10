@@ -188,6 +188,18 @@ footer {
     font-size: 0.85em;
 }
 
+.drop-cap::first-letter {
+    float: left;
+    font-family: Baskerville, "Times New Roman", Times, serif;
+    font-size: 3.4em;
+    line-height: 0.8;
+    padding: 0.05em 0.1em 0 0;
+    margin-top: 0.05em;
+    color: var(--drop-cap-color, rgba(0, 102, 204, 0.4));
+    font-weight: normal;
+    font-style: normal;
+}
+
 @media (max-width: 768px) {
     body {
         padding: 2.5em 1.5em;
@@ -205,6 +217,10 @@ footer {
     h3 {
         font-size: 1.1em;
     }
+
+    .drop-cap::first-letter {
+        font-size: 2.8em;
+    }
 }</style>
 </head>
 
@@ -212,7 +228,7 @@ footer {
     <h1>੦ to ੴ: Computational Khālsā</h1><p class="post-date"><em>January 31, 2026</em></p>
 <p><em>A letter to my friend, on the occasion of his wedding.</em></p>
 <p>Sat Śri Akāl REDACTED,</p>
-<p>Many congratulations to you and REDACTED! I wanted to take this opportunity to wish you both well and tell you how much I appreciate you, the seemingly infinite things I have learnt from you, and the amazing person I think you are. I truly think you have the gift, and with it the responsibility, to take yourself, REDACTED, and Sikhi forward.</p>
+<p class="drop-cap">Many congratulations to you and REDACTED! I wanted to take this opportunity to wish you both well and tell you how much I appreciate you, the seemingly infinite things I have learnt from you, and the amazing person I think you are. I truly think you have the gift, and with it the responsibility, to take yourself, REDACTED, and Sikhi forward.</p>
 <p>I don’t know much about your personal life, but I have deeply cherished our conversations over time, and wanted to note in this letter some ideas for us both to think about. I am a big fan of REDACTED and have deep appreciation for you as its founder. I wish for your efforts to echo through time so future generations may learn and reconstruct knowledge from a Sikh perspective the same way you have made possible for many.</p>
 <p>The entirety of human knowledge can be classified into three big paradigms: that of fuzzy concepts expressed linguistically and then eventually symbolically; that of formally expressed reason, logic and mathematics; and that of even further formalized combinations of symbolic reasoning via computer programs (aka running code; which is where we exist today). It’s vital for us to put things in such perspective to gain view of “where we are” in the grand tree of symbolic knowledge. I am unsure if this view is popularly held, but I like to think of Sikhi as an enlightenment comparable to that of Europe in the late 17th and 18th centuries. That is to say it gave common, everyday people a newfound ability to knowledge-seek and knowledge-create; challenging many previously held systems in the process via criticism. This strange ability to seek and create knowledgable explanations of any and all kinds, which is what differentiates us as humans from other animals and plants unable to do so, can roughly be called “universalism” in the linguistic paradigms, and what’s nowadays often called “Turing completeness” in the computational paradigm. What makes such knowledge-seeking-and-creating systems universal is their ability to explain <em>and compute any conceivable system or program possible</em>, with its only limits being memory and speed. This relatively newfound ability to knowledge-seek-and-create in the grand timeline of human history is easy to take for granted, and also prone to degeneration, as witnessed in the decline of past efforts like in Hellenic Greece. Lastly, an absence of such systematic knowledge-seeking-and-creation, otherwise known as <em>ignorance</em>, dwarfs societies and their progress. I find you the opposite of that; a shining example of an enlightened constructor capable of creating new formal systems that pass the only test that matters, that of <em>time</em>.</p>
 <p>I also must insist upon you a second consideration. For most of human history, during long periods without knowledge-seeking-and-creation, most creative resources and innovation were spent ensuring protecting aggregates of previously developed symbolic systems of knowledge. It is easy to sympathize with such an outlook the more one studies history, as it makes sense that protecting the knowledge to create fire, as an example, supersedes knowledge of creating a steam engine. Surviving is an important prerequisite for thriving after all. But you are among the very few people I know who are actively creating, and directing creation via others, of Sikh philosophy and knowledge. I understand this effort can also be found in academia and such, and while those efforts are commendable, they lack the rigor, beauty, and grit of your work; done simply for the love of the game.</p>
@@ -220,6 +236,21 @@ footer {
 <p>My bold conjecture is that what we refer to as “Metaphysics”, which are explanations of the yet-to-be-observed behaviors underlying our experiences and reality, will increasingly be described in formal, replicable, computational terms. This trend is observable in conjectures such as the “Church–Turing–Deutsch principle”, or the “Physicalization of Metamathematics”, and like in the past, will continually challenge previous systems in that process. I wish for us to be prepared for, embrace and partake in these new computational paradigms, and construct new systems of knowledge with it; enabling both ourselves and those around us in the process.</p>
 <p>I am sending a book that influenced me in expressing some of these thoughts, and hope to continue our conversations with time discussing these fuzzily expressed ideas. A seed phrase to REDACTED BTC is also attached to this letter, as a fun experiment for us to look back and laugh about some time. I hope to meet you soon in REDACTED.</p>
 <p>May Waheguru bless you and REDACTED with a very prosperous life ahead.</p>
+    <script>
+    (function(){
+        var d=document.querySelector('.drop-cap');
+        if(!d)return;
+        var c=[
+            'rgba(0,102,204,0.35)',
+            'rgba(153,50,50,0.4)',
+            'rgba(60,120,80,0.35)',
+            'rgba(140,90,40,0.38)',
+            'rgba(100,60,140,0.35)',
+            'rgba(50,120,130,0.35)'
+        ];
+        d.style.setProperty('--drop-cap-color',c[Math.floor(Math.random()*c.length)]);
+    })();
+    </script>
 <p><a href="/blog">← Blog</a></p>
 <footer>Randhawa Inc. 1309 Coffeen Ave Ste 1386 Sheridan, WY</footer>
 </body>
