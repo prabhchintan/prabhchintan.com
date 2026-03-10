@@ -24,13 +24,28 @@ class RichEmbedProcessor:
     @staticmethod
     def process(content):
         """Convert URLs to rich embeds"""
-        # YouTube embed
+        # Fix old YouTube iframes first
+        content = RichEmbedProcessor._fix_old_youtube_iframes(content)
+        # YouTube embed from URLs
         content = RichEmbedProcessor._youtube_embed(content)
         # X/Twitter embed
         content = RichEmbedProcessor._twitter_embed(content)
         # Generic auto-linking (but preserve markdown links)
         content = RichEmbedProcessor._auto_link(content)
         return content
+
+    @staticmethod
+    def _fix_old_youtube_iframes(text):
+        """Fix old YouTube iframe embeds that are missing required attributes"""
+        # Match old iframe embeds and extract video ID
+        old_iframe_pattern = r'<div[^>]*><iframe src="https://www\.youtube\.com/embed/([a-zA-Z0-9_-]{11})"[^>]*></iframe></div>'
+
+        def replace_old_iframe(match):
+            video_id = match.group(1)
+            # Return properly formatted iframe
+            return f'<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;border-radius:8px;margin:2em 0"><iframe src="https://www.youtube-nocookie.com/embed/{video_id}?rel=0" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" title="YouTube video"></iframe></div>'
+
+        return re.sub(old_iframe_pattern, replace_old_iframe, text)
 
     @staticmethod
     def _youtube_embed(text):
