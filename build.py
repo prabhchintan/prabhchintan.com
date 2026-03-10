@@ -131,7 +131,10 @@ class BlogBuilder:
             'rgba(140,50,70,0.45)',   'rgba(90,130,100,0.42)',  'rgba(110,100,140,0.45)'
         ]"""
 
-        # Blog drop cap JS — starts with transparent first-letter, reveals after font+color set
+        # Blog drop cap JS — per-font scale/shift from actual glyph metrics
+        # Each entry: [fontName, scale, shiftEm]
+        # scale adjusts font-size so all glyphs appear visually similar
+        # shift adjusts vertical position for fonts that overflow or sit too high/low
         self.drop_cap_js = f"""<script>
     (function(){{
         var d=document.querySelector('.drop-cap');
@@ -139,17 +142,32 @@ class BlogBuilder:
         d.classList.add('drop-cap-loading');
         var colors={self._drop_cap_colors};
         var fonts=[
-            'AcornInitials','AngloText','ApexLake','CamelotCaps',
-            'DecoratedRoman','DejaVu','EileenCaps','ElzevierCaps',
-            'FleurCornerCaps','FlowerInitials','GothicFlourish',
-            'GoudyInitialen','PaulusFranck','Romantik','Tenderleaf',
-            'TypographerCaps','VictorianInitials','WoodcutInitials',
-            'ZallmanCaps'
+            ['AcornInitials',     1.0,   0],
+            ['AngloText',         1.0,   0],
+            ['ApexLake',          0.80,  0.05],
+            ['CamelotCaps',       1.0,   0],
+            ['DecoratedRoman',    1.0,   0],
+            ['DejaVu',            1.04,  0],
+            ['EileenCaps',        0.92, -0.02],
+            ['ElzevierCaps',      1.03,  0],
+            ['FleurCornerCaps',   1.0,   0],
+            ['FlowerInitials',    1.19, -0.03],
+            ['GothicFlourish',    1.0,   0],
+            ['GoudyInitialen',    1.0,   0],
+            ['PaulusFranck',      1.0,   0],
+            ['Romantik',          0.93,  0.02],
+            ['Tenderleaf',        0.92, -0.02],
+            ['TypographerCaps',   0.79,  0.03],
+            ['VictorianInitials', 0.96,  0],
+            ['WoodcutInitials',   0.82,  0.06],
+            ['ZallmanCaps',       1.04,  0]
         ];
-        var font=fonts[Math.floor(Math.random()*fonts.length)];
+        var pick=fonts[Math.floor(Math.random()*fonts.length)];
         d.style.setProperty('--drop-cap-color',colors[Math.floor(Math.random()*colors.length)]);
-        d.style.setProperty('--drop-cap-font',font);
-        document.fonts.load('1em '+font).then(function(){{
+        d.style.setProperty('--drop-cap-font',pick[0]);
+        d.style.setProperty('--drop-cap-scale',pick[1]);
+        if(pick[2])d.style.setProperty('--drop-cap-shift',pick[2]+'em');
+        document.fonts.load('1em '+pick[0]).then(function(){{
             d.classList.remove('drop-cap-loading');
         }}).catch(function(){{
             d.classList.remove('drop-cap-loading');
@@ -157,15 +175,8 @@ class BlogBuilder:
     }})();
     </script>"""
 
-        # Index drop cap JS — color only, no fancy fonts, no hide/show needed
-        self.drop_cap_js_index = f"""<script>
-    (function(){{
-        var d=document.querySelector('.drop-cap');
-        if(!d)return;
-        var colors={self._drop_cap_colors};
-        d.style.setProperty('--drop-cap-color',colors[Math.floor(Math.random()*colors.length)]);
-    }})();
-    </script>"""
+        # Index uses the same full drop cap JS (fonts + colors + metrics)
+        self.drop_cap_js_index = self.drop_cap_js
 
     def setup_dirs(self):
         """Ensure all directories exist"""

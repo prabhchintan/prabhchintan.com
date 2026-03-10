@@ -210,10 +210,10 @@ footer {
 .drop-cap::first-letter {
     float: left;
     font-family: var(--drop-cap-font, Baskerville), Baskerville, "Times New Roman", Times, serif;
-    font-size: 3.4em;
+    font-size: calc(3.4em * var(--drop-cap-scale, 1));
     line-height: 0.68;
     padding: 0.08em 0.1em 0 0;
-    margin-top: 0.05em;
+    margin-top: calc(0.05em + var(--drop-cap-shift, 0em));
     color: var(--drop-cap-color, rgba(0, 102, 204, 0.5));
     font-weight: normal;
     font-style: normal;
@@ -242,7 +242,7 @@ footer {
     }
 
     .drop-cap::first-letter {
-        font-size: 2.8em;
+        font-size: calc(2.8em * var(--drop-cap-scale, 1));
     }
 }</style>
 </head>
@@ -289,6 +289,7 @@ footer {
     (function(){
         var d=document.querySelector('.drop-cap');
         if(!d)return;
+        d.classList.add('drop-cap-loading');
         var colors=[
             'rgba(0,102,204,0.45)',   'rgba(20,80,180,0.48)',   'rgba(40,100,200,0.42)',
             'rgba(10,70,160,0.5)',    'rgba(30,90,190,0.44)',   'rgba(50,110,210,0.46)',
@@ -312,7 +313,37 @@ footer {
             'rgba(60,90,150,0.45)',   'rgba(70,80,140,0.42)',   'rgba(50,100,160,0.48)',
             'rgba(140,50,70,0.45)',   'rgba(90,130,100,0.42)',  'rgba(110,100,140,0.45)'
         ];
+        var fonts=[
+            ['AcornInitials',     1.0,   0],
+            ['AngloText',         1.0,   0],
+            ['ApexLake',          0.80,  0.05],
+            ['CamelotCaps',       1.0,   0],
+            ['DecoratedRoman',    1.0,   0],
+            ['DejaVu',            1.04,  0],
+            ['EileenCaps',        0.92, -0.02],
+            ['ElzevierCaps',      1.03,  0],
+            ['FleurCornerCaps',   1.0,   0],
+            ['FlowerInitials',    1.19, -0.03],
+            ['GothicFlourish',    1.0,   0],
+            ['GoudyInitialen',    1.0,   0],
+            ['PaulusFranck',      1.0,   0],
+            ['Romantik',          0.93,  0.02],
+            ['Tenderleaf',        0.92, -0.02],
+            ['TypographerCaps',   0.79,  0.03],
+            ['VictorianInitials', 0.96,  0],
+            ['WoodcutInitials',   0.82,  0.06],
+            ['ZallmanCaps',       1.04,  0]
+        ];
+        var pick=fonts[Math.floor(Math.random()*fonts.length)];
         d.style.setProperty('--drop-cap-color',colors[Math.floor(Math.random()*colors.length)]);
+        d.style.setProperty('--drop-cap-font',pick[0]);
+        d.style.setProperty('--drop-cap-scale',pick[1]);
+        if(pick[2])d.style.setProperty('--drop-cap-shift',pick[2]+'em');
+        document.fonts.load('1em '+pick[0]).then(function(){
+            d.classList.remove('drop-cap-loading');
+        }).catch(function(){
+            d.classList.remove('drop-cap-loading');
+        });
     })();
     </script>
 <footer>Randhawa Inc. 1309 Coffeen Ave Ste 1386 Sheridan, WY</footer>
