@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Edit Post - Randhawa Inc.</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="favicon.svg">
+    <!-- CRITICAL_CSS_PLACEHOLDER -->
+    <style>
+        .form-group {
+            margin-bottom: 1.5em
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.4em;
+            color: #666;
+            font-size: 0.8em;
+            letter-spacing: 0.08em;
+            text-transform: uppercase
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 0.4em 0;
+            border: none;
+            border-bottom: 1px solid #eee;
+            font-family: inherit;
+            font-size: 1em;
+            box-sizing: border-box;
+            background: transparent;
+            color: #1a1a1a;
+            transition: border-color 0.3s
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-bottom-color: #1a1a1a
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 280px;
+            padding: 1em;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 1em;
+            line-height: 1.6;
+            box-sizing: border-box;
+            background: transparent;
+            color: #1a1a1a;
+            resize: vertical;
+            transition: border-color 0.3s
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #1a1a1a
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #ccc;
+            font-style: italic
+        }
+
+        button {
+            background: #1a1a1a;
+            color: #fff;
+            border: 1px solid #1a1a1a;
+            font-size: 1em;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+            width: 100%;
+            padding: 0.8em;
+            margin-top: 0.5em
+        }
+
+        button:hover {
+            background: transparent;
+            color: #1a1a1a
+        }
+
+        button:disabled {
+            background: #f5f5f5;
+            color: #bbb;
+            border-color: #eee;
+            cursor: not-allowed
+        }
+
+        #status {
+            margin-top: 1.5em;
+            padding: 1em;
+            border-radius: 4px;
+            font-size: 0.9em;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s
+        }
+
+        #status.show {
+            opacity: 1
+        }
+
+        .success {
+            background: #f0f7f0;
+            color: #2b703e;
+            border: 1px solid #d4e8d4
+        }
+
+        .error {
+            background: #fef0ef;
+            color: #a33b32;
+            border: 1px solid #f5d5d3
+        }
+
+        #matches {
+            margin: 0.5em 0 1em 0;
+            font-size: 0.9em;
+        }
+
+        #matches label {
+            text-transform: none;
+            letter-spacing: 0;
+            font-size: 0.9em;
+            margin-bottom: 0.3em;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="profile-pic">
+        <img src="profile.png" alt="Profile" width="80" height="80">
+    </div>
+
+    <h1>Edit Post</h1>
+
+    <div class="form-group">
+        <label for="slug">Slug</label>
+        <input type="text" id="slug" required placeholder="americano" autocomplete="off">
+    </div>
+
+    <div class="form-group">
+        <label for="token">Authentication</label>
+        <input type="text" id="token" required placeholder="Personal Access Token" autocomplete="off" autocorrect="off"
+            autocapitalize="none">
+    </div>
+
+    <button id="lookupBtn">Lookup Post</button>
+
+    <div id="matches"></div>
+
+    <div class="form-group">
+        <label for="content">Body</label>
+        <textarea id="content" placeholder="Post content will appear here after lookup..." disabled></textarea>
+    </div>
+
+    <button id="saveBtn" disabled>Save Changes</button>
+
+    <div id="status"></div>
+
+    <script>
+        const REPO_OWNER = 'prabhchintan';
+        const REPO_NAME = 'prabhchintan.com';
+
+        let currentFilename = null;
+        let currentSha = null;
+
+        function setStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = message;
+            statusDiv.className = (type ? type : '') + ' show';
+        }
+
+        document.getElementById('lookupBtn').addEventListener('click', async () => {
+            const slugInput = document.getElementById('slug').value.trim().toLowerCase();
+            const token = document.getElementById('token').value.trim();
+            const matchesDiv = document.getElementById('matches');
+            const contentEl = document.getElementById('content');
+            const saveBtn = document.getElementById('saveBtn');
+            const lookupBtn = document.getElementById('lookupBtn');
+
+            matchesDiv.innerHTML = '';
+            contentEl.value = '';
+            contentEl.disabled = true;
+            saveBtn.disabled = true;
+            setStatus('', '');
+
+            if (!slugInput) {
+                setStatus('Please enter a slug.', 'error');
+                return;
+            }
+
+            lookupBtn.disabled = true;
+            lookupBtn.textContent = 'Looking up...';
+
+            try {
+                const listUrl = 'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/posts';
+                const response = await fetch(listUrl, {
+                    headers: {
+                        'Authorization': 'token ' + token,
+                        'Accept': 'application/vnd.github+json'
+                    }
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || 'Failed to list posts');
+                }
+
+                const files = await response.json();
+                const slugMatches = files
+                    .filter(item => item.type === 'file' && item.name.endsWith('.md'))
+                    .filter(item => {
+                        const match = item.name.match(/^\\d{4}_\\d{2}_\\d{2}_(.+)\\.md$/);
+                        if (!match) return false;
+                        const fileSlug = match[1].toLowerCase();
+                        return fileSlug === slugInput;
+                    });
+
+                if (slugMatches.length === 0) {
+                    setStatus('No posts found for slug "' + slugInput + '".', 'error');
+                    return;
+                }
+
+                if (slugMatches.length === 1) {
+                    await loadPost(slugMatches[0].name, token);
+                    matchesDiv.innerHTML = 'Editing: <strong>' + slugMatches[0].name + '</strong>';
+                } else {
+                    let html = '<div><strong>Multiple matches found:</strong></div>';
+                    slugMatches.forEach((item, index) => {
+                        const id = 'match_' + index;
+                        html += '<div><label><input type=\"radio\" name=\"match\" id=\"' + id +
+                            '\" value=\"' + item.name + '\"> ' + item.name + '</label></div>';
+                    });
+                    matchesDiv.innerHTML = html;
+
+                    const radios = matchesDiv.querySelectorAll('input[name=\"match\"]');
+                    radios.forEach(radio => {
+                        radio.addEventListener('change', async (e) => {
+                            await loadPost(e.target.value, token);
+                        });
+                    });
+                }
+
+            } catch (error) {
+                setStatus('Error: ' + error.message, 'error');
+            } finally {
+                lookupBtn.disabled = false;
+                lookupBtn.textContent = 'Lookup Post';
+            }
+        });
+
+        async function loadPost(filename, token) {
+            const contentEl = document.getElementById('content');
+            const saveBtn = document.getElementById('saveBtn');
+
+            setStatus('Loading ' + filename + '...', '');
+
+            try {
+                const fileUrl = 'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/posts/' + encodeURIComponent(filename);
+                const response = await fetch(fileUrl, {
+                    headers: {
+                        'Authorization': 'token ' + token,
+                        'Accept': 'application/vnd.github+json'
+                    }
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || 'Failed to fetch file');
+                }
+
+                const fileData = await response.json();
+                currentFilename = filename;
+                currentSha = fileData.sha;
+
+                const decoded = decodeURIComponent(escape(atob(fileData.content.replace(/\\n/g, ''))));
+                contentEl.value = decoded;
+                contentEl.disabled = false;
+                saveBtn.disabled = false;
+
+                setStatus('Loaded ' + filename + '. Edit and press Save Changes.', 'success');
+            } catch (error) {
+                setStatus('Error: ' + error.message, 'error');
+                currentFilename = null;
+                currentSha = null;
+                contentEl.value = '';
+                contentEl.disabled = true;
+                saveBtn.disabled = true;
+            }
+        }
+
+        document.getElementById('saveBtn').addEventListener('click', async () => {
+            const token = document.getElementById('token').value.trim();
+            const contentEl = document.getElementById('content');
+            const saveBtn = document.getElementById('saveBtn');
+
+            if (!currentFilename || !currentSha) {
+                setStatus('No post loaded to save.', 'error');
+                return;
+            }
+
+            if (!contentEl.value.trim()) {
+                setStatus('Content cannot be empty.', 'error');
+                return;
+            }
+
+            if (!confirm('Save changes to ' + currentFilename + '?')) {
+                return;
+            }
+
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving...';
+            setStatus('', '');
+
+            try {
+                const fileUrl = 'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/posts/' + encodeURIComponent(currentFilename);
+                const markdownContent = contentEl.value;
+                const encodedContent = btoa(unescape(encodeURIComponent(markdownContent)));
+
+                const response = await fetch(fileUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': 'token ' + token,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/vnd.github+json'
+                    },
+                    body: JSON.stringify({
+                        message: 'Mobile update: ' + currentFilename,
+                        content: encodedContent,
+                        sha: currentSha,
+                        branch: 'main'
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    // If SHA is out of date, tell the user to re-load
+                    if (errorData && /sha/i.test(errorData.message || '')) {
+                        throw new Error('File changed on GitHub. Tap Lookup again to refresh, then retry.');
+                    }
+                    throw new Error(errorData.message || 'Failed to save changes');
+                }
+
+                const result = await response.json();
+                currentSha = result.content && result.content.sha ? result.content.sha : currentSha;
+
+                setStatus('Updated. Site updates in ~60 seconds.', 'success');
+            } catch (error) {
+                setStatus('Error: ' + error.message, 'error');
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save Changes';
+            }
+        });
+    </script>
+</body>
+
+</html>
+
