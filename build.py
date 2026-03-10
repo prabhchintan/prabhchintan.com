@@ -131,12 +131,12 @@ class BlogBuilder:
             'rgba(140,50,70,0.45)',   'rgba(90,130,100,0.42)',  'rgba(110,100,140,0.45)'
         ]"""
 
-        # Blog drop cap JS — hides letter until font+color are set, preventing fallback flash
-        self.drop_cap_js = f"""<style>.drop-cap::first-letter {{visibility:hidden}}</style>
-    <script>
+        # Blog drop cap JS — starts with transparent first-letter, reveals after font+color set
+        self.drop_cap_js = f"""<script>
     (function(){{
         var d=document.querySelector('.drop-cap');
         if(!d)return;
+        d.classList.add('drop-cap-loading');
         var colors={self._drop_cap_colors};
         var fonts=[
             'AcornInitials','AngloText','ApexLake','CamelotCaps',
@@ -146,10 +146,14 @@ class BlogBuilder:
             'TypographerCaps','VictorianInitials','WoodcutInitials',
             'ZallmanCaps'
         ];
+        var font=fonts[Math.floor(Math.random()*fonts.length)];
         d.style.setProperty('--drop-cap-color',colors[Math.floor(Math.random()*colors.length)]);
-        d.style.setProperty('--drop-cap-font',fonts[Math.floor(Math.random()*fonts.length)]);
-        d.style.setProperty('visibility','visible');
-        var s=document.querySelector('style');if(s&&s.textContent.indexOf('visibility:hidden')!==-1)s.remove();
+        d.style.setProperty('--drop-cap-font',font);
+        document.fonts.load('1em '+font).then(function(){{
+            d.classList.remove('drop-cap-loading');
+        }}).catch(function(){{
+            d.classList.remove('drop-cap-loading');
+        }});
     }})();
     </script>"""
 

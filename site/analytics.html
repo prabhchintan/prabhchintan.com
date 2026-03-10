@@ -220,6 +220,10 @@ footer {
     font-style: normal;
 }
 
+.drop-cap-loading::first-letter {
+    color: transparent;
+}
+
 @media (max-width: 768px) {
     body {
         padding: 2.5em 1.5em;
@@ -338,11 +342,11 @@ footer {
 <li>The Data Science subreddit (r/datascience)</li>
 <li>"Data Skeptic" podcast by Kyle Polich</li>
 </ol>
-    <style>.drop-cap::first-letter {visibility:hidden}</style>
     <script>
     (function(){
         var d=document.querySelector('.drop-cap');
         if(!d)return;
+        d.classList.add('drop-cap-loading');
         var colors=[
             'rgba(0,102,204,0.45)',   'rgba(20,80,180,0.48)',   'rgba(40,100,200,0.42)',
             'rgba(10,70,160,0.5)',    'rgba(30,90,190,0.44)',   'rgba(50,110,210,0.46)',
@@ -374,10 +378,14 @@ footer {
             'TypographerCaps','VictorianInitials','WoodcutInitials',
             'ZallmanCaps'
         ];
+        var font=fonts[Math.floor(Math.random()*fonts.length)];
         d.style.setProperty('--drop-cap-color',colors[Math.floor(Math.random()*colors.length)]);
-        d.style.setProperty('--drop-cap-font',fonts[Math.floor(Math.random()*fonts.length)]);
-        d.style.setProperty('visibility','visible');
-        var s=document.querySelector('style');if(s&&s.textContent.indexOf('visibility:hidden')!==-1)s.remove();
+        d.style.setProperty('--drop-cap-font',font);
+        document.fonts.load('1em '+font).then(function(){
+            d.classList.remove('drop-cap-loading');
+        }).catch(function(){
+            d.classList.remove('drop-cap-loading');
+        });
     })();
     </script>
 <p><a href="/">← Home</a></p>

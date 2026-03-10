@@ -220,6 +220,10 @@ footer {
     font-style: normal;
 }
 
+.drop-cap-loading::first-letter {
+    color: transparent;
+}
+
 @media (max-width: 768px) {
     body {
         padding: 2.5em 1.5em;
@@ -256,11 +260,11 @@ footer {
 <p>My bold conjecture is that what we refer to as “Metaphysics”, which are explanations of the yet-to-be-observed behaviors underlying our experiences and reality, will increasingly be described in formal, replicable, computational terms. This trend is observable in conjectures such as the “Church–Turing–Deutsch principle”, or the “Physicalization of Metamathematics”, and like in the past, will continually challenge previous systems in that process. I wish for us to be prepared for, embrace and partake in these new computational paradigms, and construct new systems of knowledge with it; enabling both ourselves and those around us in the process.</p>
 <p>I am sending a book that influenced me in expressing some of these thoughts, and hope to continue our conversations with time discussing these fuzzily expressed ideas. A seed phrase to REDACTED BTC is also attached to this letter, as a fun experiment for us to look back and laugh about some time. I hope to meet you soon in REDACTED.</p>
 <p>May Waheguru bless you and REDACTED with a very prosperous life ahead.</p>
-    <style>.drop-cap::first-letter {visibility:hidden}</style>
     <script>
     (function(){
         var d=document.querySelector('.drop-cap');
         if(!d)return;
+        d.classList.add('drop-cap-loading');
         var colors=[
             'rgba(0,102,204,0.45)',   'rgba(20,80,180,0.48)',   'rgba(40,100,200,0.42)',
             'rgba(10,70,160,0.5)',    'rgba(30,90,190,0.44)',   'rgba(50,110,210,0.46)',
@@ -292,10 +296,14 @@ footer {
             'TypographerCaps','VictorianInitials','WoodcutInitials',
             'ZallmanCaps'
         ];
+        var font=fonts[Math.floor(Math.random()*fonts.length)];
         d.style.setProperty('--drop-cap-color',colors[Math.floor(Math.random()*colors.length)]);
-        d.style.setProperty('--drop-cap-font',fonts[Math.floor(Math.random()*fonts.length)]);
-        d.style.setProperty('visibility','visible');
-        var s=document.querySelector('style');if(s&&s.textContent.indexOf('visibility:hidden')!==-1)s.remove();
+        d.style.setProperty('--drop-cap-font',font);
+        document.fonts.load('1em '+font).then(function(){
+            d.classList.remove('drop-cap-loading');
+        }).catch(function(){
+            d.classList.remove('drop-cap-loading');
+        });
     })();
     </script>
 <p><a href="/blog">← Blog</a></p>

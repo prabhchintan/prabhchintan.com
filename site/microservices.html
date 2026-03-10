@@ -220,6 +220,10 @@ footer {
     font-style: normal;
 }
 
+.drop-cap-loading::first-letter {
+    color: transparent;
+}
+
 @media (max-width: 768px) {
     body {
         padding: 2.5em 1.5em;
@@ -247,11 +251,11 @@ footer {
 <body>
     <h1>What Analytic Philosophy Sounds Like to Continental Philosophers</h1><p class="post-date"><em>March 07, 2026</em></p>
 <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;border-radius:8px;margin:2em 0"><iframe width="560" height="315" src="https://www.youtube.com/embed/y8OnoxKotPQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;border:0"></iframe></div>
-    <style>.drop-cap::first-letter {visibility:hidden}</style>
     <script>
     (function(){
         var d=document.querySelector('.drop-cap');
         if(!d)return;
+        d.classList.add('drop-cap-loading');
         var colors=[
             'rgba(0,102,204,0.45)',   'rgba(20,80,180,0.48)',   'rgba(40,100,200,0.42)',
             'rgba(10,70,160,0.5)',    'rgba(30,90,190,0.44)',   'rgba(50,110,210,0.46)',
@@ -283,10 +287,14 @@ footer {
             'TypographerCaps','VictorianInitials','WoodcutInitials',
             'ZallmanCaps'
         ];
+        var font=fonts[Math.floor(Math.random()*fonts.length)];
         d.style.setProperty('--drop-cap-color',colors[Math.floor(Math.random()*colors.length)]);
-        d.style.setProperty('--drop-cap-font',fonts[Math.floor(Math.random()*fonts.length)]);
-        d.style.setProperty('visibility','visible');
-        var s=document.querySelector('style');if(s&&s.textContent.indexOf('visibility:hidden')!==-1)s.remove();
+        d.style.setProperty('--drop-cap-font',font);
+        document.fonts.load('1em '+font).then(function(){
+            d.classList.remove('drop-cap-loading');
+        }).catch(function(){
+            d.classList.remove('drop-cap-loading');
+        });
     })();
     </script>
 <p><a href="/blog">← Blog</a></p>
