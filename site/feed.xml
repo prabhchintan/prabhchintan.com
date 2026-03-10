@@ -5,7 +5,14 @@
 <link>https://prabhchintan.com/blog</link>
 <atom:link href="https://prabhchintan.com/feed.xml" rel="self" type="application/rss+xml"/>
 <description>Personal blog featuring thoughts on technology, design, and life.</description>
-<lastBuildDate>Tue, 10 Mar 2026 07:02:06 +0000</lastBuildDate>
+<lastBuildDate>Tue, 10 Mar 2026 12:06:35 +0000</lastBuildDate>
+<item>
+<title>Troubleshooting the Blog</title>
+<link>https://prabhchintan.com/poast</link>
+<description>I’m really enjoying this workflow I built to blog more. What I do is go to my site [https://prabhchintan.com/post](https://prabhchintan.com/post) which is wh...</description>
+<pubDate>Tue, 10 Mar 2026 12:00:00 +0000</pubDate>
+<guid>https://prabhchintan.com/poast</guid>
+</item>
 <item>
 <title>Americano</title>
 <link>https://prabhchintan.com/americano</link>
