@@ -337,6 +337,7 @@ class BlogBuilder:
             .replace('{{title}}', title)
             .replace('{{date}}', formatted_date)
             .replace('{{content}}', html_with_date)
+            .replace('{{post_nav}}', '<p><a href="/blog">\u2190 Blog</a></p>')
             .replace('{{comments_section}}', comments_html)
             .replace('{{slug}}', slug)
             .replace('{{description}}', description)
@@ -394,6 +395,7 @@ class BlogBuilder:
             .replace('{{title}}', title)
             .replace('{{date}}', '')
             .replace('{{content}}', html)
+            .replace('{{post_nav}}', '')
             .replace('{{comments_section}}', '')
             .replace('{{slug}}', slug)
             .replace('{{description}}', description)
@@ -644,10 +646,9 @@ class BlogBuilder:
         # Remove any existing navigation to avoid duplication
         html = re.sub(r'<p><a href="[^"]*">← (?:Back to Blog|Home)</a></p>\s*', '', html)
 
-        # Add navigation if not present
+        # Add navigation if not present (posts handle their own nav via template)
         if is_post is True:
-            nav = '<p><a href="/blog">← Blog</a></p>'
-            html = html.replace('</body>', f'{nav}\n{footer}\n</body>')
+            html = html.replace('</body>', f'{footer}\n</body>')
         elif is_post is False and '← Home' not in html:
             nav = '<p><a href="/">← Home</a></p>'
             html = html.replace('</body>', f'{nav}\n{footer}\n</body>')
