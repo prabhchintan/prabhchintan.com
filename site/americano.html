@@ -136,6 +136,8 @@ a {
     color: var(--link-color);
     text-decoration: none;
     transition: opacity 0.2s ease;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 a:hover {
@@ -373,7 +375,7 @@ footer {
 <input type="text" id="comment-name" placeholder="Your name" maxlength="50" autocomplete="off" spellcheck="false">
 <textarea id="comment-text" placeholder="Your thoughts..." maxlength="2000"></textarea>
 <div class="comment-form-actions" id="comment-actions">
-<a id="comment-btn" href="javascript:void(0)">connect wallet</a><span class="comment-sep"> &middot; </span><span class="comment-cost">1 USDC via Base</span>
+<a id="comment-btn" href="javascript:void(0)">connect wallet</a><span class="comment-sep"> &middot; </span><span class="comment-cost">1 USDC</span>
 </div>
 <p class="comment-status" id="comment-status"></p>
 </div>
@@ -381,12 +383,19 @@ footer {
 <script>
 (function(){
     var SLUG='americano';
-    var RECIPIENT='0xbc82B52FD791757De5002bcfAa5738776F63C440';
-    var USDC='0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913';
-    var CHAIN_ID='0x2105';
+    // transfer(address,uint256) → to: randhawa.eth, amount: 1000000 (1 USDC)
     var TX_DATA='0xa9059cbb'
-        +'000000000000000000000000bc82b52fd791757de5002bcfaa5738776f63c440'
+        +'0000000000000000000000003570958b8dcbc4f663f508efcedb454ee9af9516'
         +'00000000000000000000000000000000000000000000000000000000000f4240';
+
+    var CHAINS={
+        '0x1':    {name:'Ethereum', usdc:'0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',explorer:'https://etherscan.io'},
+        '0x2105': {name:'Base',     usdc:'0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',explorer:'https://basescan.org'},
+        '0xa4b1': {name:'Arbitrum', usdc:'0xaf88d065e77c8cC2239327C5EDb3A432268e5831',explorer:'https://arbiscan.io'},
+        '0xa':    {name:'Optimism', usdc:'0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85',explorer:'https://optimistic.etherscan.io'},
+        '0x89':   {name:'Polygon',  usdc:'0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359',explorer:'https://polygonscan.com'}
+    };
+    var CHAIN_INFO={1:{name:'Ethereum',explorer:'https://etherscan.io'},8453:{name:'Base',explorer:'https://basescan.org'},42161:{name:'Arbitrum',explorer:'https://arbiscan.io'},10:{name:'Optimism',explorer:'https://optimistic.etherscan.io'},137:{name:'Polygon',explorer:'https://polygonscan.com'}};
 
     var list=document.getElementById('comments-list');
     var statusEl=document.getElementById('comment-status');
@@ -394,11 +403,13 @@ footer {
     var nameInput=document.getElementById('comment-name');
     var textInput=document.getElementById('comment-text');
     var addr=null;
+    var chainHex=null;
 
     function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
     function short(a){return a.slice(0,6)+'\u2026'+a.slice(-4);}
     function fmtDate(ts){return new Date(ts).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});}
     function setStatus(s){statusEl.textContent=s;}
+    function hexInt(h){return parseInt(h,16);}
 
     function renderComments(comments){
         if(!comments||!comments.length){
@@ -408,9 +419,12 @@ footer {
         var h='';
         for(var i=0;i<comments.length;i++){
             var c=comments[i];
+            var ci=CHAIN_INFO[c.chainId||8453]||{name:'',explorer:'https://basescan.org'};
             var meta='';
             if(c.name)meta+=esc(c.name)+' \u00b7 ';
-            meta+='<a href="https://basescan.org/tx/'+c.txHash+'" target="_blank" rel="noopener">'+short(c.address)+'</a>';
+            meta+='<a href="'+ci.explorer+'/tx/'+c.txHash+'" target="_blank" rel="noopener">'+short(c.address);
+            if(ci.name)meta+=' on '+ci.name;
+            meta+='</a>';
             meta+=' \u00b7 '+fmtDate(c.timestamp);
             h+='<div class="comment"><p class="comment-text">\u201c'+esc(c.text)+'\u201d</p><p class="comment-meta">\u2014 '+meta+'</p></div>';
         }
@@ -422,45 +436,61 @@ footer {
         .then(function(d){renderComments(d.comments);})
         .catch(function(){list.innerHTML='<p class="comment-empty">No comments yet.</p>';});
 
-    function updateActions(){
-        if(addr){
-            actionsEl.innerHTML='<span class="comment-addr">'+short(addr)+'</span>'
-                +'<span class="comment-sep"> \u00b7 </span>'
-                +'<a id="comment-btn" href="javascript:void(0)">post comment</a>'
-                +'<span class="comment-sep"> \u00b7 </span>'
-                +'<span class="comment-cost">1 USDC via Base</span>';
+    // Mobile: no injected wallet — show deep links to wallet apps
+    if(!window.ethereum){
+        var pageUrl=encodeURIComponent(window.location.href);
+        var dappPath=window.location.host+window.location.pathname;
+        actionsEl.innerHTML=
+            '<a href="https://metamask.app.link/dapp/'+dappPath+'">open in MetaMask</a>'
+            +'<span class="comment-sep"> \u00b7 </span>'
+            +'<a href="https://go.cb-w.com/dapp?cb_url='+pageUrl+'">Coinbase Wallet</a>'
+            +'<span class="comment-sep"> \u00b7 </span>'
+            +'<span class="comment-cost">1 USDC</span>';
+    } else {
+        ethereum.on('chainChanged',function(c){chainHex=c;if(addr)showConnected();});
+        ethereum.on('accountsChanged',function(a){
+            if(a.length){addr=a[0];showConnected();}
+            else{addr=null;showDisconnected();}
+        });
+        document.getElementById('comment-btn').onclick=function(e){
+            e.preventDefault();
+            if(addr)submitComment();else connectWallet();
+        };
+    }
+
+    function showDisconnected(){
+        actionsEl.innerHTML='<a id="comment-btn" href="javascript:void(0)">connect wallet</a>'
+            +'<span class="comment-sep"> \u00b7 </span>'
+            +'<span class="comment-cost">1 USDC</span>';
+        document.getElementById('comment-btn').onclick=function(e){e.preventDefault();connectWallet();};
+    }
+
+    function showConnected(){
+        var chain=CHAINS[chainHex];
+        var chainName=chain?chain.name:'unsupported network';
+        var supported=!!chain;
+        actionsEl.innerHTML='<span class="comment-addr">'+short(addr)+' on '+chainName+'</span>'
+            +'<span class="comment-sep"> \u00b7 </span>'
+            +(supported
+                ?'<a id="comment-btn" href="javascript:void(0)">post comment</a>'
+                :'<span class="comment-cost">switch to a supported network</span>')
+            +'<span class="comment-sep"> \u00b7 </span>'
+            +'<span class="comment-cost">1 USDC</span>';
+        if(supported){
             document.getElementById('comment-btn').onclick=function(e){e.preventDefault();submitComment();};
         }
     }
 
-    document.getElementById('comment-btn').onclick=function(e){
-        e.preventDefault();
-        if(addr)submitComment();
-        else connectWallet();
-    };
-
     function connectWallet(){
-        if(!window.ethereum){
-            setStatus('Requires a crypto wallet like MetaMask.');
-            return;
-        }
+        if(!window.ethereum)return;
         ethereum.request({method:'eth_requestAccounts'}).then(function(accounts){
             if(!accounts.length)return;
             addr=accounts[0];
-            return ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:CHAIN_ID}]}).catch(function(err){
-                if(err.code===4902){
-                    return ethereum.request({method:'wallet_addEthereumChain',params:[{
-                        chainId:CHAIN_ID,
-                        chainName:'Base',
-                        nativeCurrency:{name:'ETH',symbol:'ETH',decimals:18},
-                        rpcUrls:['https://mainnet.base.org'],
-                        blockExplorerUrls:['https://basescan.org']
-                    }]});
-                }
-                throw err;
-            });
-        }).then(function(){
-            updateActions();
+            return ethereum.request({method:'eth_chainId'});
+        }).then(function(c){
+            if(!c)return;
+            chainHex=c;
+            showConnected();
             setStatus('');
         }).catch(function(err){
             setStatus(err.message||'Connection failed.');
@@ -472,13 +502,15 @@ footer {
         var text=textInput.value.trim();
         if(!text){setStatus('Please write a comment.');return;}
         if(!addr){connectWallet();return;}
+        var chain=CHAINS[chainHex];
+        if(!chain){setStatus('Please switch to a supported network.');return;}
 
-        setStatus('Sending 1 USDC\u2026');
+        setStatus('Sending 1 USDC on '+chain.name+'\u2026');
         ethereum.request({
             method:'eth_sendTransaction',
-            params:[{from:addr,to:USDC,data:TX_DATA}]
+            params:[{from:addr,to:chain.usdc,data:TX_DATA}]
         }).then(function(txHash){
-            setStatus('Confirming\u2026');
+            setStatus('Confirming on '+chain.name+'\u2026');
             return waitForReceipt(txHash);
         }).then(function(result){
             if(result.receipt.status!=='0x1'){
@@ -489,7 +521,7 @@ footer {
             return fetch('/api/comments',{
                 method:'POST',
                 headers:{'Content-Type':'application/json'},
-                body:JSON.stringify({slug:SLUG,name:name,text:text,txHash:result.txHash,address:addr})
+                body:JSON.stringify({slug:SLUG,name:name,text:text,txHash:result.txHash,address:addr,chainId:hexInt(chainHex)})
             }).then(function(r){return r.json();});
         }).then(function(data){
             if(!data)return;

@@ -1,8 +1,14 @@
-const RECIPIENT = '0xbc82b52fd791757de5002bcfaa5738776f63c440';
-const USDC_BASE = '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913';
+const RECIPIENT = '0x3570958b8dcbc4f663f508efcedb454ee9af9516';
 const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
-const BASE_RPC = 'https://mainnet.base.org';
 const MIN_AMOUNT = 1000000; // 1 USDC (6 decimals)
+
+const CHAINS = {
+    1:     { rpc: 'https://eth.llamarpc.com',    usdc: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48' },
+    8453:  { rpc: 'https://mainnet.base.org',     usdc: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913' },
+    42161: { rpc: 'https://arb1.arbitrum.io/rpc', usdc: '0xaf88d065e77c8cc2239327c5edb3a432268e5831' },
+    10:    { rpc: 'https://mainnet.optimism.io',  usdc: '0x0b2c639c533813f4aa9d7837caf62653d097ff85' },
+    137:   { rpc: 'https://polygon-rpc.com',      usdc: '0x3c499c542cef5e3811e1192ce70d8cc03d5c3359' }
+};
 
 function json(data, status = 200) {
     return new Response(JSON.stringify(data), {
@@ -30,10 +36,10 @@ export async function onRequestPost(context) {
     const { request, env } = context;
 
     try {
-        const { slug, name, text, txHash, address } = await request.json();
+        const { slug, name, text, txHash, address, chainId } = await request.json();
 
         // Validate required fields
-        if (!slug || !text || !txHash || !address) {
+        if (!slug || !text || !txHash || !address || !chainId) {
             return json({ error: 'Missing required fields' }, 400);
         }
 
@@ -49,6 +55,11 @@ export async function onRequestPost(context) {
             return json({ error: 'Invalid address' }, 400);
         }
 
+        const chain = CHAINS[chainId];
+        if (!chain) {
+            return json({ error: 'Unsupported chain' }, 400);
+        }
+
         // Check tx not already used
         const txKey = `tx:${txHash.toLowerCase()}`;
         const txUsed = await env.COMMENTS.get(txKey);
@@ -56,8 +67,8 @@ export async function onRequestPost(context) {
             return json({ error: 'Transaction already used for a comment' }, 400);
         }
 
-        // Verify tx on-chain (also checks sender matches)
-        const verification = await verifyTransaction(txHash, address);
+        // Verify tx on-chain
+        const verification = await verifyTransaction(txHash, address, chain);
         if (!verification.valid) {
             return json({ error: verification.reason }, 400);
         }
@@ -78,6 +89,7 @@ export async function onRequestPost(context) {
             text: sanitizedText,
             address: address.toLowerCase(),
             txHash: txHash.toLowerCase(),
+            chainId: chainId,
             timestamp: Date.now()
         };
         data.comments.push(comment);
@@ -92,8 +104,8 @@ export async function onRequestPost(context) {
     }
 }
 
-async function verifyTransaction(txHash, senderAddress) {
-    const resp = await fetch(BASE_RPC, {
+async function verifyTransaction(txHash, senderAddress, chain) {
+    const resp = await fetch(chain.rpc, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -107,7 +119,7 @@ async function verifyTransaction(txHash, senderAddress) {
     const { result } = await resp.json();
 
     if (!result) {
-        return { valid: false, reason: 'Transaction not found on Base' };
+        return { valid: false, reason: 'Transaction not found' };
     }
 
     if (result.status !== '0x1') {
@@ -119,7 +131,7 @@ async function verifyTransaction(txHash, senderAddress) {
     const recipientPadded = '0x' + RECIPIENT.slice(2).padStart(64, '0');
 
     for (const log of (result.logs || [])) {
-        if (log.address.toLowerCase() !== USDC_BASE) continue;
+        if (log.address.toLowerCase() !== chain.usdc) continue;
         if (!log.topics || log.topics[0] !== TRANSFER_TOPIC) continue;
         if (log.topics[1]?.toLowerCase() !== senderPadded) continue;
         if (log.topics[2]?.toLowerCase() !== recipientPadded) continue;

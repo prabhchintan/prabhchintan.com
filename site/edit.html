@@ -113,6 +113,8 @@ a {
     color: var(--link-color);
     text-decoration: none;
     transition: opacity 0.2s ease;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 a:hover {
@@ -469,6 +471,100 @@ footer {
             color: #a33b32;
             border: 1px solid #f5d5d3
         }
+
+        .info {
+            background: #f0f7ff;
+            color: #0066cc;
+            border: 1px solid #d4e8f5
+        }
+
+        .media-upload {
+            margin: 1em 0;
+            padding: 1.5em;
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(0, 0, 0, 0.01);
+            display: none
+        }
+
+        .media-upload:hover {
+            border-color: var(--text-color);
+            background: rgba(0, 0, 0, 0.02)
+        }
+
+        .media-upload.dragover {
+            border-color: var(--link-color);
+            background: rgba(0, 102, 204, 0.05)
+        }
+
+        .media-upload-icon {
+            font-size: 2em;
+            margin-bottom: 0.3em
+        }
+
+        .media-upload-text {
+            color: var(--meta-color);
+            font-size: 0.9em
+        }
+
+        .attached-files {
+            margin: 1em 0;
+            padding: 0;
+            list-style: none
+        }
+
+        .attached-file {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.8em;
+            margin: 0.5em 0;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.01)
+        }
+
+        .attached-file-info {
+            display: flex;
+            align-items: center;
+            gap: 0.8em;
+            flex: 1
+        }
+
+        .attached-file-preview {
+            width: 50px;
+            height: 50px;
+            border-radius: 4px;
+            object-fit: cover;
+            background: rgba(0, 0, 0, 0.05)
+        }
+
+        .attached-file-name {
+            font-size: 0.9em;
+            color: var(--text-color)
+        }
+
+        .attached-file-size {
+            font-size: 0.8em;
+            color: var(--meta-color)
+        }
+
+        .remove-file {
+            background: transparent;
+            border: none;
+            color: #a33b32;
+            cursor: pointer;
+            font-size: 1.2em;
+            padding: 0.2em 0.5em;
+            width: auto
+        }
+
+        .remove-file:hover {
+            background: rgba(163, 59, 50, 0.1)
+        }
     </style>
 </head>
 
@@ -498,6 +594,17 @@ footer {
         <textarea id="content" disabled></textarea>
     </div>
 
+    <div class="media-upload" id="mediaUpload">
+        <input type="file" id="mediaFile" style="display:none" multiple>
+        <div class="media-upload-icon">📎</div>
+        <div class="media-upload-text">
+            <strong>Attach Files</strong><br>
+            <small>Click or drag files here</small>
+        </div>
+    </div>
+
+    <ul id="attachedFiles" class="attached-files"></ul>
+
     <button id="saveBtn" style="display:none" disabled>Save Changes</button>
 
     <div id="status"></div>
@@ -506,6 +613,98 @@ footer {
         const API = '/api';
         let allPosts = [];
         let selectedPost = null;
+        let attachedFiles = [];
+        let fileMarkdownMap = new Map();
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+
+        function generateMediaFilename(file) {
+            const now = new Date();
+            const pad = (n) => String(n).padStart(2, '0');
+            const index = String(attachedFiles.length + 1).padStart(3, '0');
+            const ext = file.name.split('.').pop().toLowerCase().replace(/[^a-z0-9]/g, '');
+            return `${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}_${index}.${ext}`;
+        }
+
+        function getMarkdownForFile(file, mediaFilename) {
+            const mediaPath = `/media/${mediaFilename}`;
+            const altText = mediaFilename.split('/').pop();
+            if (file.type.startsWith('image/')) return `\n\n![${altText}](${mediaPath})`;
+            if (file.type.startsWith('video/')) return `\n\n<video controls src="${mediaPath}"></video>`;
+            if (file.type.startsWith('audio/')) return `\n\n<audio controls src="${mediaPath}"></audio>`;
+            return `\n\n[${altText}](${mediaPath})`;
+        }
+
+        function addFileToList(file) {
+            const filesList = document.getElementById('attachedFiles');
+            const contentTextarea = document.getElementById('content');
+            const mediaFilename = generateMediaFilename(file);
+            const markdown = getMarkdownForFile(file, mediaFilename);
+
+            contentTextarea.value += markdown;
+            fileMarkdownMap.set(file, { markdown, mediaFilename });
+
+            const li = document.createElement('li');
+            li.className = 'attached-file';
+
+            const info = document.createElement('div');
+            info.className = 'attached-file-info';
+
+            if (file.type.startsWith('image/')) {
+                const preview = document.createElement('img');
+                preview.className = 'attached-file-preview';
+                preview.src = URL.createObjectURL(file);
+                info.appendChild(preview);
+            }
+
+            const details = document.createElement('div');
+            const name = document.createElement('div');
+            name.className = 'attached-file-name';
+            name.textContent = file.name;
+            const size = document.createElement('div');
+            size.className = 'attached-file-size';
+            size.textContent = formatFileSize(file.size);
+            details.appendChild(name);
+            details.appendChild(size);
+            info.appendChild(details);
+            li.appendChild(info);
+
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'remove-file';
+            removeBtn.innerHTML = '×';
+            removeBtn.type = 'button';
+            removeBtn.onclick = () => {
+                const fileData = fileMarkdownMap.get(file);
+                if (fileData) {
+                    contentTextarea.value = contentTextarea.value.replace(fileData.markdown, '');
+                    fileMarkdownMap.delete(file);
+                }
+                attachedFiles = attachedFiles.filter(f => f !== file);
+                li.remove();
+            };
+            li.appendChild(removeBtn);
+            filesList.appendChild(li);
+        }
+
+        // Media upload handlers
+        const uploadArea = document.getElementById('mediaUpload');
+        const mediaFileInput = document.getElementById('mediaFile');
+
+        uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+        uploadArea.addEventListener('dragleave', () => { uploadArea.classList.remove('dragover'); });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            Array.from(e.dataTransfer.files).forEach(file => { attachedFiles.push(file); addFileToList(file); });
+        });
+        uploadArea.addEventListener('click', () => { mediaFileInput.click(); });
+        mediaFileInput.addEventListener('change', (e) => {
+            Array.from(e.target.files).forEach(file => { attachedFiles.push(file); addFileToList(file); });
+        });
 
         // Fuzzy search function
         function fuzzyMatch(query, text) {
@@ -612,8 +811,13 @@ footer {
                 content.value = decoded;
                 content.disabled = false;
                 editorSection.style.display = 'block';
+                document.getElementById('mediaUpload').style.display = 'block';
                 saveBtn.style.display = 'block';
                 saveBtn.disabled = false;
+                // Clear any previous attachments
+                attachedFiles = [];
+                fileMarkdownMap.clear();
+                document.getElementById('attachedFiles').innerHTML = '';
 
                 statusDiv.innerHTML = `✓ Loaded ${filename}`;
                 statusDiv.className = 'success show';
@@ -640,6 +844,37 @@ footer {
             statusDiv.style.display = 'none';
 
             try {
+                // Upload any attached files first
+                if (attachedFiles.length > 0) {
+                    statusDiv.innerHTML = `Uploading ${attachedFiles.length} file(s)...`;
+                    statusDiv.className = 'info show';
+
+                    for (let i = 0; i < attachedFiles.length; i++) {
+                        const file = attachedFiles[i];
+                        if (file.size > 25 * 1024 * 1024) {
+                            throw new Error(`${file.name} is too large (${formatFileSize(file.size)}). Maximum: 25MB.`);
+                        }
+                        statusDiv.innerHTML = `Uploading ${i + 1}/${attachedFiles.length}: ${file.name}...`;
+
+                        const fileData = fileMarkdownMap.get(file);
+                        const expectedFilename = fileData ? fileData.mediaFilename : generateMediaFilename(file);
+
+                        const formData = new FormData();
+                        formData.append('password', password);
+                        formData.append('file', file);
+                        formData.append('filename', expectedFilename);
+
+                        const uploadResponse = await fetch(`${API}/upload`, { method: 'POST', body: formData });
+                        const uploadResult = await uploadResponse.json();
+                        if (!uploadResponse.ok) {
+                            throw new Error(`Failed to upload ${file.name}: ${uploadResult.error}`);
+                        }
+                    }
+                }
+
+                statusDiv.innerHTML = 'Saving post...';
+                statusDiv.className = 'info show';
+
                 const response = await fetch(`${API}/update`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -664,11 +899,15 @@ footer {
                 document.getElementById('content').disabled = true;
                 document.getElementById('search').value = '';
                 editorSection.style.display = 'none';
+                document.getElementById('mediaUpload').style.display = 'none';
                 saveBtn.style.display = 'none';
                 selectedPost = null;
+                attachedFiles = [];
+                fileMarkdownMap.clear();
+                document.getElementById('attachedFiles').innerHTML = '';
 
                 // Clear matches and show fresh state
-                document.getElementById('matchesDiv').innerHTML = '';
+                document.getElementById('matches').innerHTML = '';
                 document.querySelectorAll('.match-item').forEach(item => {
                     item.classList.remove('selected');
                 });

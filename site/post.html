@@ -113,6 +113,8 @@ a {
     color: var(--link-color);
     text-decoration: none;
     transition: opacity 0.2s ease;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 a:hover {
@@ -582,11 +584,11 @@ footer {
         </div>
 
         <div class="media-upload" id="mediaUpload">
-            <input type="file" id="mediaFile" style="display:none" accept="image/*,video/*,audio/*" multiple>
+            <input type="file" id="mediaFile" style="display:none" multiple>
             <div class="media-upload-icon">📎</div>
             <div class="media-upload-text">
-                <strong>Attach Media</strong><br>
-                <small>Click or drag files here (images, videos, audio)</small>
+                <strong>Attach Files</strong><br>
+                <small>Click or drag files here</small>
             </div>
         </div>
 
