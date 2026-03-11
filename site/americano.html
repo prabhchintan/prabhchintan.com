@@ -222,6 +222,121 @@ footer {
     color: transparent;
 }
 
+.comments-section {
+    margin-top: 3em;
+    padding-top: 2em;
+    border-top: 1px solid var(--border-color);
+}
+
+.comments-section h2 {
+    font-size: 1.15em;
+    margin: 0 0 1.5em 0;
+    letter-spacing: 0.02em;
+}
+
+.comment {
+    margin: 0 0 1.8em 0;
+}
+
+.comment-text {
+    font-style: italic;
+    margin: 0 0 0.25em 0;
+    line-height: 1.55;
+    color: var(--text-color);
+}
+
+.comment-meta {
+    font-size: 0.8em;
+    color: var(--meta-color);
+    margin: 0;
+}
+
+.comment-meta a {
+    color: var(--meta-color);
+}
+
+.comment-meta a:hover {
+    color: var(--link-color);
+}
+
+.comment-empty {
+    color: var(--meta-color);
+    font-style: italic;
+    font-size: 0.95em;
+}
+
+.comment-form {
+    margin-top: 2em;
+}
+
+.comment-form input[type="text"] {
+    width: 100%;
+    font-family: var(--font-body);
+    font-size: 0.95em;
+    line-height: 1.6;
+    padding: 0.4em 0;
+    border: none;
+    border-bottom: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-color);
+    outline: none;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    border-radius: 0;
+}
+
+.comment-form input[type="text"]:focus {
+    border-bottom-color: var(--link-color);
+}
+
+.comment-form textarea {
+    width: 100%;
+    font-family: var(--font-body);
+    font-size: 0.95em;
+    line-height: 1.6;
+    padding: 0.6em 0.7em;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text-color);
+    outline: none;
+    resize: vertical;
+    min-height: 5em;
+    margin-top: 0.8em;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+}
+
+.comment-form textarea:focus {
+    border-color: var(--link-color);
+}
+
+.comment-form-actions {
+    margin-top: 0.8em;
+    font-size: 0.9em;
+    line-height: 1.6;
+}
+
+.comment-sep {
+    color: var(--meta-color);
+}
+
+.comment-cost {
+    color: var(--meta-color);
+}
+
+.comment-addr {
+    color: var(--meta-color);
+    font-size: 0.95em;
+}
+
+.comment-status {
+    font-size: 0.85em;
+    color: var(--meta-color);
+    margin: 0.4em 0 0 0;
+    min-height: 1.3em;
+}
+
 @media (max-width: 768px) {
     body {
         padding: 2.5em 1.5em;
@@ -251,6 +366,163 @@ footer {
 <p class="drop-cap">I keep realizing the genius of an Americano the older I get. When I moved to America as a teenager, my first job was at a Walmart in Houston. It’s where I first saw the trademark American drip coffee. It neither registered nor made much sense.</p>
 <p>Then I worked at an oil refinery a few years later, and I saw again people drinking loads of black coffee there. It's where I realized that drip coffee is the American worker’s coffee.</p>
 <p>An “Americano” is watered down black coffee. The gentleman-laborer’s drink.</p>
+    <section class="comments-section" id="comments">
+<h2>Comments</h2>
+<div id="comments-list"></div>
+<div class="comment-form">
+<input type="text" id="comment-name" placeholder="Your name" maxlength="50" autocomplete="off" spellcheck="false">
+<textarea id="comment-text" placeholder="Your thoughts..." maxlength="2000"></textarea>
+<div class="comment-form-actions" id="comment-actions">
+<a id="comment-btn" href="javascript:void(0)">connect wallet</a><span class="comment-sep"> &middot; </span><span class="comment-cost">1 USDC via Base</span>
+</div>
+<p class="comment-status" id="comment-status"></p>
+</div>
+</section>
+<script>
+(function(){
+    var SLUG='americano';
+    var RECIPIENT='0xbc82B52FD791757De5002bcfAa5738776F63C440';
+    var USDC='0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913';
+    var CHAIN_ID='0x2105';
+    var TX_DATA='0xa9059cbb'
+        +'000000000000000000000000bc82b52fd791757de5002bcfaa5738776f63c440'
+        +'00000000000000000000000000000000000000000000000000000000000f4240';
+
+    var list=document.getElementById('comments-list');
+    var statusEl=document.getElementById('comment-status');
+    var actionsEl=document.getElementById('comment-actions');
+    var nameInput=document.getElementById('comment-name');
+    var textInput=document.getElementById('comment-text');
+    var addr=null;
+
+    function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+    function short(a){return a.slice(0,6)+'\u2026'+a.slice(-4);}
+    function fmtDate(ts){return new Date(ts).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});}
+    function setStatus(s){statusEl.textContent=s;}
+
+    function renderComments(comments){
+        if(!comments||!comments.length){
+            list.innerHTML='<p class="comment-empty">No comments yet.</p>';
+            return;
+        }
+        var h='';
+        for(var i=0;i<comments.length;i++){
+            var c=comments[i];
+            var meta='';
+            if(c.name)meta+=esc(c.name)+' \u00b7 ';
+            meta+='<a href="https://basescan.org/tx/'+c.txHash+'" target="_blank" rel="noopener">'+short(c.address)+'</a>';
+            meta+=' \u00b7 '+fmtDate(c.timestamp);
+            h+='<div class="comment"><p class="comment-text">\u201c'+esc(c.text)+'\u201d</p><p class="comment-meta">\u2014 '+meta+'</p></div>';
+        }
+        list.innerHTML=h;
+    }
+
+    fetch('/api/comments?slug='+SLUG)
+        .then(function(r){return r.json();})
+        .then(function(d){renderComments(d.comments);})
+        .catch(function(){list.innerHTML='<p class="comment-empty">No comments yet.</p>';});
+
+    function updateActions(){
+        if(addr){
+            actionsEl.innerHTML='<span class="comment-addr">'+short(addr)+'</span>'
+                +'<span class="comment-sep"> \u00b7 </span>'
+                +'<a id="comment-btn" href="javascript:void(0)">post comment</a>'
+                +'<span class="comment-sep"> \u00b7 </span>'
+                +'<span class="comment-cost">1 USDC via Base</span>';
+            document.getElementById('comment-btn').onclick=function(e){e.preventDefault();submitComment();};
+        }
+    }
+
+    document.getElementById('comment-btn').onclick=function(e){
+        e.preventDefault();
+        if(addr)submitComment();
+        else connectWallet();
+    };
+
+    function connectWallet(){
+        if(!window.ethereum){
+            setStatus('Requires a crypto wallet like MetaMask.');
+            return;
+        }
+        ethereum.request({method:'eth_requestAccounts'}).then(function(accounts){
+            if(!accounts.length)return;
+            addr=accounts[0];
+            return ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:CHAIN_ID}]}).catch(function(err){
+                if(err.code===4902){
+                    return ethereum.request({method:'wallet_addEthereumChain',params:[{
+                        chainId:CHAIN_ID,
+                        chainName:'Base',
+                        nativeCurrency:{name:'ETH',symbol:'ETH',decimals:18},
+                        rpcUrls:['https://mainnet.base.org'],
+                        blockExplorerUrls:['https://basescan.org']
+                    }]});
+                }
+                throw err;
+            });
+        }).then(function(){
+            updateActions();
+            setStatus('');
+        }).catch(function(err){
+            setStatus(err.message||'Connection failed.');
+        });
+    }
+
+    function submitComment(){
+        var name=nameInput.value.trim();
+        var text=textInput.value.trim();
+        if(!text){setStatus('Please write a comment.');return;}
+        if(!addr){connectWallet();return;}
+
+        setStatus('Sending 1 USDC\u2026');
+        ethereum.request({
+            method:'eth_sendTransaction',
+            params:[{from:addr,to:USDC,data:TX_DATA}]
+        }).then(function(txHash){
+            setStatus('Confirming\u2026');
+            return waitForReceipt(txHash);
+        }).then(function(result){
+            if(result.receipt.status!=='0x1'){
+                setStatus('Transaction failed on chain.');
+                return;
+            }
+            setStatus('Posting\u2026');
+            return fetch('/api/comments',{
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body:JSON.stringify({slug:SLUG,name:name,text:text,txHash:result.txHash,address:addr})
+            }).then(function(r){return r.json();});
+        }).then(function(data){
+            if(!data)return;
+            if(data.success){
+                setStatus('');
+                nameInput.value='';
+                textInput.value='';
+                fetch('/api/comments?slug='+SLUG)
+                    .then(function(r){return r.json();})
+                    .then(function(d){renderComments(d.comments);});
+            }else{
+                setStatus(data.error||'Failed to post.');
+            }
+        }).catch(function(err){
+            if(err.code===4001){setStatus('Transaction cancelled.');return;}
+            setStatus(err.message||'Something went wrong.');
+        });
+    }
+
+    function waitForReceipt(txHash){
+        var attempts=0;
+        return new Promise(function(resolve,reject){
+            (function poll(){
+                ethereum.request({method:'eth_getTransactionReceipt',params:[txHash]}).then(function(receipt){
+                    if(receipt)return resolve({receipt:receipt,txHash:txHash});
+                    if(++attempts>90){return reject(new Error('Transaction timeout.'));}
+                    setTimeout(poll,2000);
+                }).catch(reject);
+            })();
+        });
+    }
+})();
+</script>
     <script>
     (function(){
         var d=document.querySelector('.drop-cap');

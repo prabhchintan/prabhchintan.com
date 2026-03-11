@@ -104,6 +104,14 @@ class BlogBuilder:
             log.warning("critical.css not found, using fallback")
             self.critical_css = "body{max-width:600px;margin:0 auto;padding:2em}"
 
+        # Load comments template
+        try:
+            with open(self.templates_dir / 'comments.html', 'r', encoding='utf-8') as f:
+                self.comments_template = f.read().strip()
+        except FileNotFoundError:
+            log.warning("comments.html not found, comments disabled")
+            self.comments_template = ''
+
         self.slug_registry = {}  # Track slugs to detect collisions
 
         # Color palette shared between blog and index drop cap JS
@@ -321,11 +329,15 @@ class BlogBuilder:
         # Add drop cap to first qualifying paragraph
         html_with_date = self.add_drop_cap(html_with_date)
 
+        # Generate comments section for this post
+        comments_html = self.comments_template.replace('{{slug}}', slug) if self.comments_template else ''
+
         # Replace placeholders
         post_html = (template
             .replace('{{title}}', title)
             .replace('{{date}}', formatted_date)
             .replace('{{content}}', html_with_date)
+            .replace('{{comments_section}}', comments_html)
             .replace('{{slug}}', slug)
             .replace('{{description}}', description)
             .replace('{{url}}', f'https://prabhchintan.com/{slug}')
@@ -377,11 +389,12 @@ class BlogBuilder:
         with open(self.templates_dir / 'post.html', 'r', encoding='utf-8') as f:
             template = f.read()
 
-        # Replace placeholders (no date for pages)
+        # Replace placeholders (no date or comments for pages)
         page_html = (template
             .replace('{{title}}', title)
             .replace('{{date}}', '')
             .replace('{{content}}', html)
+            .replace('{{comments_section}}', '')
             .replace('{{slug}}', slug)
             .replace('{{description}}', description)
             .replace('{{url}}', f'https://prabhchintan.com/{slug}')
