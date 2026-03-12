@@ -7,3 +7,5 @@ One of the many Taleb aphorisms I like and remember. There's a lot of truth to t
 The solution is to surrender to the idea that I just don't *understand*, that there is something I am missing, only to be gained by meditation.
 
 I don't know, man. Feels suspect.
+
+Meditation is narcissism.
