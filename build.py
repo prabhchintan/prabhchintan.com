@@ -829,6 +829,18 @@ Sitemap: https://prabhchintan.com/sitemap.xml
             log.info("Skipping git operations (CI mode)")
             return
 
+        # Abort any in-progress rebase before starting
+        subprocess.run(['git', 'rebase', '--abort'], capture_output=True)
+
+        # Ensure we're on a branch (not detached HEAD)
+        branch = subprocess.run(
+            ['git', 'symbolic-ref', '--short', 'HEAD'],
+            capture_output=True, text=True
+        )
+        if branch.returncode != 0:
+            log.warning("Detached HEAD detected, checking out main...")
+            subprocess.run(['git', 'checkout', 'main'], check=False)
+
         subprocess.run(['git', 'add', '.'], check=False)
         status = subprocess.run(['git', 'status', '--porcelain'], capture_output=True, text=True)
 
