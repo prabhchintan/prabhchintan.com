@@ -473,7 +473,7 @@ class BlogBuilder:
 <title>Blog - Randhawa</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="alternate icon" href="favicon.ico">
+
 <link rel="apple-touch-icon" href="favicon.svg">
 <meta name="description" content="Personal blog by Randhawa">
 <meta property="og:title" content="Blog - Randhawa">
@@ -687,7 +687,7 @@ Sitemap: https://prabhchintan.com/sitemap.xml
     def copy_assets(self):
         """Copy assets to site directory"""
         # Copy images
-        for asset in ['profile.png', 'favicon.svg', 'favicon.ico']:
+        for asset in ['profile.png', 'favicon.svg']:
             if Path(asset).exists():
                 shutil.copy2(asset, self.site_dir / asset)
 

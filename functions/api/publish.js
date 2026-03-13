@@ -53,8 +53,7 @@ export async function onRequestPost(context) {
         );
 
         if (!response.ok) {
-            const error = await response.json();
-            return new Response(JSON.stringify({ error: error.message }), {
+            return new Response(JSON.stringify({ error: 'Failed to publish post' }), {
                 status: response.status,
                 headers: { 'Content-Type': 'application/json' }
             });
@@ -69,7 +68,7 @@ export async function onRequestPost(context) {
         });
 
     } catch (error) {
-        return new Response(JSON.stringify({ error: error.message }), {
+        return new Response(JSON.stringify({ error: 'Publish failed' }), {
             status: 500,
             headers: { 'Content-Type': 'application/json' }
         });

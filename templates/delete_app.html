@@ -283,7 +283,8 @@
                 }
 
                 // Remove from UI
-                document.querySelector(`[data-filename="${selectedPost}"]`).remove();
+                const elem = document.querySelector(`[data-filename="${selectedPost}"]`);
+                if (elem) elem.remove();
 
                 statusDiv.innerHTML = '✓ Deleted. Site updates in ~60 seconds.';
                 statusDiv.className = 'success show';

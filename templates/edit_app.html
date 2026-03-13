@@ -312,6 +312,12 @@
         }
 
         function addFileToList(file) {
+            // Duplicate detection: skip if same name and size already attached
+            if (attachedFiles.some(f => f.name === file.name && f.size === file.size)) {
+                return;
+            }
+            attachedFiles.push(file);
+
             const filesList = document.getElementById('attachedFiles');
             const contentTextarea = document.getElementById('content');
             const mediaFilename = generateMediaFilename(file);
@@ -326,10 +332,12 @@
             const info = document.createElement('div');
             info.className = 'attached-file-info';
 
+            let blobUrl = null;
             if (file.type.startsWith('image/')) {
                 const preview = document.createElement('img');
                 preview.className = 'attached-file-preview';
-                preview.src = URL.createObjectURL(file);
+                blobUrl = URL.createObjectURL(file);
+                preview.src = blobUrl;
                 info.appendChild(preview);
             }
 
@@ -350,6 +358,7 @@
             removeBtn.innerHTML = '×';
             removeBtn.type = 'button';
             removeBtn.onclick = () => {
+                if (blobUrl) URL.revokeObjectURL(blobUrl);
                 const fileData = fileMarkdownMap.get(file);
                 if (fileData) {
                     contentTextarea.value = contentTextarea.value.replace(fileData.markdown, '');
@@ -371,11 +380,12 @@
         uploadArea.addEventListener('drop', (e) => {
             e.preventDefault();
             uploadArea.classList.remove('dragover');
-            Array.from(e.dataTransfer.files).forEach(file => { attachedFiles.push(file); addFileToList(file); });
+            Array.from(e.dataTransfer.files).forEach(file => addFileToList(file));
         });
         uploadArea.addEventListener('click', () => { mediaFileInput.click(); });
         mediaFileInput.addEventListener('change', (e) => {
-            Array.from(e.target.files).forEach(file => { attachedFiles.push(file); addFileToList(file); });
+            Array.from(e.target.files).forEach(file => addFileToList(file));
+            e.target.value = ''; // Reset so re-selecting same file triggers change
         });
 
         // Fuzzy search function
@@ -521,9 +531,19 @@
                     statusDiv.innerHTML = `Uploading ${attachedFiles.length} file(s)...`;
                     statusDiv.className = 'info show';
 
+                    // Helper to strip markdown for unuploaded files
+                    const stripRemaining = (fromIndex) => {
+                        const textarea = document.getElementById('content');
+                        for (let j = fromIndex; j < attachedFiles.length; j++) {
+                            const fd = fileMarkdownMap.get(attachedFiles[j]);
+                            if (fd) textarea.value = textarea.value.replace(fd.markdown, '');
+                        }
+                    };
+
                     for (let i = 0; i < attachedFiles.length; i++) {
                         const file = attachedFiles[i];
                         if (file.size > 25 * 1024 * 1024) {
+                            stripRemaining(i);
                             throw new Error(`${file.name} is too large (${formatFileSize(file.size)}). Maximum: 25MB.`);
                         }
                         statusDiv.innerHTML = `Uploading ${i + 1}/${attachedFiles.length}: ${file.name}...`;
@@ -536,10 +556,17 @@
                         formData.append('file', file);
                         formData.append('filename', expectedFilename);
 
-                        const uploadResponse = await fetch(`${API}/upload`, { method: 'POST', body: formData });
-                        const uploadResult = await uploadResponse.json();
-                        if (!uploadResponse.ok) {
-                            throw new Error(`Failed to upload ${file.name}: ${uploadResult.error}`);
+                        try {
+                            const uploadResponse = await fetch(`${API}/upload`, { method: 'POST', body: formData });
+                            const uploadResult = await uploadResponse.json();
+                            if (!uploadResponse.ok) {
+                                stripRemaining(i);
+                                throw new Error(`Failed to upload ${file.name}: ${uploadResult.error}`);
+                            }
+                        } catch (uploadErr) {
+                            if (uploadErr.message.startsWith('Failed to upload')) throw uploadErr;
+                            stripRemaining(i);
+                            throw new Error(`Network error uploading ${file.name}`);
                         }
                     }
                 }

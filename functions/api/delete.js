@@ -53,8 +53,7 @@ export async function onRequestPost(context) {
         );
 
         if (!deleteResponse.ok) {
-            const error = await deleteResponse.json();
-            return new Response(JSON.stringify({ error: error.message }), {
+            return new Response(JSON.stringify({ error: 'Failed to delete post' }), {
                 status: deleteResponse.status,
                 headers: { 'Content-Type': 'application/json' }
             });
@@ -68,7 +67,7 @@ export async function onRequestPost(context) {
         });
 
     } catch (error) {
-        return new Response(JSON.stringify({ error: error.message }), {
+        return new Response(JSON.stringify({ error: 'Delete failed' }), {
             status: 500,
             headers: { 'Content-Type': 'application/json' }
         });

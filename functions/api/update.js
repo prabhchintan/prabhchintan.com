@@ -55,8 +55,7 @@ export async function onRequestPost(context) {
         );
 
         if (!updateResponse.ok) {
-            const error = await updateResponse.json();
-            return new Response(JSON.stringify({ error: error.message }), {
+            return new Response(JSON.stringify({ error: 'Failed to update post' }), {
                 status: updateResponse.status,
                 headers: { 'Content-Type': 'application/json' }
             });
@@ -70,7 +69,7 @@ export async function onRequestPost(context) {
         });
 
     } catch (error) {
-        return new Response(JSON.stringify({ error: error.message }), {
+        return new Response(JSON.stringify({ error: 'Update failed' }), {
             status: 500,
             headers: { 'Content-Type': 'application/json' }
         });

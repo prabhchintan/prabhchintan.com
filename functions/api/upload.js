@@ -1,4 +1,11 @@
 // Upload media file
+const ALLOWED_EXTENSIONS = new Set([
+    'jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'ico', 'avif',
+    'mp3', 'wav', 'ogg', 'flac', 'aac', 'm4a',
+    'mp4', 'webm', 'mov',
+    'pdf', 'txt', 'csv', 'json'
+]);
+
 export async function onRequestPost(context) {
     const { request, env } = context;
 
@@ -18,6 +25,15 @@ export async function onRequestPost(context) {
 
         if (!file) {
             return new Response(JSON.stringify({ error: 'No file provided' }), {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' }
+            });
+        }
+
+        // Validate file type
+        const ext = (file.name.split('.').pop() || '').toLowerCase();
+        if (!ALLOWED_EXTENSIONS.has(ext)) {
+            return new Response(JSON.stringify({ error: `File type .${ext} is not allowed` }), {
                 status: 400,
                 headers: { 'Content-Type': 'application/json' }
             });
@@ -67,8 +83,7 @@ export async function onRequestPost(context) {
         );
 
         if (!uploadResponse.ok) {
-            const error = await uploadResponse.json();
-            return new Response(JSON.stringify({ error: error.message }), {
+            return new Response(JSON.stringify({ error: 'Failed to upload file' }), {
                 status: uploadResponse.status,
                 headers: { 'Content-Type': 'application/json' }
             });
@@ -86,7 +101,7 @@ export async function onRequestPost(context) {
         });
 
     } catch (error) {
-        return new Response(JSON.stringify({ error: error.message }), {
+        return new Response(JSON.stringify({ error: 'Upload failed' }), {
             status: 500,
             headers: { 'Content-Type': 'application/json' }
         });

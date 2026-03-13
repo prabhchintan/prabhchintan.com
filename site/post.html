@@ -703,6 +703,12 @@ footer {
         }
 
         function addFileToList(file) {
+            // Duplicate detection: skip if same name and size already attached
+            if (attachedFiles.some(f => f.name === file.name && f.size === file.size)) {
+                return;
+            }
+            attachedFiles.push(file);
+
             const filesList = document.getElementById('attachedFiles');
             const contentTextarea = document.getElementById('content');
 
@@ -726,10 +732,12 @@ footer {
             info.className = 'attached-file-info';
 
             // Show image preview if it's an image
+            let blobUrl = null;
             if (file.type.startsWith('image/')) {
                 const preview = document.createElement('img');
                 preview.className = 'attached-file-preview';
-                preview.src = URL.createObjectURL(file);
+                blobUrl = URL.createObjectURL(file);
+                preview.src = blobUrl;
                 info.appendChild(preview);
             }
 
@@ -751,6 +759,8 @@ footer {
             removeBtn.innerHTML = '×';
             removeBtn.type = 'button';
             removeBtn.onclick = () => {
+                // Revoke blob URL to free memory
+                if (blobUrl) URL.revokeObjectURL(blobUrl);
                 // Remove markdown from textarea
                 const fileData = fileMarkdownMap.get(file);
                 if (fileData) {
@@ -780,11 +790,7 @@ footer {
         uploadArea.addEventListener('drop', (e) => {
             e.preventDefault();
             uploadArea.classList.remove('dragover');
-            const files = Array.from(e.dataTransfer.files);
-            files.forEach(file => {
-                attachedFiles.push(file);
-                addFileToList(file);
-            });
+            Array.from(e.dataTransfer.files).forEach(file => addFileToList(file));
         });
 
         uploadArea.addEventListener('click', () => {
@@ -792,11 +798,8 @@ footer {
         });
 
         document.getElementById('mediaFile').addEventListener('change', (e) => {
-            const files = Array.from(e.target.files);
-            files.forEach(file => {
-                attachedFiles.push(file);
-                addFileToList(file);
-            });
+            Array.from(e.target.files).forEach(file => addFileToList(file));
+            e.target.value = ''; // Reset so re-selecting same file triggers change
         });
 
         // Initialize
@@ -828,11 +831,18 @@ footer {
                     statusDiv.innerHTML = `Uploading ${attachedFiles.length} file(s)...`;
                     statusDiv.className = 'info show';
 
+                    const uploadedIndices = [];
+
                     for (let i = 0; i < attachedFiles.length; i++) {
                         const file = attachedFiles[i];
 
                         // Check file size (100MB GitHub limit, but warn at 25MB for Cloudflare)
                         if (file.size > 25 * 1024 * 1024) {
+                            // Roll back: strip markdown for all unuploaded files
+                            for (let j = i; j < attachedFiles.length; j++) {
+                                const fd = fileMarkdownMap.get(attachedFiles[j]);
+                                if (fd) finalContent = finalContent.replace(fd.markdown, '');
+                            }
                             throw new Error(`${file.name} is too large (${formatFileSize(file.size)}). Maximum size: 25MB. For larger files, use external hosting.`);
                         }
 
@@ -847,18 +857,37 @@ footer {
                         formData.append('file', file);
                         formData.append('filename', expectedFilename); // Tell server what filename to use
 
-                        const uploadResponse = await fetch(`${API}/upload`, {
-                            method: 'POST',
-                            body: formData
-                        });
+                        try {
+                            const uploadResponse = await fetch(`${API}/upload`, {
+                                method: 'POST',
+                                body: formData
+                            });
 
-                        const uploadResult = await uploadResponse.json();
+                            const uploadResult = await uploadResponse.json();
 
-                        if (!uploadResponse.ok) {
-                            throw new Error(`Failed to upload ${file.name}: ${uploadResult.error}`);
+                            if (!uploadResponse.ok) {
+                                // Roll back: strip markdown for this and all remaining unuploaded files
+                                for (let j = i; j < attachedFiles.length; j++) {
+                                    const fd = fileMarkdownMap.get(attachedFiles[j]);
+                                    if (fd) finalContent = finalContent.replace(fd.markdown, '');
+                                }
+                                throw new Error(`Failed to upload ${file.name}: ${uploadResult.error}`);
+                            }
+
+                            uploadedMediaUrls.push(uploadResult.url);
+                            uploadedIndices.push(i);
+                        } catch (uploadErr) {
+                            // If this is our own rethrown error, propagate it
+                            if (uploadErr.message.startsWith('Failed to upload')) {
+                                throw uploadErr;
+                            }
+                            // Network error: roll back remaining
+                            for (let j = i; j < attachedFiles.length; j++) {
+                                const fd = fileMarkdownMap.get(attachedFiles[j]);
+                                if (fd) finalContent = finalContent.replace(fd.markdown, '');
+                            }
+                            throw new Error(`Network error uploading ${file.name}`);
                         }
-
-                        uploadedMediaUrls.push(uploadResult.url);
                     }
                 }
 
