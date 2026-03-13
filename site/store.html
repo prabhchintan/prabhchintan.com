@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Store - Randhawa</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="description" content="Digital products by Prabhchintan Randhawa">
+<meta property="og:title" content="Store - Randhawa">
+<meta property="og:url" content="https://prabhchintan.com/store">
+<link rel="canonical" href="https://prabhchintan.com/store">
+<style>:root {
+    --bg-color: #ffffff;
+    --text-color: #1a1a1a;
+    --heading-color: #111111;
+    --link-color: #0066cc;
+    --meta-color: #666666;
+    --border-color: #eeeeee;
+    --font-ui: Baskerville, "Times New Roman", Times, serif;
+    --font-body: Baskerville, "Times New Roman", Times, serif;
+}
+
+@font-face { font-family: 'AcornInitials'; src: url('/fonts/AcornInitials.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'AngloText'; src: url('/fonts/AngloText.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'ApexLake'; src: url('/fonts/ApexLake.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'CamelotCaps'; src: url('/fonts/CamelotCaps.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'DecoratedRoman'; src: url('/fonts/DecoratedRoman.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'EileenCaps'; src: url('/fonts/EileenCaps.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'ElzevierCaps'; src: url('/fonts/ElzevierCaps.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'FleurCornerCaps'; src: url('/fonts/FleurCornerCaps.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'FlowerInitials'; src: url('/fonts/FlowerInitials.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'GothicFlourish'; src: url('/fonts/GothicFlourish.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'GoudyInitialen'; src: url('/fonts/GoudyInitialen.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'PaulusFranck'; src: url('/fonts/PaulusFranck.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'Romantik'; src: url('/fonts/Romantik.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'TypographerCaps'; src: url('/fonts/TypographerCaps.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'VictorianInitials'; src: url('/fonts/VictorianInitials.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'WoodcutInitials'; src: url('/fonts/WoodcutInitials.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'ZallmanCaps'; src: url('/fonts/ZallmanCaps.woff2') format('woff2'); font-display: swap; }
+
+body {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 4em 1.5em;
+    font-family: var(--font-body);
+    font-size: 1em;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    -webkit-font-smoothing: antialiased;
+}
+
+.profile-pic {
+    text-align: center;
+    margin-bottom: 3em;
+}
+
+.profile-pic img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.site-headline {
+    font-family: var(--font-body);
+    font-size: 2.5em;
+    font-weight: normal;
+    text-align: center;
+    margin: 0 0 0.8em 0;
+    letter-spacing: -0.01em;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-ui);
+    color: var(--heading-color);
+    font-weight: normal;
+    line-height: 1.3;
+}
+
+h1 {
+    font-size: 2em;
+    margin: 0 0 0.5em 0;
+    letter-spacing: -0.02em;
+}
+
+h2 {
+    font-size: 1.4em;
+    margin: 1.8em 0 0.6em 0;
+}
+
+h3 {
+    font-size: 1.15em;
+    margin: 1.6em 0 0.5em 0;
+}
+
+p {
+    margin: 1em 0;
+}
+
+.post-date {
+    margin-top: -0.5em;
+    margin-bottom: 2em;
+}
+
+a {
+    color: var(--link-color);
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+a:hover {
+    opacity: 0.7;
+}
+
+ul,
+ol {
+    margin: 1em 0;
+    padding-left: 1.8em;
+}
+
+li {
+    margin: 0.5em 0;
+}
+
+blockquote {
+    border-left: 3px solid var(--link-color);
+    margin: 1.5em 0;
+    padding-left: 1.2em;
+    font-style: italic;
+    color: var(--meta-color);
+}
+
+code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 0.9em;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+}
+
+pre {
+    background: rgba(0, 0, 0, 0.04);
+    padding: 1.2em;
+    overflow-x: auto;
+    border-radius: 6px;
+    margin: 1.8em 0;
+    border: 1px solid var(--border-color);
+}
+
+pre code {
+    background: none;
+    padding: 0;
+    color: var(--text-color);
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 2em auto;
+    border-radius: 4px;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 3em 0;
+}
+
+footer {
+    text-align: center;
+    margin-top: 4em;
+    padding-top: 2em;
+    border-top: 1px solid var(--border-color);
+    color: var(--meta-color);
+    font-size: 0.85em;
+}
+
+.drop-cap::first-letter {
+    float: left;
+    font-family: var(--drop-cap-font, Baskerville), Baskerville, "Times New Roman", Times, serif;
+    font-size: calc(3.4em * var(--drop-cap-scale, 1));
+    line-height: 0.68;
+    padding: 0.08em 0.1em 0 0;
+    margin-top: calc(0.05em + var(--drop-cap-shift, 0em));
+    color: var(--drop-cap-color, rgba(0, 102, 204, 0.5));
+    font-weight: normal;
+    font-style: normal;
+}
+
+.drop-cap-loading::first-letter {
+    color: transparent;
+}
+
+.comments-section {
+    margin-top: 3em;
+    padding-top: 2em;
+    border-top: 1px solid var(--border-color);
+}
+
+.comments-section h2 {
+    font-size: 1.15em;
+    margin: 0 0 1.5em 0;
+    letter-spacing: 0.02em;
+}
+
+.comment {
+    margin: 0 0 1.8em 0;
+}
+
+.comment-text {
+    font-style: italic;
+    margin: 0 0 0.25em 0;
+    line-height: 1.55;
+    color: var(--text-color);
+}
+
+.comment-meta {
+    font-size: 0.8em;
+    color: var(--meta-color);
+    margin: 0;
+}
+
+.comment-meta a {
+    color: var(--meta-color);
+}
+
+.comment-meta a:hover {
+    color: var(--link-color);
+}
+
+.comment-empty {
+    color: var(--meta-color);
+    font-style: italic;
+    font-size: 0.95em;
+}
+
+.comment-form {
+    margin-top: 2em;
+}
+
+.comment-form input[type="text"] {
+    width: 100%;
+    font-family: var(--font-body);
+    font-size: 0.95em;
+    line-height: 1.6;
+    padding: 0.4em 0;
+    border: none;
+    border-bottom: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-color);
+    outline: none;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    border-radius: 0;
+}
+
+.comment-form input[type="text"]:focus {
+    border-bottom-color: var(--link-color);
+}
+
+.comment-form textarea {
+    width: 100%;
+    font-family: var(--font-body);
+    font-size: 0.95em;
+    line-height: 1.6;
+    padding: 0.6em 0.7em;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text-color);
+    outline: none;
+    resize: vertical;
+    min-height: 5em;
+    margin-top: 0.8em;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+}
+
+.comment-form textarea:focus {
+    border-color: var(--link-color);
+}
+
+.comment-form-actions {
+    margin-top: 0.8em;
+    font-size: 0.9em;
+    line-height: 1.6;
+}
+
+.comment-sep {
+    color: var(--meta-color);
+}
+
+.comment-cost {
+    color: var(--meta-color);
+}
+
+.comment-addr {
+    color: var(--meta-color);
+    font-size: 0.95em;
+}
+
+.comment-status {
+    font-size: 0.85em;
+    color: var(--meta-color);
+    margin: 0.4em 0 0 0;
+    min-height: 1.3em;
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 2.5em 1.5em;
+    }
+
+    .site-headline,
+    h1 {
+        font-size: 1.8em;
+    }
+
+    h2 {
+        font-size: 1.3em;
+    }
+
+    h3 {
+        font-size: 1.1em;
+    }
+
+    .drop-cap::first-letter {
+        font-size: calc(2.8em * var(--drop-cap-scale, 1));
+    }
+}</style>
+<style>
+.store-grid{margin:2em 0}
+.product-card{border:1px solid var(--border-color);border-radius:8px;padding:1.5em;margin-bottom:1.5em;transition:border-color 0.3s}
+.product-card:hover{border-color:var(--text-color)}
+.product-title{font-size:1.2em;margin:0 0 0.3em}
+.product-desc{color:var(--meta-color);font-size:0.95em;margin:0 0 1em;line-height:1.5}
+.product-meta{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5em}
+.product-price{font-size:1.1em;font-weight:600}
+.product-size{font-size:0.85em;color:var(--meta-color)}
+.buy-btn{background:var(--text-color);color:var(--bg-color);border:1px solid var(--text-color);padding:0.5em 1.5em;border-radius:4px;cursor:pointer;font-family:var(--font-body);font-size:0.95em;transition:all 0.2s;text-decoration:none;display:inline-block}
+.buy-btn:hover{background:transparent;color:var(--text-color)}
+.buy-btn:disabled{opacity:0.4;cursor:not-allowed}
+.store-status{margin-top:0.5em;font-size:0.85em;color:var(--meta-color)}
+.store-empty{color:var(--meta-color);text-align:center;padding:3em 0}
+.wallet-bar{margin:1.5em 0;padding:1em;border:1px solid var(--border-color);border-radius:4px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5em}
+.wallet-info{font-size:0.9em;color:var(--meta-color)}
+.connect-btn{background:transparent;color:var(--text-color);border:1px solid var(--text-color);padding:0.4em 1em;border-radius:4px;cursor:pointer;font-family:var(--font-body);font-size:0.9em;transition:all 0.2s}
+.connect-btn:hover{background:var(--text-color);color:var(--bg-color)}
+.redownload-link{font-size:0.85em;color:var(--link-color);cursor:pointer;text-decoration:underline}
+</style>
+</head>
+<body>
+<h1>Store</h1>
+
+<div class="wallet-bar" id="walletBar">
+    <span class="wallet-info" id="walletInfo">Connect your wallet to purchase</span>
+    <button class="connect-btn" id="connectBtn">Connect Wallet</button>
+</div>
+
+<div class="store-grid" id="storeGrid">
+    <p class="store-empty">Loading...</p>
+</div>
+
+<script>
+(function(){
+    var RECIPIENT='0x3570958b8dcbc4f663f508efcedb454ee9af9516';
+
+    var CHAINS={
+        '0x1':    {name:'Ethereum', usdc:'0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'},
+        '0x2105': {name:'Base',     usdc:'0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'},
+        '0xa4b1': {name:'Arbitrum', usdc:'0xaf88d065e77c8cC2239327C5EDb3A432268e5831'},
+        '0xa':    {name:'Optimism', usdc:'0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85'},
+        '0x89':   {name:'Polygon',  usdc:'0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359'}
+    };
+
+    var grid=document.getElementById('storeGrid');
+    var walletInfo=document.getElementById('walletInfo');
+    var connectBtn=document.getElementById('connectBtn');
+    var addr=null;
+    var chainHex=null;
+    var products=[];
+
+    function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+    function short(a){return a.slice(0,6)+'\u2026'+a.slice(-4);}
+    function hexInt(h){return parseInt(h,16);}
+
+    function formatSize(bytes){
+        if(bytes<1024)return bytes+' B';
+        if(bytes<1024*1024)return(bytes/1024).toFixed(1)+' KB';
+        return(bytes/(1024*1024)).toFixed(1)+' MB';
+    }
+
+    function buildUsdcCalldata(priceAtomic){
+        var recipHex=RECIPIENT.slice(2).toLowerCase().padStart(64,'0');
+        var amountHex=priceAtomic.toString(16).padStart(64,'0');
+        return '0xa9059cbb'+recipHex+amountHex;
+    }
+
+    function waitForReceipt(txHash){
+        var attempts=0;
+        return new Promise(function(resolve,reject){
+            (function poll(){
+                ethereum.request({method:'eth_getTransactionReceipt',params:[txHash]}).then(function(receipt){
+                    if(receipt)return resolve({receipt:receipt,txHash:txHash});
+                    if(++attempts>90)return reject(new Error('Transaction timeout.'));
+                    setTimeout(poll,2000);
+                }).catch(reject);
+            })();
+        });
+    }
+
+    function getStoredToken(productId){
+        try{
+            var data=JSON.parse(localStorage.getItem('dltoken:'+productId));
+            if(data && data.expiresAt>Date.now())return data.token;
+            localStorage.removeItem('dltoken:'+productId);
+        }catch(e){}
+        return null;
+    }
+
+    function storeToken(productId,token,expiresAt){
+        try{
+            localStorage.setItem('dltoken:'+productId,JSON.stringify({token:token,expiresAt:expiresAt}));
+        }catch(e){}
+    }
+
+    function triggerDownload(token){
+        window.location.href='/api/download?token='+encodeURIComponent(token);
+    }
+
+    function renderProducts(){
+        if(!products.length){
+            grid.innerHTML='<p class="store-empty">No products available yet.</p>';
+            return;
+        }
+        var h='';
+        for(var i=0;i<products.length;i++){
+            var p=products[i];
+            var existingToken=getStoredToken(p.id);
+            h+='<div class="product-card" id="card-'+p.id+'">';
+            h+='<h3 class="product-title">'+esc(p.title)+'</h3>';
+            if(p.description)h+='<p class="product-desc">'+esc(p.description)+'</p>';
+            h+='<div class="product-meta">';
+            h+='<div><span class="product-price">'+esc(p.priceDisplay)+'</span> <span class="product-size">'+formatSize(p.fileSize)+'</span></div>';
+            if(existingToken){
+                h+='<div><button class="buy-btn" onclick="storeBuy(\''+p.id+'\')">Buy</button> <span class="redownload-link" onclick="storeRedownload(\''+p.id+'\')">re-download</span></div>';
+            }else{
+                h+='<button class="buy-btn" onclick="storeBuy(\''+p.id+'\')">Buy</button>';
+            }
+            h+='</div>';
+            h+='<p class="store-status" id="status-'+p.id+'"></p>';
+            h+='</div>';
+        }
+        grid.innerHTML=h;
+    }
+
+    function setProductStatus(productId,msg){
+        var el=document.getElementById('status-'+productId);
+        if(el)el.textContent=msg;
+    }
+
+    function updateWalletUI(){
+        if(!window.ethereum){
+            var pageUrl=encodeURIComponent(window.location.href);
+            var dappPath=window.location.host+window.location.pathname;
+            walletInfo.innerHTML='<a href="https://metamask.app.link/dapp/'+dappPath+'">MetaMask</a> · <a href="https://go.cb-w.com/dapp?cb_url='+pageUrl+'">Coinbase Wallet</a>';
+            connectBtn.style.display='none';
+            return;
+        }
+        if(addr){
+            var chain=CHAINS[chainHex];
+            var chainName=chain?chain.name:'unsupported network';
+            walletInfo.textContent=short(addr)+' on '+chainName;
+            connectBtn.textContent='Disconnect';
+            connectBtn.onclick=function(){addr=null;chainHex=null;updateWalletUI();};
+        }else{
+            walletInfo.textContent='Connect your wallet to purchase';
+            connectBtn.textContent='Connect Wallet';
+            connectBtn.onclick=connectWallet;
+        }
+    }
+
+    function connectWallet(){
+        if(!window.ethereum)return;
+        ethereum.request({method:'eth_requestAccounts'}).then(function(accounts){
+            if(!accounts.length)return;
+            addr=accounts[0];
+            return ethereum.request({method:'eth_chainId'});
+        }).then(function(c){
+            if(!c)return;
+            chainHex=c;
+            updateWalletUI();
+        }).catch(function(err){
+            walletInfo.textContent=err.message||'Connection failed.';
+        });
+    }
+
+    if(window.ethereum){
+        ethereum.on('chainChanged',function(c){chainHex=c;updateWalletUI();});
+        ethereum.on('accountsChanged',function(a){
+            if(a.length){addr=a[0];updateWalletUI();}
+            else{addr=null;updateWalletUI();}
+        });
+        connectBtn.onclick=connectWallet;
+    }
+
+    // Expose for onclick handlers
+    window.storeBuy=function(productId){
+        if(!window.ethereum){return;}
+        if(!addr){connectWallet();return;}
+
+        var chain=CHAINS[chainHex];
+        if(!chain){setProductStatus(productId,'Please switch to a supported network.');return;}
+
+        var product=null;
+        for(var i=0;i<products.length;i++){
+            if(products[i].id===productId){product=products[i];break;}
+        }
+        if(!product)return;
+
+        var txPromise;
+        if(product.currency==='eth'){
+            // Native ETH transfer
+            var weiHex='0x'+BigInt(product.price).toString(16);
+            setProductStatus(productId,'Sending '+product.priceDisplay+' on '+chain.name+'\u2026');
+            txPromise=ethereum.request({
+                method:'eth_sendTransaction',
+                params:[{from:addr,to:RECIPIENT,value:weiHex}]
+            });
+        }else{
+            // USDC ERC-20 transfer
+            var calldata=buildUsdcCalldata(product.price);
+            setProductStatus(productId,'Sending '+product.priceDisplay+' on '+chain.name+'\u2026');
+            txPromise=ethereum.request({
+                method:'eth_sendTransaction',
+                params:[{from:addr,to:chain.usdc,data:calldata}]
+            });
+        }
+
+        txPromise.then(function(txHash){
+            setProductStatus(productId,'Confirming on '+chain.name+'\u2026');
+            return waitForReceipt(txHash);
+        }).then(function(result){
+            if(result.receipt.status!=='0x1'){
+                setProductStatus(productId,'Transaction failed on chain.');
+                return;
+            }
+            setProductStatus(productId,'Verifying payment\u2026');
+            return fetch('/api/purchase',{
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body:JSON.stringify({productId:productId,txHash:result.txHash,address:addr,chainId:hexInt(chainHex)})
+            }).then(function(r){return r.json();});
+        }).then(function(data){
+            if(!data)return;
+            if(data.success){
+                storeToken(productId,data.downloadToken,Date.now()+24*60*60*1000);
+                setProductStatus(productId,'Starting download\u2026');
+                triggerDownload(data.downloadToken);
+                renderProducts();
+            }else{
+                setProductStatus(productId,data.error||'Purchase failed.');
+            }
+        }).catch(function(err){
+            if(err.code===4001){setProductStatus(productId,'Transaction cancelled.');return;}
+            setProductStatus(productId,err.message||'Something went wrong.');
+        });
+    };
+
+    window.storeRedownload=function(productId){
+        var token=getStoredToken(productId);
+        if(token)triggerDownload(token);
+        else setProductStatus(productId,'Token expired. Please purchase again.');
+    };
+
+    // Load products
+    fetch('/api/products')
+        .then(function(r){return r.json();})
+        .then(function(d){
+            products=d.products||[];
+            renderProducts();
+        })
+        .catch(function(){
+            grid.innerHTML='<p class="store-empty">Failed to load products.</p>';
+        });
+
+    updateWalletUI();
+})();
+</script>
+<p><a href="/">← Home</a></p>
+<footer>Randhawa 1309 Coffeen Ave Ste 1386 Sheridan, WY</footer>
+</body>
+</html>

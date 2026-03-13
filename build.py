@@ -510,7 +510,8 @@ class BlogBuilder:
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url><loc>https://prabhchintan.com/</loc><priority>1.0</priority></url>
 <url><loc>https://prabhchintan.com/blog</loc><priority>0.9</priority></url>
-<url><loc>https://prabhchintan.com/certifications</loc><priority>0.8</priority></url>'''
+<url><loc>https://prabhchintan.com/certifications</loc><priority>0.8</priority></url>
+<url><loc>https://prabhchintan.com/store</loc><priority>0.8</priority></url>'''
 
         for post in posts:
             sitemap += f'\n<url><loc>https://prabhchintan.com{post["url"]}</loc><lastmod>{post["date"].strftime("%Y-%m-%d")}</lastmod><priority>0.8</priority></url>'
@@ -717,6 +718,11 @@ Sitemap: https://prabhchintan.com/sitemap.xml
                 if font_file.is_file() and font_file.suffix.lower() in ['.woff2', '.woff', '.ttf', '.otf']:
                     shutil.copy2(font_file, site_fonts / font_file.name)
 
+        # Copy store widget
+        widget_file = self.templates_dir / 'store-widget.js'
+        if widget_file.exists():
+            shutil.copy2(widget_file, self.site_dir / 'store-widget.js')
+
         log.info("Copied assets to site/")
 
     def generate_certifications_page(self):
@@ -808,6 +814,24 @@ Sitemap: https://prabhchintan.com/sitemap.xml
             f.write(page_html)
 
         log.info("Generated certifications page")
+
+    def generate_store_page(self):
+        """Generate public store page"""
+        template_file = self.templates_dir / 'store.html'
+        if not template_file.exists():
+            log.warning("store.html not found, skipping")
+            return
+
+        with open(template_file, 'r', encoding='utf-8') as f:
+            html = f.read()
+
+        html = html.replace('{{critical_css}}', self.critical_css)
+        html = self.apply_footer(html, is_post=False)
+
+        with open(self.site_dir / 'store.html', 'w', encoding='utf-8') as f:
+            f.write(html)
+
+        log.info("Generated store page")
 
     def validate_redirects(self):
         """Validate redirect configuration"""
@@ -918,10 +942,11 @@ Sitemap: https://prabhchintan.com/sitemap.xml
         self.create_404_page()
         self.optimize_index()
         self.generate_certifications_page()
+        self.generate_store_page()
         self.copy_assets()
 
         # Generate admin UIs
-        for ui_type in ['post', 'edit', 'delete']:
+        for ui_type in ['post', 'edit', 'delete', 'sell']:
             self.create_admin_ui(ui_type)
 
         # Git operations

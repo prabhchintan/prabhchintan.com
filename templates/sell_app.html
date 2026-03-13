@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Sell - Randhawa</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <!-- CRITICAL_CSS_PLACEHOLDER -->
+    <style>
+        .form-group {
+            margin-bottom: 1.5em
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.4em;
+            color: var(--meta-color);
+            font-size: 0.8em;
+            letter-spacing: 0.08em;
+            text-transform: uppercase
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 0.4em 0;
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+            font-family: var(--font-body);
+            font-size: 1.2em;
+            box-sizing: border-box;
+            background: transparent;
+            color: var(--text-color);
+            transition: border-color 0.3s
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-bottom-color: var(--text-color)
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 1em;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-family: var(--font-body);
+            font-size: 1em;
+            line-height: 1.6;
+            box-sizing: border-box;
+            background: transparent;
+            color: var(--text-color);
+            resize: vertical;
+            transition: border-color 0.3s
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--text-color)
+        }
+
+        button {
+            background: var(--text-color);
+            color: var(--bg-color);
+            border: 1px solid var(--text-color);
+            font-size: 1em;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: var(--font-body);
+            transition: all 0.2s;
+            width: 100%;
+            padding: 0.8em;
+            margin-top: 0.5em
+        }
+
+        button:hover {
+            background: transparent;
+            color: var(--text-color)
+        }
+
+        button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed
+        }
+
+        .media-upload {
+            margin: 1em 0;
+            padding: 1.5em;
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(0, 0, 0, 0.01)
+        }
+
+        .media-upload:hover {
+            border-color: var(--text-color);
+            background: rgba(0, 0, 0, 0.02)
+        }
+
+        .media-upload.dragover {
+            border-color: var(--link-color);
+            background: rgba(0, 102, 204, 0.05)
+        }
+
+        .media-upload-icon {
+            font-size: 2em;
+            margin-bottom: 0.3em
+        }
+
+        .media-upload-text {
+            color: var(--meta-color);
+            font-size: 0.9em
+        }
+
+        .attached-file {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.8em;
+            margin: 1em 0;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.01)
+        }
+
+        .attached-file-name {
+            font-size: 0.9em;
+            color: var(--text-color)
+        }
+
+        .attached-file-size {
+            font-size: 0.8em;
+            color: var(--meta-color)
+        }
+
+        .price-row {
+            display: flex;
+            gap: 1em;
+            align-items: flex-end
+        }
+
+        .price-row .form-group:first-child {
+            flex: 1
+        }
+
+        .price-row .form-group:last-child {
+            width: 120px
+        }
+
+        #status {
+            margin-top: 1em;
+            padding: 1em;
+            border-radius: 4px;
+            font-size: 0.9em;
+            text-align: center;
+            display: none
+        }
+
+        #status.show {
+            display: block
+        }
+
+        .success {
+            background: #f0f7f0;
+            color: #2b703e;
+            border: 1px solid #d4e8d4
+        }
+
+        .error {
+            background: #fef0ef;
+            color: #a33b32;
+            border: 1px solid #f5d5d3
+        }
+
+        .info {
+            background: #f0f7ff;
+            color: #0066cc;
+            border: 1px solid #d4e8f5
+        }
+    </style>
+</head>
+
+<body>
+    <div class="profile-pic">
+        <img src="/profile.png" alt="Profile" width="80" height="80">
+    </div>
+
+    <h1>Sell</h1>
+
+    <form id="sellForm">
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" id="title" required placeholder="Product name" autocomplete="off">
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" placeholder="What are they getting?"></textarea>
+        </div>
+
+        <div class="price-row">
+            <div class="form-group">
+                <label for="price">Price</label>
+                <input type="number" id="price" required placeholder="5" min="0.0001" step="any" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label for="currency">Currency</label>
+                <select id="currency">
+                    <option value="usdc">USDC</option>
+                    <option value="eth">ETH</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="media-upload" id="fileUpload">
+            <input type="file" id="fileInput" style="display:none">
+            <div class="media-upload-icon">📦</div>
+            <div class="media-upload-text">
+                <strong>Upload File</strong><br>
+                <small>Click or drag file here</small>
+            </div>
+        </div>
+
+        <div id="attachedFile" style="display:none" class="attached-file">
+            <div>
+                <div class="attached-file-name" id="fileName"></div>
+                <div class="attached-file-size" id="fileSize"></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" required placeholder="Admin password" autocomplete="off">
+        </div>
+
+        <button type="submit" id="submitBtn">Upload Product</button>
+    </form>
+
+    <div id="status"></div>
+
+    <p><a href="/store">← Store</a></p>
+
+    <script>
+        let selectedFile = null;
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+
+        const uploadArea = document.getElementById('fileUpload');
+        const fileInput = document.getElementById('fileInput');
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            if (e.dataTransfer.files.length) setFile(e.dataTransfer.files[0]);
+        });
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) setFile(e.target.files[0]);
+        });
+
+        function setFile(file) {
+            selectedFile = file;
+            document.getElementById('fileName').textContent = file.name;
+            document.getElementById('fileSize').textContent = formatFileSize(file.size);
+            document.getElementById('attachedFile').style.display = 'flex';
+            uploadArea.style.display = 'none';
+        }
+
+        document.getElementById('sellForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const title = document.getElementById('title').value.trim();
+            const description = document.getElementById('description').value.trim();
+            const price = document.getElementById('price').value;
+            const currency = document.getElementById('currency').value;
+            const password = document.getElementById('password').value;
+            const submitBtn = document.getElementById('submitBtn');
+            const statusDiv = document.getElementById('status');
+
+            if (!selectedFile) {
+                statusDiv.innerHTML = 'Please select a file.';
+                statusDiv.className = 'error show';
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Uploading...';
+            statusDiv.className = 'info show';
+            statusDiv.innerHTML = 'Uploading file...';
+
+            try {
+                const formData = new FormData();
+                formData.append('password', password);
+                formData.append('file', selectedFile);
+                formData.append('title', title);
+                formData.append('description', description);
+                formData.append('price', price);
+                formData.append('currency', currency);
+
+                const response = await fetch('/api/sell-upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'Upload failed');
+                }
+
+                statusDiv.innerHTML = `✓ Product created: ${result.productId}<br>Price: ${result.priceDisplay}<br><br>Embed code:<br><code>&lt;div class="store-embed" data-product="${result.productId}"&gt;&lt;/div&gt;</code>`;
+                statusDiv.className = 'success show';
+
+                // Reset form
+                document.getElementById('title').value = '';
+                document.getElementById('description').value = '';
+                document.getElementById('price').value = '';
+                document.getElementById('password').value = '';
+                selectedFile = null;
+                document.getElementById('attachedFile').style.display = 'none';
+                uploadArea.style.display = '';
+
+            } catch (error) {
+                statusDiv.innerHTML = '✗ ' + error.message;
+                statusDiv.className = 'error show';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Upload Product';
+            }
+        });
+    </script>
+</body>
+
+</html>
