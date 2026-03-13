@@ -775,7 +775,7 @@ document.addEventListener('click',function(e){{if(!e.target.closest('.blog-searc
 
     def apply_footer(self, html, is_post=True):
         """Apply universal footer with context-aware navigation"""
-        footer = '<footer>Randhawa 1309 Coffeen Ave Ste 1386 Sheridan, WY</footer>'
+        footer = '<footer>Randhawa Inc. 1309 Coffeen Ave Ste 1386 Sheridan, WY</footer>'
 
         # Remove existing footer if present
         html = re.sub(r'<footer>.*?</footer>', '', html, flags=re.DOTALL)
