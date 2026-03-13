@@ -624,8 +624,10 @@ class BlogBuilder:
 
         Similar to add_drop_cap but starts after the site-headline h1 instead of post-date.
         """
-        # Find the site-headline h1
+        # Find the site-headline h1, or fall back to profile-pic div
         headline_match = re.search(r'<h1[^>]*class="site-headline"[^>]*>.*?</h1>', html, re.DOTALL)
+        if not headline_match:
+            headline_match = re.search(r'<div class="profile-pic">.*?</div>', html, re.DOTALL)
         if not headline_match:
             return html
 

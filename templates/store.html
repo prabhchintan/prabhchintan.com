@@ -23,14 +23,14 @@
 <link rel="canonical" href="https://prabhchintan.com/store">
 <style>{{critical_css}}</style>
 <style>
-.store-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1.5em;margin:2em 0}
-.product-card{border:1px solid var(--border-color);border-radius:8px;overflow:hidden;transition:border-color 0.3s}
-.product-card:hover{border-color:var(--text-color)}
-.product-img-wrap{aspect-ratio:1;overflow:hidden;background:rgba(0,0,0,0.03)}
+.store-grid{margin:2em 0}
+.product-card{border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.08);transition:box-shadow 0.3s;margin-bottom:2em}
+.product-card:hover{box-shadow:0 4px 16px rgba(0,0,0,0.12)}
+.product-img-wrap{aspect-ratio:16/9;overflow:hidden;background:rgba(0,0,0,0.03)}
 .product-img-wrap img{width:100%;height:100%;object-fit:cover;display:block}
-.product-body{padding:1.2em}
-.product-title{font-size:1.1em;margin:0 0 0.3em;font-family:var(--font-body)}
-.product-desc{color:var(--meta-color);font-size:0.9em;margin:0 0 0.8em;line-height:1.5}
+.product-body{padding:1.5em}
+.product-title{font-size:1.2em;margin:0 0 0.3em;font-family:var(--font-body)}
+.product-desc{color:var(--meta-color);font-size:0.95em;margin:0 0 1em;line-height:1.5}
 .product-meta{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5em}
 .product-price{font-size:1.05em;font-weight:600}
 .product-size{font-size:0.8em;color:var(--meta-color)}
@@ -169,8 +169,9 @@
         for(var i=0;i<products.length;i++){
             var p=products[i];
             var existingToken=getStoredToken(p.id);
+            var imgSrc=p.imageUrl||'/social.jpg';
             h+='<div class="product-card" id="card-'+p.id+'">';
-            if(p.imageUrl)h+='<div class="product-img-wrap"><img src="'+esc(p.imageUrl)+'" alt="'+esc(p.title)+'" loading="lazy"></div>';
+            h+='<div class="product-img-wrap"><img src="'+esc(imgSrc)+'" alt="'+esc(p.title)+'" loading="lazy"></div>';
             h+='<div class="product-body">';
             h+='<h3 class="product-title">'+esc(p.title)+'</h3>';
             if(p.description)h+='<p class="product-desc">'+esc(p.description)+'</p>';

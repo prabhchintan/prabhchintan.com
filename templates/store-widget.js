@@ -95,12 +95,11 @@
                 var p=d.product;
                 var existingToken=getStoredToken(p.id);
 
-                var html='<div style="border:1px solid var(--border-color);border-radius:8px;overflow:hidden;font-family:var(--font-body);">';
-                if(p.imageUrl){
-                    html+='<div style="aspect-ratio:16/9;overflow:hidden;background:rgba(0,0,0,0.03);">';
-                    html+='<img src="'+esc(p.imageUrl)+'" alt="'+esc(p.title)+'" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy">';
-                    html+='</div>';
-                }
+                var imgSrc=p.imageUrl||'/social.jpg';
+                var html='<div style="border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.08);font-family:var(--font-body);">';
+                html+='<div style="aspect-ratio:16/9;overflow:hidden;background:rgba(0,0,0,0.03);">';
+                html+='<img src="'+esc(imgSrc)+'" alt="'+esc(p.title)+'" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy">';
+                html+='</div>';
                 html+='<div style="padding:1.2em;">';
                 html+='<h3 style="margin:0 0 0.3em;font-size:1.1em;font-family:var(--font-body);">'+esc(p.title)+'</h3>';
                 if(p.description)html+='<p style="color:var(--meta-color);font-size:0.9em;margin:0 0 0.8em;line-height:1.5;">'+esc(p.description)+'</p>';

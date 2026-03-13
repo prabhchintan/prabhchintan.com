@@ -202,13 +202,23 @@ footer {
 .drop-cap::first-letter {
     float: left;
     font-family: var(--drop-cap-font, Baskerville), Baskerville, "Times New Roman", Times, serif;
-    font-size: calc(3.4em * var(--drop-cap-scale, 1));
-    line-height: 0.68;
-    padding: 0.08em 0.1em 0 0;
-    margin-top: calc(0.05em + var(--drop-cap-shift, 0em));
+    font-size: calc(3.2em * var(--drop-cap-scale, 1));
+    line-height: 0.75;
+    padding: 0.06em 0.1em 0 0;
+    margin-top: calc(0.06em + var(--drop-cap-shift, 0em));
     color: var(--drop-cap-color, rgba(0, 102, 204, 0.5));
     font-weight: normal;
     font-style: normal;
+}
+
+/* Native drop caps for Safari + Chrome 110+ — handles sizing/alignment perfectly */
+@supports (initial-letter: 3) {
+    .drop-cap::first-letter {
+        initial-letter: 3;
+        line-height: normal;
+        margin-top: 0;
+        padding: 0 0.08em 0 0;
+    }
 }
 
 .drop-cap-loading::first-letter {
@@ -349,18 +359,28 @@ footer {
     }
 
     .drop-cap::first-letter {
-        font-size: calc(2.8em * var(--drop-cap-scale, 1));
+        font-size: calc(2.6em * var(--drop-cap-scale, 1));
+        line-height: 0.78;
+        margin-top: calc(0.08em + var(--drop-cap-shift, 0em));
+    }
+
+    @supports (initial-letter: 3) {
+        .drop-cap::first-letter {
+            initial-letter: 3;
+            line-height: normal;
+            margin-top: 0;
+        }
     }
 }</style>
 <style>
-.store-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1.5em;margin:2em 0}
-.product-card{border:1px solid var(--border-color);border-radius:8px;overflow:hidden;transition:border-color 0.3s}
-.product-card:hover{border-color:var(--text-color)}
-.product-img-wrap{aspect-ratio:1;overflow:hidden;background:rgba(0,0,0,0.03)}
+.store-grid{margin:2em 0}
+.product-card{border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.08);transition:box-shadow 0.3s;margin-bottom:2em}
+.product-card:hover{box-shadow:0 4px 16px rgba(0,0,0,0.12)}
+.product-img-wrap{aspect-ratio:16/9;overflow:hidden;background:rgba(0,0,0,0.03)}
 .product-img-wrap img{width:100%;height:100%;object-fit:cover;display:block}
-.product-body{padding:1.2em}
-.product-title{font-size:1.1em;margin:0 0 0.3em;font-family:var(--font-body)}
-.product-desc{color:var(--meta-color);font-size:0.9em;margin:0 0 0.8em;line-height:1.5}
+.product-body{padding:1.5em}
+.product-title{font-size:1.2em;margin:0 0 0.3em;font-family:var(--font-body)}
+.product-desc{color:var(--meta-color);font-size:0.95em;margin:0 0 1em;line-height:1.5}
 .product-meta{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5em}
 .product-price{font-size:1.05em;font-weight:600}
 .product-size{font-size:0.8em;color:var(--meta-color)}
@@ -499,8 +519,9 @@ footer {
         for(var i=0;i<products.length;i++){
             var p=products[i];
             var existingToken=getStoredToken(p.id);
+            var imgSrc=p.imageUrl||'/social.jpg';
             h+='<div class="product-card" id="card-'+p.id+'">';
-            if(p.imageUrl)h+='<div class="product-img-wrap"><img src="'+esc(p.imageUrl)+'" alt="'+esc(p.title)+'" loading="lazy"></div>';
+            h+='<div class="product-img-wrap"><img src="'+esc(imgSrc)+'" alt="'+esc(p.title)+'" loading="lazy"></div>';
             h+='<div class="product-body">';
             h+='<h3 class="product-title">'+esc(p.title)+'</h3>';
             if(p.description)h+='<p class="product-desc">'+esc(p.description)+'</p>';
