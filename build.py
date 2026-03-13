@@ -163,8 +163,6 @@ class BlogBuilder:
             ['FleurCornerCaps',   1.02,   0.03],
             ['FlowerInitials',    1.24,  -0.09],
             ['GothicFlourish',    1.02,   0.03],
-            ['GoudyInitialen',    1.02,   0.03],
-            ['PaulusFranck',      1.02,   0.03],
             ['Romantik',          0.96,   0.09],
             ['TypographerCaps',   0.81,   0.03],
             ['VictorianInitials', 0.96,   0.04],
