@@ -38,9 +38,15 @@ export async function onRequestPost(context) {
             filename = `${year}_${month}_${day}_${timestamp}_${cleanName}`;
         }
 
-        // Read file as base64
+        // Read file as base64 (chunked to avoid call stack overflow on large files)
         const arrayBuffer = await file.arrayBuffer();
-        const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+        const bytes = new Uint8Array(arrayBuffer);
+        let binary = '';
+        const chunkSize = 8192;
+        for (let i = 0; i < bytes.length; i += chunkSize) {
+            binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+        }
+        const base64 = btoa(binary);
 
         // Upload to GitHub
         const uploadResponse = await fetch(

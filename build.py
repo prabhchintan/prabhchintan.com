@@ -8,6 +8,7 @@ import subprocess
 from pathlib import Path
 import shutil
 from urllib.parse import quote
+from html import escape as html_escape
 import os
 
 # Configure logging
@@ -220,13 +221,23 @@ class BlogBuilder:
 
         for line in lines:
             stripped = line.strip()
-            if stripped and not stripped.startswith('#') and not stripped.startswith('<'):
+            # Skip headings, HTML, blockquotes, and blank lines
+            if stripped and not stripped.startswith('#') and not stripped.startswith('<') and not stripped.startswith('>'):
                 desc_lines.append(stripped)
                 if len(' '.join(desc_lines)) > 140:
                     break
 
         description = ' '.join(desc_lines)[:157] + '...' if len(' '.join(desc_lines)) > 160 else ' '.join(desc_lines)
-        description = re.sub(r'<[^>]+>', '', description).strip()
+        # Strip HTML tags
+        description = re.sub(r'<[^>]+>', '', description)
+        # Strip markdown formatting: bold, italic, links, images
+        description = re.sub(r'!\[([^\]]*)\]\([^)]+\)', r'\1', description)  # images
+        description = re.sub(r'\[([^\]]*)\]\([^)]+\)', r'\1', description)   # links
+        description = re.sub(r'\*\*(.+?)\*\*', r'\1', description)           # bold
+        description = re.sub(r'\*(.+?)\*', r'\1', description)               # italic
+        description = re.sub(r'_(.+?)_', r'\1', description)                 # italic alt
+        description = re.sub(r'`(.+?)`', r'\1', description)                 # inline code
+        description = description.strip()
 
         return description or 'A blog post by Randhawa'
 
@@ -332,15 +343,16 @@ class BlogBuilder:
         # Generate comments section for this post
         comments_html = self.comments_template.replace('{{slug}}', slug) if self.comments_template else ''
 
-        # Replace placeholders
+        # Replace placeholders (escape description for use in HTML attributes)
+        safe_description = html_escape(description, quote=True)
         post_html = (template
-            .replace('{{title}}', title)
+            .replace('{{title}}', html_escape(title, quote=True))
             .replace('{{date}}', formatted_date)
             .replace('{{content}}', html_with_date)
             .replace('{{post_nav}}', '<p><a href="/blog">\u2190 Blog</a></p>')
             .replace('{{comments_section}}', comments_html)
             .replace('{{slug}}', slug)
-            .replace('{{description}}', description)
+            .replace('{{description}}', safe_description)
             .replace('{{url}}', f'https://prabhchintan.com/{slug}')
             .replace('{{year}}', str(date.year))
             .replace('{{critical_css}}', self.critical_css)
@@ -391,14 +403,15 @@ class BlogBuilder:
             template = f.read()
 
         # Replace placeholders (no date or comments for pages)
+        safe_description = html_escape(description, quote=True)
         page_html = (template
-            .replace('{{title}}', title)
+            .replace('{{title}}', html_escape(title, quote=True))
             .replace('{{date}}', '')
             .replace('{{content}}', html)
             .replace('{{post_nav}}', '')
             .replace('{{comments_section}}', '')
             .replace('{{slug}}', slug)
-            .replace('{{description}}', description)
+            .replace('{{description}}', safe_description)
             .replace('{{url}}', f'https://prabhchintan.com/{slug}')
             .replace('{{year}}', '')
             .replace('{{critical_css}}', self.critical_css)
@@ -525,11 +538,13 @@ class BlogBuilder:
 <lastBuildDate>{datetime.now().strftime('%a, %d %b %Y %H:%M:%S +0000')}</lastBuildDate>'''
 
         for post in posts[:10]:
+            safe_title = html_escape(post['title'])
+            safe_desc = html_escape(post['description'])
             rss += f'''
 <item>
-<title>{post['title']}</title>
+<title>{safe_title}</title>
 <link>https://prabhchintan.com{post['url']}</link>
-<description>{post['description']}</description>
+<description>{safe_desc}</description>
 <pubDate>{post['date'].strftime('%a, %d %b %Y 12:00:00 +0000')}</pubDate>
 <guid>https://prabhchintan.com{post['url']}</guid>
 </item>'''
