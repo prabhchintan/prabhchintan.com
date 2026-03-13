@@ -643,7 +643,7 @@ class BlogBuilder:
             if len(plain_text) < 150:
                 continue
             abs_start = search_start + p_match.start()
-            html = html[:abs_start] + '<p class="drop-cap">' + html[abs_start + 3:]
+            html = html[:abs_start] + '<p class="drop-cap-simple">' + html[abs_start + 3:]
             break
 
         return html
@@ -656,11 +656,8 @@ class BlogBuilder:
         # Inject critical CSS
         content = content.replace('</head>', f'<style>{self.critical_css}</style>\n</head>')
 
-        # Add drop cap to first qualifying paragraph
+        # Add simple drop cap to first qualifying paragraph (no custom font JS needed)
         content = self.add_drop_cap_index(content)
-
-        # Add drop cap JS before </body> (index: color only, no fancy fonts)
-        content = content.replace('</body>', f'{self.drop_cap_js_index}\n</body>')
 
         # Apply footer (no nav — homepage is the top level)
         content = self.apply_footer(content, is_post=None)

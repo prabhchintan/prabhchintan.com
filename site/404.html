@@ -204,10 +204,10 @@ footer {
     font-style: normal;
 }
 
-/* Native drop caps for Safari + Chrome 110+ — handles sizing/alignment perfectly */
 @supports (initial-letter: 3) {
     .drop-cap::first-letter {
         initial-letter: 3;
+        font-size: 1em;
         line-height: normal;
         margin-top: 0;
         padding: 0 0.08em 0 0;
@@ -216,6 +216,29 @@ footer {
 
 .drop-cap-loading::first-letter {
     color: transparent;
+}
+
+/* Simple drop cap for homepage — body font, no custom decorative font */
+.drop-cap-simple::first-letter {
+    float: left;
+    font-family: Baskerville, "Times New Roman", Times, serif;
+    font-size: 3em;
+    line-height: 0.75;
+    padding: 0.06em 0.08em 0 0;
+    margin-top: 0.06em;
+    color: var(--text-color);
+    font-weight: normal;
+    font-style: normal;
+}
+
+@supports (initial-letter: 3) {
+    .drop-cap-simple::first-letter {
+        initial-letter: 3;
+        font-size: 1em;
+        line-height: normal;
+        margin-top: 0;
+        padding: 0 0.06em 0 0;
+    }
 }
 
 .comments-section {
@@ -360,6 +383,7 @@ footer {
     @supports (initial-letter: 3) {
         .drop-cap::first-letter {
             initial-letter: 3;
+            font-size: 1em;
             line-height: normal;
             margin-top: 0;
         }

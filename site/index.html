@@ -221,10 +221,10 @@ footer {
     font-style: normal;
 }
 
-/* Native drop caps for Safari + Chrome 110+ — handles sizing/alignment perfectly */
 @supports (initial-letter: 3) {
     .drop-cap::first-letter {
         initial-letter: 3;
+        font-size: 1em;
         line-height: normal;
         margin-top: 0;
         padding: 0 0.08em 0 0;
@@ -233,6 +233,29 @@ footer {
 
 .drop-cap-loading::first-letter {
     color: transparent;
+}
+
+/* Simple drop cap for homepage — body font, no custom decorative font */
+.drop-cap-simple::first-letter {
+    float: left;
+    font-family: Baskerville, "Times New Roman", Times, serif;
+    font-size: 3em;
+    line-height: 0.75;
+    padding: 0.06em 0.08em 0 0;
+    margin-top: 0.06em;
+    color: var(--text-color);
+    font-weight: normal;
+    font-style: normal;
+}
+
+@supports (initial-letter: 3) {
+    .drop-cap-simple::first-letter {
+        initial-letter: 3;
+        font-size: 1em;
+        line-height: normal;
+        margin-top: 0;
+        padding: 0 0.06em 0 0;
+    }
 }
 
 .comments-section {
@@ -377,6 +400,7 @@ footer {
     @supports (initial-letter: 3) {
         .drop-cap::first-letter {
             initial-letter: 3;
+            font-size: 1em;
             line-height: normal;
             margin-top: 0;
         }
@@ -389,7 +413,7 @@ footer {
         <img src="profile.png" alt="Profile" width="80" height="80">
     </div>
 
-    <p class="drop-cap">
+    <p class="drop-cap-simple">
         Hello, this is Prabhchintan Randhawa.
         I also go by Prab, Prabh, or Chintu.
         I was born and raised a Sikh in Punjab, where I lived until my mid-teens.
@@ -421,65 +445,6 @@ footer {
         <a href="https://www.youtube.com/@prab" target="_blank">YouTube</a>, and
         <a href="mailto:contact@prabhchintan.com">email</a>.
     </p>
-<script>
-    (function(){
-        var d=document.querySelector('.drop-cap');
-        if(!d)return;
-        d.classList.add('drop-cap-loading');
-        var colors=[
-            'rgba(0,102,204,0.45)',   'rgba(20,80,180,0.48)',   'rgba(40,100,200,0.42)',
-            'rgba(10,70,160,0.5)',    'rgba(30,90,190,0.44)',   'rgba(50,110,210,0.46)',
-            'rgba(153,50,50,0.48)',   'rgba(170,60,60,0.45)',   'rgba(130,40,55,0.5)',
-            'rgba(185,45,45,0.42)',   'rgba(145,55,65,0.47)',   'rgba(160,40,50,0.44)',
-            'rgba(60,120,80,0.45)',   'rgba(45,130,70,0.42)',   'rgba(70,140,90,0.48)',
-            'rgba(55,145,75,0.46)',   'rgba(40,110,65,0.5)',    'rgba(75,135,85,0.44)',
-            'rgba(140,90,40,0.48)',   'rgba(160,100,30,0.45)',  'rgba(120,80,50,0.5)',
-            'rgba(175,115,35,0.42)',  'rgba(150,95,45,0.46)',   'rgba(135,85,55,0.44)',
-            'rgba(100,60,140,0.45)',  'rgba(120,70,160,0.42)',  'rgba(90,50,130,0.48)',
-            'rgba(110,65,150,0.46)',  'rgba(85,55,125,0.5)',    'rgba(130,75,170,0.44)',
-            'rgba(50,120,130,0.45)',  'rgba(40,130,140,0.42)',  'rgba(60,110,120,0.48)',
-            'rgba(45,140,135,0.46)',  'rgba(55,125,145,0.5)',   'rgba(65,115,125,0.44)',
-            'rgba(180,70,90,0.42)',   'rgba(160,55,80,0.45)',   'rgba(140,65,100,0.48)',
-            'rgba(170,60,85,0.46)',   'rgba(150,50,75,0.5)',    'rgba(190,75,95,0.44)',
-            'rgba(80,100,60,0.45)',   'rgba(90,110,50,0.42)',   'rgba(70,90,70,0.48)',
-            'rgba(85,105,55,0.46)',   'rgba(75,95,65,0.5)',     'rgba(95,115,45,0.44)',
-            'rgba(110,80,110,0.45)',  'rgba(130,70,90,0.42)',   'rgba(95,85,120,0.48)',
-            'rgba(120,75,105,0.46)',  'rgba(105,90,115,0.5)',   'rgba(115,80,100,0.44)',
-            'rgba(170,110,50,0.42)',  'rgba(180,120,60,0.48)',  'rgba(165,105,40,0.46)',
-            'rgba(60,90,150,0.45)',   'rgba(70,80,140,0.42)',   'rgba(50,100,160,0.48)',
-            'rgba(140,50,70,0.45)',   'rgba(90,130,100,0.42)',  'rgba(110,100,140,0.45)'
-        ];
-        var fonts=[
-            ['AcornInitials',     1.0,   0],
-            ['AngloText',         1.0,   0],
-            ['ApexLake',          0.80,  0.05],
-            ['CamelotCaps',       1.0,   0],
-            ['DecoratedRoman',    1.0,   0],
-            ['EileenCaps',        0.92, -0.02],
-            ['ElzevierCaps',      1.03,  0],
-            ['FleurCornerCaps',   1.0,   0],
-            ['FlowerInitials',    1.19, -0.03],
-            ['GothicFlourish',    1.0,   0],
-            ['GoudyInitialen',    1.0,   0],
-            ['PaulusFranck',      1.0,   0],
-            ['Romantik',          0.93,  0.02],
-            ['TypographerCaps',   0.79,  0.03],
-            ['VictorianInitials', 0.96,  0],
-            ['WoodcutInitials',   0.82,  0.06],
-            ['ZallmanCaps',       1.04,  0]
-        ];
-        var pick=fonts[Math.floor(Math.random()*fonts.length)];
-        d.style.setProperty('--drop-cap-color',colors[Math.floor(Math.random()*colors.length)]);
-        d.style.setProperty('--drop-cap-font',pick[0]);
-        d.style.setProperty('--drop-cap-scale',pick[1]);
-        if(pick[2])d.style.setProperty('--drop-cap-shift',pick[2]+'em');
-        document.fonts.load('1em '+pick[0]).then(function(){
-            d.classList.remove('drop-cap-loading');
-        }).catch(function(){
-            d.classList.remove('drop-cap-loading');
-        });
-    })();
-    </script>
 <footer>Randhawa 1309 Coffeen Ave Ste 1386 Sheridan, WY</footer>
 </body>
 

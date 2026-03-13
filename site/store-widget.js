@@ -98,7 +98,7 @@
                 var imgSrc=p.imageUrl||'/social.jpg';
                 var html='<div style="border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.08);font-family:var(--font-body);">';
                 html+='<div style="aspect-ratio:16/9;overflow:hidden;background:rgba(0,0,0,0.03);">';
-                html+='<img src="'+esc(imgSrc)+'" alt="'+esc(p.title)+'" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy">';
+                html+='<img src="'+esc(imgSrc)+'" alt="'+esc(p.title)+'" style="width:100%;height:100%;object-fit:cover;display:block;margin:0;border-radius:0;" loading="lazy">';
                 html+='</div>';
                 html+='<div style="padding:1.2em;">';
                 html+='<h3 style="margin:0 0 0.3em;font-size:1.1em;font-family:var(--font-body);">'+esc(p.title)+'</h3>';
