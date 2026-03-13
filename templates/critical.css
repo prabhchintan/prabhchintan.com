@@ -172,7 +172,7 @@ footer {
     text-align: center;
     margin-top: 1em;
     padding-top: 1em;
-    border-top: 1px solid var(--footer-color);
+    border-top: 1px solid var(--meta-color);
     color: var(--footer-color);
     font-size: 0.85em;
 }
