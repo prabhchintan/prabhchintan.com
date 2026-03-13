@@ -205,7 +205,7 @@ footer {
     font-family: var(--drop-cap-font, Baskerville), Baskerville, "Times New Roman", Times, serif;
     font-size: calc(2.1em * var(--drop-cap-scale, 1));
     line-height: 1;
-    padding: 0 0.15em 0 0;
+    padding: 0 0.18em 0 0;
     margin-top: 0.05em;
     color: var(--drop-cap-color, rgba(0, 102, 204, 0.5));
     font-weight: normal;
@@ -218,35 +218,12 @@ footer {
         font-size: 1em;
         line-height: normal;
         margin-top: 0;
-        padding: 0 0.15em 0 0;
+        padding: 0 0.18em 0 0;
     }
 }
 
 .drop-cap-loading::first-letter {
     color: transparent;
-}
-
-/* Simple drop cap for homepage — body font, no custom decorative font */
-.drop-cap-simple::first-letter {
-    float: left;
-    font-family: Baskerville, "Times New Roman", Times, serif;
-    font-size: 2.1em;
-    line-height: 1;
-    padding: 0 0.15em 0 0;
-    margin-top: 0.05em;
-    color: var(--text-color);
-    font-weight: normal;
-    font-style: normal;
-}
-
-@supports (initial-letter: 2) {
-    .drop-cap-simple::first-letter {
-        initial-letter: 2;
-        font-size: 1em;
-        line-height: normal;
-        margin-top: 0;
-        padding: 0 0.12em 0 0;
-    }
 }
 
 .comments-section {
@@ -397,9 +374,26 @@ footer {
         }
     }
 }</style>
+<style>
+.blog-search{position:relative;margin:0 0 2em}
+.blog-search input{width:100%;padding:0.4em 0;border:none;border-bottom:1px solid var(--border-color);font-family:var(--font-body);font-size:1em;background:transparent;color:var(--text-color);outline:none;box-sizing:border-box}
+.blog-search input:focus{border-bottom-color:var(--text-color)}
+.blog-search input::placeholder{color:var(--meta-color)}
+.search-results{position:absolute;top:100%;left:0;right:0;background:var(--bg-color);border:1px solid var(--border-color);border-top:none;border-radius:0 0 4px 4px;max-height:300px;overflow-y:auto;z-index:10;display:none}
+.search-results.open{display:block}
+.search-result{display:block;padding:0.6em 0.8em;color:var(--text-color);text-decoration:none;border-bottom:1px solid var(--border-color);font-size:0.95em;transition:background 0.15s}
+.search-result:last-child{border-bottom:none}
+.search-result:hover{background:rgba(0,0,0,0.03)}
+.search-result em{font-size:0.8em;color:var(--meta-color)}
+.search-empty{padding:0.6em 0.8em;color:var(--meta-color);font-size:0.9em;font-style:italic}
+</style>
 </head>
 <body>
 <h1>Blog</h1>
+<div class="blog-search">
+<input type="text" id="blogSearch" placeholder="Search posts…" autocomplete="off" spellcheck="false">
+<div class="search-results" id="searchResults"></div>
+</div>
 <p><a href="/mixtape">Buy My Mixtape Fam</a><br>
 <em>March 13, 2026</em></p>
 <p><a href="/meditation">Meditation is Narcissism</a><br>
@@ -418,7 +412,25 @@ footer {
 <em>January 31, 2026</em></p>
 <p><a href="/randhawa">Randhawa EP</a><br>
 <em>February 23, 2025</em></p>
-<br>
+<script>
+(function(){
+var posts=[{"title": "Buy My Mixtape Fam", "url": "/mixtape", "date": "March 13, 2026"}, {"title": "Meditation is Narcissism", "url": "/meditation", "date": "March 12, 2026"}, {"title": "Spam Welcome", "url": "/spam", "date": "March 11, 2026"}, {"title": "Americano", "url": "/americano", "date": "March 10, 2026"}, {"title": "Jalape\u00f1o Ranch Club Sandwich", "url": "/chickfila", "date": "March 09, 2026"}, {"title": "Learn to Cope", "url": "/cope", "date": "March 08, 2026"}, {"title": "What Analytic Philosophy Sounds Like to Continental Philosophers", "url": "/microservices", "date": "March 07, 2026"}, {"title": "\u0a66 to \u0a74: Computational Kh\u0101ls\u0101", "url": "/khalsa", "date": "January 31, 2026"}, {"title": "Randhawa EP", "url": "/randhawa", "date": "February 23, 2025"}];
+var input=document.getElementById('blogSearch');
+var results=document.getElementById('searchResults');
+function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+input.addEventListener('input',function(){
+var q=this.value.toLowerCase().trim();
+if(!q){results.className='search-results';results.innerHTML='';return;}
+var m=posts.filter(function(p){return p.title.toLowerCase().indexOf(q)!==-1;});
+if(!m.length){results.className='search-results open';results.innerHTML='<div class="search-empty">No posts found</div>';return;}
+var h='';
+for(var i=0;i<m.length;i++){h+='<a class="search-result" href="'+m[i].url+'">'+esc(m[i].title)+'<br><em>'+esc(m[i].date)+'</em></a>';}
+results.className='search-results open';
+results.innerHTML=h;
+});
+document.addEventListener('click',function(e){if(!e.target.closest('.blog-search'))results.className='search-results';});
+})();
+</script>
 <p><a href="/">← Home</a></p>
 <footer>Randhawa 1309 Coffeen Ave Ste 1386 Sheridan, WY</footer>
 </body>

@@ -283,16 +283,23 @@
         let uploadedMediaUrls = [];
         let fileMarkdownMap = new Map(); // Track which markdown belongs to which file
 
-        // Load existing posts for collision detection
+        // Load all known slugs for global collision detection
         async function loadExistingSlugs() {
             try {
+                // Fetch static slugs (pages, redirects, reserved names)
+                const staticResp = await fetch('/slugs.json');
+                if (staticResp.ok) {
+                    const staticSlugs = await staticResp.json();
+                    existingSlugs = new Set(staticSlugs);
+                }
+                // Also fetch dynamic blog post slugs from API (most up-to-date)
                 const response = await fetch(`${API}/posts`);
                 const result = await response.json();
                 if (response.ok && result.posts) {
-                    existingSlugs = new Set(result.posts.map(p => p.slug));
+                    result.posts.forEach(p => existingSlugs.add(p.slug));
                 }
             } catch (error) {
-                console.log('Could not load existing posts');
+                console.log('Could not load existing slugs');
             }
         }
 

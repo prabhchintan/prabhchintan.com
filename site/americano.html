@@ -214,7 +214,7 @@ footer {
     font-family: var(--drop-cap-font, Baskerville), Baskerville, "Times New Roman", Times, serif;
     font-size: calc(2.1em * var(--drop-cap-scale, 1));
     line-height: 1;
-    padding: 0 0.15em 0 0;
+    padding: 0 0.18em 0 0;
     margin-top: 0.05em;
     color: var(--drop-cap-color, rgba(0, 102, 204, 0.5));
     font-weight: normal;
@@ -227,35 +227,12 @@ footer {
         font-size: 1em;
         line-height: normal;
         margin-top: 0;
-        padding: 0 0.15em 0 0;
+        padding: 0 0.18em 0 0;
     }
 }
 
 .drop-cap-loading::first-letter {
     color: transparent;
-}
-
-/* Simple drop cap for homepage — body font, no custom decorative font */
-.drop-cap-simple::first-letter {
-    float: left;
-    font-family: Baskerville, "Times New Roman", Times, serif;
-    font-size: 2.1em;
-    line-height: 1;
-    padding: 0 0.15em 0 0;
-    margin-top: 0.05em;
-    color: var(--text-color);
-    font-weight: normal;
-    font-style: normal;
-}
-
-@supports (initial-letter: 2) {
-    .drop-cap-simple::first-letter {
-        initial-letter: 2;
-        font-size: 1em;
-        line-height: normal;
-        margin-top: 0;
-        padding: 0 0.12em 0 0;
-    }
 }
 
 .comments-section {

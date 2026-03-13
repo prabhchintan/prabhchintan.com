@@ -466,7 +466,16 @@ class BlogBuilder:
                 log.info(f"Redirect: /{source} → {target}")
 
     def build_blog_index(self, posts):
-        """Generate blog index"""
+        """Generate blog index with search"""
+        import json as jsonlib
+
+        # Build posts JSON for search
+        posts_json = jsonlib.dumps([{
+            'title': p['title'],
+            'url': p['url'],
+            'date': p['formatted_date']
+        } for p in posts])
+
         blog_html = f'''<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -492,24 +501,97 @@ class BlogBuilder:
 <link rel="canonical" href="https://prabhchintan.com/blog">
 <link rel="alternate" type="application/rss+xml" title="RSS" href="/feed.xml">
 <style>{self.critical_css}</style>
+<style>
+.blog-search{{position:relative;margin:0 0 2em}}
+.blog-search input{{width:100%;padding:0.4em 0;border:none;border-bottom:1px solid var(--border-color);font-family:var(--font-body);font-size:1em;background:transparent;color:var(--text-color);outline:none;box-sizing:border-box}}
+.blog-search input:focus{{border-bottom-color:var(--text-color)}}
+.blog-search input::placeholder{{color:var(--meta-color)}}
+.search-results{{position:absolute;top:100%;left:0;right:0;background:var(--bg-color);border:1px solid var(--border-color);border-top:none;border-radius:0 0 4px 4px;max-height:300px;overflow-y:auto;z-index:10;display:none}}
+.search-results.open{{display:block}}
+.search-result{{display:block;padding:0.6em 0.8em;color:var(--text-color);text-decoration:none;border-bottom:1px solid var(--border-color);font-size:0.95em;transition:background 0.15s}}
+.search-result:last-child{{border-bottom:none}}
+.search-result:hover{{background:rgba(0,0,0,0.03)}}
+.search-result em{{font-size:0.8em;color:var(--meta-color)}}
+.search-empty{{padding:0.6em 0.8em;color:var(--meta-color);font-size:0.9em;font-style:italic}}
+</style>
 </head>
 <body>
-<h1>Blog</h1>'''
+<h1>Blog</h1>
+<div class="blog-search">
+<input type="text" id="blogSearch" placeholder="Search posts\u2026" autocomplete="off" spellcheck="false">
+<div class="search-results" id="searchResults"></div>
+</div>'''
 
         for post in posts:
+            safe_title = html_escape(post['title'])
             blog_html += f'''
-<p><a href="{post['url']}">{post['title']}</a><br>
+<p><a href="{post['url']}">{safe_title}</a><br>
 <em>{post['formatted_date']}</em></p>'''
 
-        blog_html += '\n<br>\n<p><a href="/">← Home</a></p>\n</body>\n</html>'
+        blog_html += f'''
+<script>
+(function(){{
+var posts={posts_json};
+var input=document.getElementById('blogSearch');
+var results=document.getElementById('searchResults');
+function esc(s){{var d=document.createElement('div');d.textContent=s;return d.innerHTML;}}
+input.addEventListener('input',function(){{
+var q=this.value.toLowerCase().trim();
+if(!q){{results.className='search-results';results.innerHTML='';return;}}
+var m=posts.filter(function(p){{return p.title.toLowerCase().indexOf(q)!==-1;}});
+if(!m.length){{results.className='search-results open';results.innerHTML='<div class="search-empty">No posts found</div>';return;}}
+var h='';
+for(var i=0;i<m.length;i++){{h+='<a class="search-result" href="'+m[i].url+'">'+esc(m[i].title)+'<br><em>'+esc(m[i].date)+'</em></a>';}}
+results.className='search-results open';
+results.innerHTML=h;
+}});
+document.addEventListener('click',function(e){{if(!e.target.closest('.blog-search'))results.className='search-results';}});
+}})();
+</script>
+'''
 
-        # Apply footer but mark this as blog index (not a post, not a page)
+        blog_html += '<p><a href="/">← Home</a></p>\n</body>\n</html>'
+
         blog_html = self.apply_footer(blog_html, is_post=False)
 
         with open(self.site_dir / 'blog.html', 'w', encoding='utf-8') as f:
             f.write(blog_html)
 
         log.info(f"Built blog index with {len(posts)} posts")
+
+    def generate_slugs_json(self, posts, pages):
+        """Generate slugs.json with all used slugs for collision detection"""
+        import json as jsonlib
+
+        slugs = set()
+
+        # Blog post slugs
+        for p in posts:
+            slugs.add(p['slug'])
+
+        # Page slugs
+        for p in pages:
+            slugs.add(p['slug'])
+
+        # Reserved slugs (generated pages + admin UIs)
+        for s in ['blog', 'store', 'sell', 'post', 'edit', 'delete',
+                   'certifications', '404', 'index']:
+            slugs.add(s)
+
+        # Redirect slugs
+        redirects_file = Path('redirects.txt')
+        if redirects_file.exists():
+            with open(redirects_file, 'r', encoding='utf-8') as f:
+                for line in f:
+                    line = line.strip()
+                    if line and '->' in line:
+                        source = line.split('->')[0].strip()
+                        slugs.add(source)
+
+        with open(self.site_dir / 'slugs.json', 'w', encoding='utf-8') as f:
+            jsonlib.dump(sorted(slugs), f)
+
+        log.info(f"Generated slugs.json ({len(slugs)} slugs)")
 
     def generate_sitemap(self, posts, pages):
         """Generate XML sitemap"""
@@ -655,9 +737,6 @@ class BlogBuilder:
 
         # Inject critical CSS
         content = content.replace('</head>', f'<style>{self.critical_css}</style>\n</head>')
-
-        # Add simple drop cap to first qualifying paragraph (no custom font JS needed)
-        content = self.add_drop_cap_index(content)
 
         # Apply footer (no nav — homepage is the top level)
         content = self.apply_footer(content, is_post=None)
@@ -963,6 +1042,7 @@ Sitemap: https://prabhchintan.com/sitemap.xml
         # Generate everything
         self.build_blog_index(posts)
         self.process_redirects()
+        self.generate_slugs_json(posts, pages)
         self.generate_sitemap(posts, pages)
         self.generate_rss(posts)
         self.generate_robots_txt()

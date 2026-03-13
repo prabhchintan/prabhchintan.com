@@ -190,7 +190,7 @@ footer {
     font-family: var(--drop-cap-font, Baskerville), Baskerville, "Times New Roman", Times, serif;
     font-size: calc(2.1em * var(--drop-cap-scale, 1));
     line-height: 1;
-    padding: 0 0.15em 0 0;
+    padding: 0 0.18em 0 0;
     margin-top: 0.05em;
     color: var(--drop-cap-color, rgba(0, 102, 204, 0.5));
     font-weight: normal;
@@ -203,35 +203,12 @@ footer {
         font-size: 1em;
         line-height: normal;
         margin-top: 0;
-        padding: 0 0.15em 0 0;
+        padding: 0 0.18em 0 0;
     }
 }
 
 .drop-cap-loading::first-letter {
     color: transparent;
-}
-
-/* Simple drop cap for homepage — body font, no custom decorative font */
-.drop-cap-simple::first-letter {
-    float: left;
-    font-family: Baskerville, "Times New Roman", Times, serif;
-    font-size: 2.1em;
-    line-height: 1;
-    padding: 0 0.15em 0 0;
-    margin-top: 0.05em;
-    color: var(--text-color);
-    font-weight: normal;
-    font-style: normal;
-}
-
-@supports (initial-letter: 2) {
-    .drop-cap-simple::first-letter {
-        initial-letter: 2;
-        font-size: 1em;
-        line-height: normal;
-        margin-top: 0;
-        padding: 0 0.12em 0 0;
-    }
 }
 
 .comments-section {
@@ -657,16 +634,23 @@ footer {
         let uploadedMediaUrls = [];
         let fileMarkdownMap = new Map(); // Track which markdown belongs to which file
 
-        // Load existing posts for collision detection
+        // Load all known slugs for global collision detection
         async function loadExistingSlugs() {
             try {
+                // Fetch static slugs (pages, redirects, reserved names)
+                const staticResp = await fetch('/slugs.json');
+                if (staticResp.ok) {
+                    const staticSlugs = await staticResp.json();
+                    existingSlugs = new Set(staticSlugs);
+                }
+                // Also fetch dynamic blog post slugs from API (most up-to-date)
                 const response = await fetch(`${API}/posts`);
                 const result = await response.json();
                 if (response.ok && result.posts) {
-                    existingSlugs = new Set(result.posts.map(p => p.slug));
+                    result.posts.forEach(p => existingSlugs.add(p.slug));
                 }
             } catch (error) {
-                console.log('Could not load existing posts');
+                console.log('Could not load existing slugs');
             }
         }
 
