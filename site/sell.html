@@ -450,12 +450,18 @@ footer {
             font-size: 0.9em
         }
 
+        .attached-files {
+            margin: 0.5em 0;
+            padding: 0;
+            list-style: none
+        }
+
         .attached-file {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0.8em;
-            margin: 1em 0;
+            padding: 0.6em 0.8em;
+            margin: 0.4em 0;
             border: 1px solid var(--border-color);
             border-radius: 4px;
             background: rgba(0, 0, 0, 0.01)
@@ -471,6 +477,21 @@ footer {
             color: var(--meta-color)
         }
 
+        .remove-file {
+            background: transparent;
+            border: none;
+            color: #a33b32;
+            cursor: pointer;
+            font-size: 1.2em;
+            padding: 0.2em 0.5em;
+            width: auto;
+            margin: 0
+        }
+
+        .remove-file:hover {
+            background: rgba(163, 59, 50, 0.1)
+        }
+
         .price-row {
             display: flex;
             gap: 1em;
@@ -483,6 +504,25 @@ footer {
 
         .price-row .form-group:last-child {
             width: 120px
+        }
+
+        .image-preview {
+            margin: 1em 0;
+            text-align: center
+        }
+
+        .image-preview img {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid var(--border-color)
+        }
+
+        .image-preview .remove-file {
+            display: block;
+            margin: 0.5em auto 0;
+            font-size: 0.85em
         }
 
         #status {
@@ -515,6 +555,44 @@ footer {
             color: #0066cc;
             border: 1px solid #d4e8f5
         }
+
+        .product-list {
+            margin-bottom: 2.5em;
+            padding-bottom: 1.5em;
+            border-bottom: 1px solid var(--border-color)
+        }
+
+        .product-list h2 {
+            font-size: 1.1em;
+            margin-bottom: 1em
+        }
+
+        .form-section-title {
+            font-size: 1.1em;
+            margin-bottom: 1em;
+            color: var(--text-color)
+        }
+
+        .product-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.8em 0;
+            border-bottom: 1px solid var(--border-color)
+        }
+
+        .product-item-info {
+            font-size: 0.95em
+        }
+
+        .product-item-price {
+            font-size: 0.85em;
+            color: var(--meta-color)
+        }
+
+        .edit-link {
+            font-size: 0.9em
+        }
     </style>
 </head>
 
@@ -523,9 +601,18 @@ footer {
         <img src="/profile.png" alt="Profile" width="80" height="80">
     </div>
 
-    <h1>Sell</h1>
+    <h1 id="pageTitle">Sell</h1>
+
+    <div class="product-list" id="productList" style="display:none">
+        <h2>Your Products</h2>
+        <div id="productListItems"></div>
+    </div>
+
+    <h2 class="form-section-title" id="formTitle">New Product</h2>
 
     <form id="sellForm">
+        <input type="hidden" id="editProductId" value="">
+
         <div class="form-group">
             <label for="title">Title</label>
             <input type="text" id="title" required placeholder="Product name" autocomplete="off">
@@ -550,21 +637,29 @@ footer {
             </div>
         </div>
 
+        <label>Display Image (optional)</label>
+        <div class="media-upload" id="imageUpload">
+            <input type="file" id="imageInput" accept="image/*" style="display:none">
+            <div class="media-upload-icon">🖼</div>
+            <div class="media-upload-text">
+                <strong>Product Image</strong><br>
+                <small>Click or drag image here</small>
+            </div>
+        </div>
+        <div id="imagePreview" class="image-preview" style="display:none"></div>
+
+        <label>Files</label>
         <div class="media-upload" id="fileUpload">
-            <input type="file" id="fileInput" style="display:none">
+            <input type="file" id="fileInput" multiple style="display:none">
             <div class="media-upload-icon">📦</div>
             <div class="media-upload-text">
-                <strong>Upload File</strong><br>
-                <small>Click or drag file here</small>
+                <strong>Upload Files</strong><br>
+                <small>Click or drag files here (multiple allowed)</small>
             </div>
         </div>
 
-        <div id="attachedFile" style="display:none" class="attached-file">
-            <div>
-                <div class="attached-file-name" id="fileName"></div>
-                <div class="attached-file-size" id="fileSize"></div>
-            </div>
-        </div>
+        <ul id="existingFiles" class="attached-files"></ul>
+        <ul id="newFiles" class="attached-files"></ul>
 
         <div class="form-group">
             <label for="password">Password</label>
@@ -579,7 +674,11 @@ footer {
     <p><a href="/store">← Store</a></p>
 
     <script>
-        let selectedFile = null;
+        let newFilesArr = [];
+        let removeFilesArr = [];
+        let selectedImage = null;
+        let removeImage = false;
+        let isEditMode = false;
 
         function formatFileSize(bytes) {
             if (bytes < 1024) return bytes + ' B';
@@ -587,38 +686,163 @@ footer {
             return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
         }
 
-        const uploadArea = document.getElementById('fileUpload');
+        // File upload area
+        const fileUploadArea = document.getElementById('fileUpload');
         const fileInput = document.getElementById('fileInput');
 
-        uploadArea.addEventListener('dragover', (e) => {
+        fileUploadArea.addEventListener('dragover', (e) => { e.preventDefault(); fileUploadArea.classList.add('dragover'); });
+        fileUploadArea.addEventListener('dragleave', () => { fileUploadArea.classList.remove('dragover'); });
+        fileUploadArea.addEventListener('drop', (e) => {
             e.preventDefault();
-            uploadArea.classList.add('dragover');
+            fileUploadArea.classList.remove('dragover');
+            Array.from(e.dataTransfer.files).forEach(addNewFile);
         });
-
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.classList.remove('dragover');
-        });
-
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.classList.remove('dragover');
-            if (e.dataTransfer.files.length) setFile(e.dataTransfer.files[0]);
-        });
-
-        uploadArea.addEventListener('click', () => fileInput.click());
-
+        fileUploadArea.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length) setFile(e.target.files[0]);
+            Array.from(e.target.files).forEach(addNewFile);
+            e.target.value = '';
         });
 
-        function setFile(file) {
-            selectedFile = file;
-            document.getElementById('fileName').textContent = file.name;
-            document.getElementById('fileSize').textContent = formatFileSize(file.size);
-            document.getElementById('attachedFile').style.display = 'flex';
-            uploadArea.style.display = 'none';
+        function addNewFile(file) {
+            if (newFilesArr.some(f => f.name === file.name && f.size === file.size)) return;
+            newFilesArr.push(file);
+            renderNewFiles();
         }
 
+        function renderNewFiles() {
+            const list = document.getElementById('newFiles');
+            list.innerHTML = '';
+            newFilesArr.forEach((file, i) => {
+                const li = document.createElement('li');
+                li.className = 'attached-file';
+                li.innerHTML = '<div><div class="attached-file-name">' + escHtml(file.name) + '</div><div class="attached-file-size">' + formatFileSize(file.size) + '</div></div>';
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'remove-file';
+                btn.innerHTML = '×';
+                btn.onclick = () => { newFilesArr.splice(i, 1); renderNewFiles(); };
+                li.appendChild(btn);
+                list.appendChild(li);
+            });
+        }
+
+        // Image upload area
+        const imageUploadArea = document.getElementById('imageUpload');
+        const imageInput = document.getElementById('imageInput');
+
+        imageUploadArea.addEventListener('dragover', (e) => { e.preventDefault(); imageUploadArea.classList.add('dragover'); });
+        imageUploadArea.addEventListener('dragleave', () => { imageUploadArea.classList.remove('dragover'); });
+        imageUploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            imageUploadArea.classList.remove('dragover');
+            if (e.dataTransfer.files.length) setImage(e.dataTransfer.files[0]);
+        });
+        imageUploadArea.addEventListener('click', () => imageInput.click());
+        imageInput.addEventListener('change', (e) => {
+            if (e.target.files.length) setImage(e.target.files[0]);
+        });
+
+        function setImage(file) {
+            if (!file.type.startsWith('image/')) return;
+            selectedImage = file;
+            removeImage = false;
+            const preview = document.getElementById('imagePreview');
+            const url = URL.createObjectURL(file);
+            preview.innerHTML = '<img src="' + url + '"><button type="button" class="remove-file" onclick="clearImage()">Remove image</button>';
+            preview.style.display = '';
+            imageUploadArea.style.display = 'none';
+        }
+
+        window.clearImage = function() {
+            selectedImage = null;
+            removeImage = true;
+            document.getElementById('imagePreview').style.display = 'none';
+            imageUploadArea.style.display = '';
+        };
+
+        function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+        // Edit mode: load product data
+        async function enterEditMode(productId) {
+            isEditMode = true;
+            document.getElementById('editProductId').value = productId;
+            document.getElementById('formTitle').textContent = 'Edit Product';
+            document.getElementById('submitBtn').textContent = 'Update Product';
+
+            try {
+                const resp = await fetch('/api/products?id=' + encodeURIComponent(productId));
+                const data = await resp.json();
+                if (!data.product) return;
+                const p = data.product;
+
+                document.getElementById('title').value = p.title || '';
+                document.getElementById('description').value = p.description || '';
+
+                // Reverse price from display
+                if (p.currency === 'usdc') {
+                    document.getElementById('price').value = p.price / 1e6;
+                } else {
+                    document.getElementById('price').value = Number(BigInt(p.price)) / 1e18;
+                }
+                document.getElementById('currency').value = p.currency;
+
+                // Show existing files
+                renderExistingFiles(p.files || []);
+
+                // Show existing image
+                if (p.imageUrl) {
+                    const preview = document.getElementById('imagePreview');
+                    preview.innerHTML = '<img src="' + p.imageUrl + '"><button type="button" class="remove-file" onclick="clearImage()">Remove image</button>';
+                    preview.style.display = '';
+                    imageUploadArea.style.display = 'none';
+                }
+            } catch (e) {
+                console.error('Failed to load product', e);
+            }
+        }
+
+        function renderExistingFiles(files) {
+            const list = document.getElementById('existingFiles');
+            list.innerHTML = '';
+            files.forEach(f => {
+                if (removeFilesArr.includes(f.filename)) return;
+                const li = document.createElement('li');
+                li.className = 'attached-file';
+                li.innerHTML = '<div><div class="attached-file-name">' + escHtml(f.filename) + '</div><div class="attached-file-size">' + formatFileSize(f.fileSize) + ' (existing)</div></div>';
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'remove-file';
+                btn.innerHTML = '×';
+                btn.onclick = () => {
+                    removeFilesArr.push(f.filename);
+                    li.remove();
+                };
+                li.appendChild(btn);
+                list.appendChild(li);
+            });
+        }
+
+        // Load product list
+        async function loadProductList() {
+            try {
+                const resp = await fetch('/api/products');
+                const data = await resp.json();
+                const products = data.products || [];
+                if (!products.length) return;
+
+                const container = document.getElementById('productListItems');
+                container.innerHTML = '';
+                products.forEach(p => {
+                    const div = document.createElement('div');
+                    div.className = 'product-item';
+                    div.innerHTML = '<div><div class="product-item-info">' + escHtml(p.title) + '</div><div class="product-item-price">' + escHtml(p.priceDisplay) + ' · ' + p.files.length + ' file(s)</div></div><a class="edit-link" href="/sell?edit=' + p.id + '">Edit</a>';
+                    container.appendChild(div);
+                });
+                document.getElementById('productList').style.display = '';
+            } catch (e) {}
+        }
+
+        // Submit handler
         document.getElementById('sellForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -630,57 +854,75 @@ footer {
             const submitBtn = document.getElementById('submitBtn');
             const statusDiv = document.getElementById('status');
 
-            if (!selectedFile) {
-                statusDiv.innerHTML = 'Please select a file.';
+            if (!isEditMode && !newFilesArr.length) {
+                statusDiv.innerHTML = 'Please select at least one file.';
                 statusDiv.className = 'error show';
                 return;
             }
 
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Uploading...';
+            submitBtn.textContent = isEditMode ? 'Updating...' : 'Uploading...';
             statusDiv.className = 'info show';
-            statusDiv.innerHTML = 'Uploading file...';
+            statusDiv.innerHTML = isEditMode ? 'Updating product...' : 'Uploading files...';
 
             try {
                 const formData = new FormData();
                 formData.append('password', password);
-                formData.append('file', selectedFile);
                 formData.append('title', title);
                 formData.append('description', description);
                 formData.append('price', price);
                 formData.append('currency', currency);
 
-                const response = await fetch('/api/sell-upload', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const result = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(result.error || 'Upload failed');
+                if (isEditMode) {
+                    formData.append('productId', document.getElementById('editProductId').value);
+                    removeFilesArr.forEach(fn => formData.append('removeFile', fn));
+                    if (removeImage && !selectedImage) formData.append('removeImage', '1');
                 }
 
-                statusDiv.innerHTML = `✓ Product created: ${result.productId}<br>Price: ${result.priceDisplay}<br><br>Embed code:<br><code>&lt;div class="store-embed" data-product="${result.productId}"&gt;&lt;/div&gt;</code>`;
+                newFilesArr.forEach(f => formData.append('file', f));
+                if (selectedImage) formData.append('image', selectedImage);
+
+                const endpoint = isEditMode ? '/api/edit-product' : '/api/sell-upload';
+                const response = await fetch(endpoint, { method: 'POST', body: formData });
+                const result = await response.json();
+
+                if (!response.ok) throw new Error(result.error || 'Failed');
+
+                if (isEditMode) {
+                    statusDiv.innerHTML = '✓ Product updated.';
+                } else {
+                    statusDiv.innerHTML = '✓ Product created: ' + result.productId + '<br>Price: ' + result.priceDisplay + '<br><br>Embed code:<br><code>&lt;div class="store-embed" data-product="' + result.productId + '"&gt;&lt;/div&gt;</code>';
+                }
                 statusDiv.className = 'success show';
 
-                // Reset form
-                document.getElementById('title').value = '';
-                document.getElementById('description').value = '';
-                document.getElementById('price').value = '';
-                document.getElementById('password').value = '';
-                selectedFile = null;
-                document.getElementById('attachedFile').style.display = 'none';
-                uploadArea.style.display = '';
+                if (!isEditMode) {
+                    document.getElementById('title').value = '';
+                    document.getElementById('description').value = '';
+                    document.getElementById('price').value = '';
+                    document.getElementById('password').value = '';
+                    newFilesArr = [];
+                    renderNewFiles();
+                    selectedImage = null;
+                    document.getElementById('imagePreview').style.display = 'none';
+                    imageUploadArea.style.display = '';
+                    loadProductList();
+                }
 
             } catch (error) {
                 statusDiv.innerHTML = '✗ ' + error.message;
                 statusDiv.className = 'error show';
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.textContent = 'Upload Product';
+                submitBtn.textContent = isEditMode ? 'Update Product' : 'Upload Product';
             }
         });
+
+        // Init
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('edit')) {
+            enterEditMode(params.get('edit'));
+        }
+        loadProductList();
     </script>
 <footer>Randhawa 1309 Coffeen Ave Ste 1386 Sheridan, WY</footer>
 </body>

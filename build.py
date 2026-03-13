@@ -470,18 +470,25 @@ class BlogBuilder:
         blog_html = f'''<!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Blog - Randhawa</title>
+<title>Randhawa: Blog</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-
 <link rel="apple-touch-icon" href="favicon.svg">
 <meta name="description" content="Personal blog by Randhawa">
-<meta property="og:title" content="Blog - Randhawa">
+<meta property="og:title" content="Randhawa: Blog">
 <meta property="og:description" content="Personal blog by Randhawa">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://prabhchintan.com/blog">
-<meta property="og:image" content="https://prabhchintan.com/profile.png">
+<meta property="og:site_name" content="Randhawa">
+<meta property="og:image" content="https://prabhchintan.com/social.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="2400">
+<meta property="og:image:height" content="1260">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Randhawa: Blog">
+<meta name="twitter:description" content="Personal blog by Randhawa">
+<meta name="twitter:image" content="https://prabhchintan.com/social.jpg">
+<meta name="twitter:image:alt" content="Randhawa: Blog">
 <link rel="canonical" href="https://prabhchintan.com/blog">
 <link rel="alternate" type="application/rss+xml" title="RSS" href="/feed.xml">
 <style>{self.critical_css}</style>
@@ -562,9 +569,18 @@ class BlogBuilder:
         html = f'''<!DOCTYPE html>
 <html lang="en">
 <head>
-<title>404 - Page Not Found</title>
+<title>Randhawa: 404</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta property="og:title" content="Randhawa">
+<meta property="og:site_name" content="Randhawa">
+<meta property="og:image" content="https://prabhchintan.com/social.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="2400">
+<meta property="og:image:height" content="1260">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Randhawa">
+<meta name="twitter:image" content="https://prabhchintan.com/social.jpg">
 <link rel="canonical" href="https://prabhchintan.com/404">
 <style>{self.critical_css}</style>
 </head>
@@ -688,7 +704,7 @@ Sitemap: https://prabhchintan.com/sitemap.xml
     def copy_assets(self):
         """Copy assets to site directory"""
         # Copy images
-        for asset in ['profile.png', 'favicon.svg']:
+        for asset in ['profile.png', 'favicon.svg', 'social.jpg']:
             if Path(asset).exists():
                 shutil.copy2(asset, self.site_dir / asset)
 
@@ -791,12 +807,24 @@ Sitemap: https://prabhchintan.com/sitemap.xml
         page_html = f'''<!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Certifications - Randhawa</title>
+<title>Randhawa: Certifications</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta name="description" content="Professional certifications of Prabhchintan Randhawa">
-<meta property="og:title" content="Certifications - Randhawa">
+<meta property="og:title" content="Randhawa: Certifications">
+<meta property="og:description" content="Professional certifications of Prabhchintan Randhawa">
+<meta property="og:type" content="website">
 <meta property="og:url" content="https://prabhchintan.com/certifications">
+<meta property="og:site_name" content="Randhawa">
+<meta property="og:image" content="https://prabhchintan.com/social.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="2400">
+<meta property="og:image:height" content="1260">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Randhawa: Certifications">
+<meta name="twitter:description" content="Professional certifications of Prabhchintan Randhawa">
+<meta name="twitter:image" content="https://prabhchintan.com/social.jpg">
+<meta name="twitter:image:alt" content="Randhawa: Certifications">
 <link rel="canonical" href="https://prabhchintan.com/certifications">
 <style>{self.critical_css}</style>
 </head>

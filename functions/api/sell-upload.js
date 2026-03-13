@@ -1,4 +1,4 @@
-// POST /api/sell-upload — admin uploads a product file to R2
+// POST /api/sell-upload — admin uploads a product with multiple files + optional image to R2
 function json(data, status = 200) {
     return new Response(JSON.stringify(data), {
         status,
@@ -12,11 +12,12 @@ export async function onRequestPost(context) {
     try {
         const formData = await request.formData();
         const password = formData.get('password');
-        const file = formData.get('file');
         const title = (formData.get('title') || '').trim();
         const description = (formData.get('description') || '').trim();
         const priceInput = formData.get('price');
         const currency = (formData.get('currency') || 'usdc').toLowerCase();
+        const files = formData.getAll('file');
+        const image = formData.get('image');
 
         // Auth
         if (password !== env.ADMIN_PASSWORD) {
@@ -24,7 +25,7 @@ export async function onRequestPost(context) {
         }
 
         // Validate
-        if (!file) return json({ error: 'No file provided' }, 400);
+        if (!files.length || !files[0]?.name) return json({ error: 'No files provided' }, 400);
         if (!title) return json({ error: 'Title is required' }, 400);
 
         const priceFloat = parseFloat(priceInput);
@@ -39,21 +40,40 @@ export async function onRequestPost(context) {
         // Convert to atomic units
         let price, priceDisplay;
         if (currency === 'usdc') {
-            price = Math.round(priceFloat * 1e6); // 6 decimals
+            price = Math.round(priceFloat * 1e6);
             priceDisplay = `${priceFloat} USDC`;
         } else {
-            price = BigInt(Math.round(priceFloat * 1e18)).toString(); // wei as string
+            price = BigInt(Math.round(priceFloat * 1e18)).toString();
             priceDisplay = `${priceFloat} ETH`;
         }
 
-        // Generate product ID
         const productId = crypto.randomUUID().split('-')[0];
 
-        // Upload to R2
-        const r2Key = `products/${productId}/${file.name}`;
-        await env.FILES.put(r2Key, file.stream(), {
-            httpMetadata: { contentType: file.type || 'application/octet-stream' }
-        });
+        // Upload files to R2
+        const productFiles = [];
+        for (const file of files) {
+            if (!file?.name) continue;
+            const r2Key = `products/${productId}/${file.name}`;
+            await env.FILES.put(r2Key, file.stream(), {
+                httpMetadata: { contentType: file.type || 'application/octet-stream' }
+            });
+            productFiles.push({
+                r2Key,
+                filename: file.name,
+                contentType: file.type || 'application/octet-stream',
+                fileSize: file.size
+            });
+        }
+
+        // Upload image to R2 if provided
+        let imageKey = null;
+        if (image && image.name) {
+            const ext = image.name.split('.').pop().toLowerCase();
+            imageKey = `products/${productId}/image.${ext}`;
+            await env.FILES.put(imageKey, image.stream(), {
+                httpMetadata: { contentType: image.type || 'image/jpeg' }
+            });
+        }
 
         // Store metadata in KV
         const product = {
@@ -63,13 +83,11 @@ export async function onRequestPost(context) {
             price,
             currency,
             priceDisplay,
-            r2Key,
-            filename: file.name,
-            contentType: file.type || 'application/octet-stream',
-            fileSize: file.size,
+            files: productFiles,
             createdAt: Date.now(),
             active: true
         };
+        if (imageKey) product.imageKey = imageKey;
 
         await env.COMMENTS.put(`product:${productId}`, JSON.stringify(product));
 
