@@ -29,7 +29,7 @@
 .product-img-wrap{aspect-ratio:1;overflow:hidden;background:rgba(0,0,0,0.03)}
 .product-img-wrap img{width:100%;height:100%;object-fit:cover;display:block}
 .product-body{padding:1.2em}
-.product-title{font-size:1.1em;margin:0 0 0.3em}
+.product-title{font-size:1.1em;margin:0 0 0.3em;font-family:var(--font-body)}
 .product-desc{color:var(--meta-color);font-size:0.9em;margin:0 0 0.8em;line-height:1.5}
 .product-meta{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5em}
 .product-price{font-size:1.05em;font-weight:600}
@@ -38,22 +38,20 @@
 .buy-btn{background:var(--text-color);color:var(--bg-color);border:1px solid var(--text-color);padding:0.5em 1.5em;border-radius:4px;cursor:pointer;font-family:var(--font-body);font-size:0.9em;transition:all 0.2s;text-decoration:none;display:inline-block}
 .buy-btn:hover{background:transparent;color:var(--text-color)}
 .buy-btn:disabled{opacity:0.4;cursor:not-allowed}
-.store-status{margin-top:0.5em;font-size:0.85em;color:var(--meta-color)}
+.store-status{margin-top:0.8em;font-size:0.85em;color:var(--meta-color);line-height:1.6}
 .store-status a{color:var(--link-color)}
 .store-empty{color:var(--meta-color);text-align:center;padding:3em 0}
-.wallet-bar{margin:1.5em 0;padding:1em;border:1px solid var(--border-color);border-radius:4px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5em}
-.wallet-info{font-size:0.9em;color:var(--meta-color)}
-.connect-btn{background:transparent;color:var(--text-color);border:1px solid var(--text-color);padding:0.4em 1em;border-radius:4px;cursor:pointer;font-family:var(--font-body);font-size:0.9em;transition:all 0.2s}
-.connect-btn:hover{background:var(--text-color);color:var(--bg-color)}
+.wallet-links{font-size:0.85em;line-height:1.8}
+.wallet-links a{color:var(--link-color)}
+.wallet-links span{color:var(--meta-color)}
+.dl-links{margin:0.5em 0;padding:0.8em;border:1px solid var(--border-color);border-radius:6px;background:rgba(0,0,0,0.01)}
+.dl-links a{display:block;padding:0.3em 0;color:var(--link-color);font-size:0.9em}
+.dl-email{display:inline-block;margin-top:0.5em;font-size:0.85em;color:var(--link-color);cursor:pointer;text-decoration:underline}
+.redownload-link{font-size:0.85em;color:var(--link-color);cursor:pointer;text-decoration:underline}
 </style>
 </head>
 <body>
 <h1>Store</h1>
-
-<div class="wallet-bar" id="walletBar">
-    <span class="wallet-info" id="walletInfo">Connect your wallet to purchase</span>
-    <button class="connect-btn" id="connectBtn">Connect Wallet</button>
-</div>
 
 <div class="store-grid" id="storeGrid">
     <p class="store-empty">Loading...</p>
@@ -62,6 +60,9 @@
 <script>
 (function(){
     var RECIPIENT='0x3570958b8dcbc4f663f508efcedb454ee9af9516';
+    var HAS_WALLET=!!window.ethereum;
+    var PAGE_URL=encodeURIComponent(window.location.href);
+    var DAPP_PATH=window.location.host+window.location.pathname;
 
     var CHAINS={
         '0x1':    {name:'Ethereum', usdc:'0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'},
@@ -72,8 +73,6 @@
     };
 
     var grid=document.getElementById('storeGrid');
-    var walletInfo=document.getElementById('walletInfo');
-    var connectBtn=document.getElementById('connectBtn');
     var addr=null;
     var chainHex=null;
     var products=[];
@@ -122,20 +121,43 @@
         }catch(e){}
     }
 
-    function triggerDownload(token,fileIndex){
-        var url='/api/download?token='+encodeURIComponent(token);
-        if(fileIndex!==undefined)url+='&file='+fileIndex;
-        window.location.href=url;
+    function buildDownloadHtml(token,files,title){
+        var h='<div class="dl-links">';
+        for(var i=0;i<files.length;i++){
+            h+='<a href="/api/download?token='+encodeURIComponent(token)+'&file='+i+'">'+esc(files[i].filename)+' ('+formatSize(files[i].fileSize)+')</a>';
+        }
+        h+='</div>';
+        // Email-me-the-link
+        var links='';
+        for(var i=0;i<files.length;i++){
+            links+=encodeURIComponent('https://prabhchintan.com/api/download?token='+token+'&file='+i)+encodeURIComponent('\n');
+        }
+        var subject=encodeURIComponent('Your download: '+title);
+        var body=encodeURIComponent('Here are your download links (valid 24 hours, 3 downloads):\n\n')+links+encodeURIComponent('\nFrom prabhchintan.com');
+        h+='<a class="dl-email" href="mailto:?subject='+subject+'&body='+body+'">email me the download link</a>';
+        return h;
     }
 
-    function showDownloadLinks(productId,token,files){
-        var el=document.getElementById('status-'+productId);
-        if(!el)return;
-        var h='<strong>Download your files:</strong><br>';
-        for(var i=0;i<files.length;i++){
-            h+='<a href="/api/download?token='+encodeURIComponent(token)+'&file='+i+'" style="display:inline-block;margin:0.3em 0;">'+esc(files[i].filename)+' ('+formatSize(files[i].fileSize)+')</a><br>';
-        }
-        el.innerHTML=h;
+    function connectWallet(callback){
+        if(!HAS_WALLET)return;
+        ethereum.request({method:'eth_requestAccounts'}).then(function(accounts){
+            if(!accounts.length)return;
+            addr=accounts[0];
+            return ethereum.request({method:'eth_chainId'});
+        }).then(function(c){
+            if(!c)return;
+            chainHex=c;
+            renderProducts();
+            if(typeof callback==='function')callback();
+        }).catch(function(){});
+    }
+
+    if(HAS_WALLET){
+        ethereum.on('chainChanged',function(c){chainHex=c;renderProducts();});
+        ethereum.on('accountsChanged',function(a){
+            if(a.length){addr=a[0];}else{addr=null;chainHex=null;}
+            renderProducts();
+        });
     }
 
     function renderProducts(){
@@ -157,21 +179,26 @@
             if(p.files.length>1)h+=' <span class="product-files">'+p.files.length+' files</span>';
             h+='</div>';
             h+='<div>';
-            if(addr){
-                h+='<button class="buy-btn" onclick="storeBuy(\''+p.id+'\')">Buy</button>';
+            if(HAS_WALLET){
+                if(addr){
+                    h+='<button class="buy-btn" onclick="storeBuy(\''+p.id+'\')">Buy</button>';
+                }else{
+                    h+='<button class="buy-btn" onclick="storeBuy(\''+p.id+'\')">Connect Wallet</button>';
+                }
             }else{
-                h+='<button class="buy-btn" onclick="storeBuy(\''+p.id+'\')">Connect Wallet</button>';
+                // Mobile: show wallet deep links
+                h+='<div class="wallet-links">';
+                h+='<a href="https://metamask.app.link/dapp/'+DAPP_PATH+'">Open in MetaMask</a>';
+                h+='<span> · </span>';
+                h+='<a href="https://go.cb-w.com/dapp?cb_url='+PAGE_URL+'">Coinbase Wallet</a>';
+                h+='</div>';
             }
             if(existingToken){
-                if(p.files.length>1){
-                    h+=' <span style="font-size:0.85em;color:var(--link-color);cursor:pointer;text-decoration:underline" onclick="storeRedownload(\''+p.id+'\')">files</span>';
-                }else{
-                    h+=' <span style="font-size:0.85em;color:var(--link-color);cursor:pointer;text-decoration:underline" onclick="storeRedownload(\''+p.id+'\')">re-download</span>';
-                }
+                h+=' <span class="redownload-link" onclick="storeRedownload(\''+p.id+'\')">re-download</span>';
             }
             h+='</div>';
             h+='</div>';
-            h+='<p class="store-status" id="status-'+p.id+'"></p>';
+            h+='<div class="store-status" id="status-'+p.id+'"></div>';
             h+='</div>';
             h+='</div>';
         }
@@ -182,52 +209,9 @@
         var el=document.getElementById('status-'+productId);
         if(el)el.textContent=msg;
     }
-
-    function updateWalletUI(){
-        if(!window.ethereum){
-            var pageUrl=encodeURIComponent(window.location.href);
-            var dappPath=window.location.host+window.location.pathname;
-            walletInfo.innerHTML='<a href="https://metamask.app.link/dapp/'+dappPath+'">MetaMask</a> · <a href="https://go.cb-w.com/dapp?cb_url='+pageUrl+'">Coinbase Wallet</a>';
-            connectBtn.style.display='none';
-            return;
-        }
-        if(addr){
-            var chain=CHAINS[chainHex];
-            var chainName=chain?chain.name:'unsupported network';
-            walletInfo.textContent=short(addr)+' on '+chainName;
-            connectBtn.textContent='Disconnect';
-            connectBtn.onclick=function(){addr=null;chainHex=null;updateWalletUI();renderProducts();};
-        }else{
-            walletInfo.textContent='Connect your wallet to purchase';
-            connectBtn.textContent='Connect Wallet';
-            connectBtn.onclick=connectWallet;
-        }
-        renderProducts();
-    }
-
-    function connectWallet(callback){
-        if(!window.ethereum)return;
-        ethereum.request({method:'eth_requestAccounts'}).then(function(accounts){
-            if(!accounts.length)return;
-            addr=accounts[0];
-            return ethereum.request({method:'eth_chainId'});
-        }).then(function(c){
-            if(!c)return;
-            chainHex=c;
-            updateWalletUI();
-            if(typeof callback==='function')callback();
-        }).catch(function(err){
-            walletInfo.textContent=err.message||'Connection failed.';
-        });
-    }
-
-    if(window.ethereum){
-        ethereum.on('chainChanged',function(c){chainHex=c;updateWalletUI();});
-        ethereum.on('accountsChanged',function(a){
-            if(a.length){addr=a[0];updateWalletUI();}
-            else{addr=null;updateWalletUI();}
-        });
-        connectBtn.onclick=connectWallet;
+    function setProductStatusHtml(productId,h){
+        var el=document.getElementById('status-'+productId);
+        if(el)el.innerHTML=h;
     }
 
     function executeBuy(productId){
@@ -279,13 +263,12 @@
                 for(var i=0;i<products.length;i++){
                     if(products[i].id===productId){product=products[i];break;}
                 }
-                if(product && product.files.length>1){
-                    showDownloadLinks(productId,data.downloadToken,product.files);
-                }else{
-                    setProductStatus(productId,'Starting download\u2026');
-                    triggerDownload(data.downloadToken,0);
+                if(product){
+                    setProductStatusHtml(productId,buildDownloadHtml(data.downloadToken,product.files,product.title));
+                    if(product.files.length===1){
+                        window.location.href='/api/download?token='+encodeURIComponent(data.downloadToken)+'&file=0';
+                    }
                 }
-                renderProducts();
             }else{
                 setProductStatus(productId,data.error||'Purchase failed.');
             }
@@ -295,11 +278,9 @@
         });
     }
 
-    // Expose for onclick handlers
     window.storeBuy=function(productId){
-        if(!window.ethereum)return;
+        if(!HAS_WALLET)return;
         if(!addr){
-            // Connect first, then auto-buy
             setProductStatus(productId,'Connecting wallet\u2026');
             connectWallet(function(){
                 executeBuy(productId);
@@ -316,14 +297,15 @@
         for(var i=0;i<products.length;i++){
             if(products[i].id===productId){product=products[i];break;}
         }
-        if(product && product.files.length>1){
-            showDownloadLinks(productId,token,product.files);
+        if(!product)return;
+        if(product.files.length>1){
+            setProductStatusHtml(productId,buildDownloadHtml(token,product.files,product.title));
         }else{
-            triggerDownload(token,0);
+            setProductStatusHtml(productId,buildDownloadHtml(token,product.files,product.title));
+            window.location.href='/api/download?token='+encodeURIComponent(token)+'&file=0';
         }
     };
 
-    // Load products
     fetch('/api/products')
         .then(function(r){return r.json();})
         .then(function(d){
@@ -334,7 +316,7 @@
             grid.innerHTML='<p class="store-empty">Failed to load products.</p>';
         });
 
-    updateWalletUI();
+    renderProducts();
 })();
 </script>
 </body>

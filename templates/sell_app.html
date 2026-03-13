@@ -263,6 +263,44 @@
         .edit-link {
             font-size: 0.9em
         }
+
+        .product-item-embed {
+            margin-top: 0.4em;
+            display: flex;
+            align-items: center;
+            gap: 0.5em
+        }
+
+        .product-item-embed code {
+            font-size: 0.75em;
+            color: var(--meta-color);
+            background: rgba(0, 0, 0, 0.03);
+            padding: 0.2em 0.5em;
+            border-radius: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 280px;
+            display: inline-block
+        }
+
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--meta-color);
+            cursor: pointer;
+            font-size: 0.75em;
+            padding: 0.2em 0.6em;
+            border-radius: 3px;
+            width: auto;
+            margin: 0;
+            white-space: nowrap
+        }
+
+        .copy-btn:hover {
+            border-color: var(--text-color);
+            color: var(--text-color)
+        }
     </style>
 </head>
 
@@ -503,9 +541,16 @@
                 const container = document.getElementById('productListItems');
                 container.innerHTML = '';
                 products.forEach(p => {
+                    const embedCode = '<div class="store-embed" data-product="' + p.id + '"></div>';
                     const div = document.createElement('div');
                     div.className = 'product-item';
-                    div.innerHTML = '<div><div class="product-item-info">' + escHtml(p.title) + '</div><div class="product-item-price">' + escHtml(p.priceDisplay) + ' · ' + p.files.length + ' file(s)</div></div><a class="edit-link" href="/sell?edit=' + p.id + '">Edit</a>';
+                    div.innerHTML = '<div><div class="product-item-info">' + escHtml(p.title) + '</div><div class="product-item-price">' + escHtml(p.priceDisplay) + ' · ' + p.files.length + ' file(s)</div><div class="product-item-embed"><code>' + escHtml(embedCode) + '</code><button type="button" class="copy-btn" data-embed="' + escHtml(embedCode) + '">Copy</button></div></div><a class="edit-link" href="/sell?edit=' + p.id + '">Edit</a>';
+                    div.querySelector('.copy-btn').addEventListener('click', function() {
+                        navigator.clipboard.writeText(embedCode).then(function() {
+                            div.querySelector('.copy-btn').textContent = 'Copied!';
+                            setTimeout(function() { div.querySelector('.copy-btn').textContent = 'Copy'; }, 2000);
+                        });
+                    });
                     container.appendChild(div);
                 });
                 document.getElementById('productList').style.display = '';

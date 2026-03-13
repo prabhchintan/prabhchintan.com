@@ -1,5 +1,8 @@
 (function(){
     var RECIPIENT='0x3570958b8dcbc4f663f508efcedb454ee9af9516';
+    var HAS_WALLET=!!window.ethereum;
+    var PAGE_URL=encodeURIComponent(window.location.href);
+    var DAPP_PATH=window.location.host+window.location.pathname;
 
     var CHAINS={
         '0x1':    {name:'Ethereum', usdc:'0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'},
@@ -53,7 +56,7 @@
     }
 
     function connectWallet(cb){
-        if(!window.ethereum)return;
+        if(!HAS_WALLET)return;
         ethereum.request({method:'eth_requestAccounts'}).then(function(accounts){
             if(!accounts.length)return;
             return ethereum.request({method:'eth_chainId'}).then(function(c){
@@ -62,11 +65,28 @@
         }).catch(function(){});
     }
 
+    function buildDownloadHtml(token,files,title){
+        var h='<div style="margin:0.5em 0;padding:0.8em;border:1px solid var(--border-color);border-radius:6px;background:rgba(0,0,0,0.01);">';
+        for(var i=0;i<files.length;i++){
+            h+='<a href="/api/download?token='+encodeURIComponent(token)+'&file='+i+'" style="display:block;padding:0.3em 0;color:var(--link-color);font-size:0.9em;">'+esc(files[i].filename)+' ('+formatSize(files[i].fileSize)+')</a>';
+        }
+        h+='</div>';
+        var links='';
+        for(var i=0;i<files.length;i++){
+            links+=encodeURIComponent('https://prabhchintan.com/api/download?token='+token+'&file='+i)+encodeURIComponent('\n');
+        }
+        var subject=encodeURIComponent('Your download: '+title);
+        var body=encodeURIComponent('Here are your download links (valid 24 hours, 3 downloads):\n\n')+links+encodeURIComponent('\nFrom prabhchintan.com');
+        h+='<a href="mailto:?subject='+subject+'&body='+body+'" style="display:inline-block;margin-top:0.5em;font-size:0.85em;color:var(--link-color);text-decoration:underline;">email me the download link</a>';
+        return h;
+    }
+
     function initEmbed(el){
         var productId=el.getAttribute('data-product');
         if(!productId)return;
 
-        el.innerHTML='<p style="color:var(--meta-color);font-size:0.9em;">Loading...</p>';
+        el.style.margin='1.5em 0';
+        el.innerHTML='<p style="color:var(--meta-color);font-size:0.9em;text-align:center;">Loading...</p>';
 
         fetch('/api/products?id='+encodeURIComponent(productId))
             .then(function(r){return r.json();})
@@ -75,31 +95,35 @@
                 var p=d.product;
                 var existingToken=getStoredToken(p.id);
 
-                var html='<div style="border:1px solid var(--border-color);border-radius:8px;overflow:hidden;margin:1.5em 0;">';
+                var html='<div style="border:1px solid var(--border-color);border-radius:8px;overflow:hidden;font-family:var(--font-body);">';
                 if(p.imageUrl){
                     html+='<div style="aspect-ratio:16/9;overflow:hidden;background:rgba(0,0,0,0.03);">';
                     html+='<img src="'+esc(p.imageUrl)+'" alt="'+esc(p.title)+'" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy">';
                     html+='</div>';
                 }
                 html+='<div style="padding:1.2em;">';
-                html+='<h3 style="margin:0 0 0.3em;font-size:1.1em;">'+esc(p.title)+'</h3>';
+                html+='<h3 style="margin:0 0 0.3em;font-size:1.1em;font-family:var(--font-body);">'+esc(p.title)+'</h3>';
                 if(p.description)html+='<p style="color:var(--meta-color);font-size:0.9em;margin:0 0 0.8em;line-height:1.5;">'+esc(p.description)+'</p>';
                 html+='<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5em;">';
                 html+='<div><span style="font-weight:600;">'+esc(p.priceDisplay)+'</span> <span style="font-size:0.8em;color:var(--meta-color);">'+formatSize(p.totalFileSize)+'</span>';
                 if(p.files.length>1)html+=' <span style="font-size:0.8em;color:var(--meta-color);">'+p.files.length+' files</span>';
                 html+='</div>';
-                html+='<span>';
-                html+='<button class="store-widget-buy" style="background:var(--text-color);color:var(--bg-color);border:1px solid var(--text-color);padding:0.5em 1.5em;border-radius:4px;cursor:pointer;font-family:var(--font-body);font-size:0.9em;">Buy</button>';
-                if(existingToken){
-                    if(p.files.length>1){
-                        html+=' <span class="store-widget-redownload" style="font-size:0.85em;color:var(--link-color);cursor:pointer;text-decoration:underline;">files</span>';
-                    }else{
-                        html+=' <span class="store-widget-redownload" style="font-size:0.85em;color:var(--link-color);cursor:pointer;text-decoration:underline;">re-download</span>';
-                    }
+                html+='<div>';
+                if(HAS_WALLET){
+                    html+='<button class="store-widget-buy" style="background:var(--text-color);color:var(--bg-color);border:1px solid var(--text-color);padding:0.5em 1.5em;border-radius:4px;cursor:pointer;font-family:var(--font-body);font-size:0.9em;transition:all 0.2s;">Buy</button>';
+                }else{
+                    html+='<span style="font-size:0.85em;line-height:1.8;">';
+                    html+='<a href="https://metamask.app.link/dapp/'+DAPP_PATH+'" style="color:var(--link-color);">Open in MetaMask</a>';
+                    html+='<span style="color:var(--meta-color);"> · </span>';
+                    html+='<a href="https://go.cb-w.com/dapp?cb_url='+PAGE_URL+'" style="color:var(--link-color);">Coinbase Wallet</a>';
+                    html+='</span>';
                 }
-                html+='</span>';
+                if(existingToken){
+                    html+=' <span class="store-widget-redownload" style="font-size:0.85em;color:var(--link-color);cursor:pointer;text-decoration:underline;margin-left:0.5em;">re-download</span>';
+                }
                 html+='</div>';
-                html+='<p class="store-widget-status" style="margin-top:0.5em;font-size:0.85em;color:var(--meta-color);"></p>';
+                html+='</div>';
+                html+='<div class="store-widget-status" style="margin-top:0.5em;font-size:0.85em;color:var(--meta-color);line-height:1.6;"></div>';
                 html+='</div>';
                 html+='</div>';
                 el.innerHTML=html;
@@ -111,21 +135,12 @@
                 function setStatus(msg){statusEl.textContent=msg;}
                 function setStatusHtml(h){statusEl.innerHTML=h;}
 
-                function showDownloadLinks(token){
-                    var h='<strong>Download your files:</strong><br>';
-                    for(var i=0;i<p.files.length;i++){
-                        h+='<a href="/api/download?token='+encodeURIComponent(token)+'&file='+i+'" style="display:inline-block;margin:0.3em 0;">'+esc(p.files[i].filename)+' ('+formatSize(p.files[i].fileSize)+')</a><br>';
-                    }
-                    setStatusHtml(h);
-                }
-
                 if(redownloadEl){
                     redownloadEl.onclick=function(){
                         var token=getStoredToken(p.id);
                         if(!token){setStatus('Token expired. Please purchase again.');return;}
-                        if(p.files.length>1){
-                            showDownloadLinks(token);
-                        }else{
+                        setStatusHtml(buildDownloadHtml(token,p.files,p.title));
+                        if(p.files.length===1){
                             window.location.href='/api/download?token='+encodeURIComponent(token)+'&file=0';
                         }
                     };
@@ -170,10 +185,8 @@
                         if(!data)return;
                         if(data.success){
                             storeToken(p.id,data.downloadToken,Date.now()+24*60*60*1000);
-                            if(p.files.length>1){
-                                showDownloadLinks(data.downloadToken);
-                            }else{
-                                setStatus('Starting download\u2026');
+                            setStatusHtml(buildDownloadHtml(data.downloadToken,p.files,p.title));
+                            if(p.files.length===1){
                                 window.location.href='/api/download?token='+encodeURIComponent(data.downloadToken)+'&file=0';
                             }
                         }else{
@@ -185,24 +198,20 @@
                     });
                 }
 
-                buyBtn.onclick=function(){
-                    if(!window.ethereum){
-                        setStatus('Open in MetaMask or Coinbase Wallet to purchase.');
-                        return;
-                    }
-                    // Connect then buy in one flow
-                    setStatus('Connecting wallet\u2026');
-                    connectWallet(function(walletAddr,walletChain){
-                        executeBuy(walletAddr,walletChain);
-                    });
-                };
+                if(buyBtn){
+                    buyBtn.onclick=function(){
+                        setStatus('Connecting wallet\u2026');
+                        connectWallet(function(walletAddr,walletChain){
+                            executeBuy(walletAddr,walletChain);
+                        });
+                    };
+                }
             })
             .catch(function(){
                 el.innerHTML='';
             });
     }
 
-    // Initialize all embed elements on the page
     var embeds=document.querySelectorAll('.store-embed');
     for(var i=0;i<embeds.length;i++){
         initEmbed(embeds[i]);
