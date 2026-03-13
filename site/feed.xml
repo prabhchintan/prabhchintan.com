@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
-<title>Randhawa Inc. Blog</title>
+<title>Randhawa Blog</title>
 <link>https://prabhchintan.com/blog</link>
 <atom:link href="https://prabhchintan.com/feed.xml" rel="self" type="application/rss+xml"/>
 <description>Personal blog featuring thoughts on technology, design, and life.</description>
-<lastBuildDate>Thu, 12 Mar 2026 18:10:08 +0000</lastBuildDate>
+<lastBuildDate>Fri, 13 Mar 2026 07:19:48 +0000</lastBuildDate>
 <item>
 <title>Meditation is Narcissism</title>
 <link>https://prabhchintan.com/meditation</link>
@@ -37,14 +37,14 @@
 <item>
 <title>Learn to Cope</title>
 <link>https://prabhchintan.com/cope</link>
-<description>A blog post by Randhawa Inc.</description>
+<description>A blog post by Randhawa</description>
 <pubDate>Sun, 08 Mar 2026 12:00:00 +0000</pubDate>
 <guid>https://prabhchintan.com/cope</guid>
 </item>
 <item>
 <title>What Analytic Philosophy Sounds Like to Continental Philosophers</title>
 <link>https://prabhchintan.com/microservices</link>
-<description>A blog post by Randhawa Inc.</description>
+<description>A blog post by Randhawa</description>
 <pubDate>Sat, 07 Mar 2026 12:00:00 +0000</pubDate>
 <guid>https://prabhchintan.com/microservices</guid>
 </item>

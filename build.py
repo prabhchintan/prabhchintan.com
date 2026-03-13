@@ -228,7 +228,7 @@ class BlogBuilder:
         description = ' '.join(desc_lines)[:157] + '...' if len(' '.join(desc_lines)) > 160 else ' '.join(desc_lines)
         description = re.sub(r'<[^>]+>', '', description).strip()
 
-        return description or 'A blog post by Randhawa Inc.'
+        return description or 'A blog post by Randhawa'
 
     def extract_title(self, content):
         """Extract first heading from markdown"""
@@ -457,14 +457,14 @@ class BlogBuilder:
         blog_html = f'''<!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Blog - Randhawa Inc.</title>
+<title>Blog - Randhawa</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="alternate icon" href="favicon.ico">
 <link rel="apple-touch-icon" href="favicon.svg">
-<meta name="description" content="Personal blog by Randhawa Inc.">
-<meta property="og:title" content="Blog - Randhawa Inc.">
-<meta property="og:description" content="Personal blog by Randhawa Inc.">
+<meta name="description" content="Personal blog by Randhawa">
+<meta property="og:title" content="Blog - Randhawa">
+<meta property="og:description" content="Personal blog by Randhawa">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://prabhchintan.com/blog">
 <meta property="og:image" content="https://prabhchintan.com/profile.png">
@@ -518,7 +518,7 @@ class BlogBuilder:
         rss = f'''<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
-<title>Randhawa Inc. Blog</title>
+<title>Randhawa Blog</title>
 <link>https://prabhchintan.com/blog</link>
 <atom:link href="https://prabhchintan.com/feed.xml" rel="self" type="application/rss+xml"/>
 <description>Personal blog featuring thoughts on technology, design, and life.</description>
@@ -638,7 +638,7 @@ class BlogBuilder:
 
     def apply_footer(self, html, is_post=True):
         """Apply universal footer with context-aware navigation"""
-        footer = '<footer>Randhawa Inc. 1309 Coffeen Ave Ste 1386 Sheridan, WY</footer>'
+        footer = '<footer>Randhawa 1309 Coffeen Ave Ste 1386 Sheridan, WY</footer>'
 
         # Remove existing footer if present
         html = re.sub(r'<footer>.*?</footer>', '', html, flags=re.DOTALL)
@@ -770,11 +770,11 @@ Sitemap: https://prabhchintan.com/sitemap.xml
         page_html = f'''<!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Certifications - Randhawa Inc.</title>
+<title>Certifications - Randhawa</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta name="description" content="Professional certifications of Prabhchintan Randhawa">
-<meta property="og:title" content="Certifications - Randhawa Inc.">
+<meta property="og:title" content="Certifications - Randhawa">
 <meta property="og:url" content="https://prabhchintan.com/certifications">
 <link rel="canonical" href="https://prabhchintan.com/certifications">
 <style>{self.critical_css}</style>
