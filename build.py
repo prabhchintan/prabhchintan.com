@@ -144,6 +144,8 @@ class BlogBuilder:
         # Each entry: [fontName, scale, shiftEm]
         # scale adjusts font-size so all glyphs appear visually similar
         # shift adjusts vertical position for fonts that overflow or sit too high/low
+        # Font metrics from actual glyph analysis (fontTools):
+        # [fontName, scale, shiftEm] — scale normalizes cap height, shift aligns top edge
         self.drop_cap_js = f"""<script>
     (function(){{
         var d=document.querySelector('.drop-cap');
@@ -151,29 +153,29 @@ class BlogBuilder:
         d.classList.add('drop-cap-loading');
         var colors={self._drop_cap_colors};
         var fonts=[
-            ['AcornInitials',     1.0,   0],
-            ['AngloText',         1.0,   0],
-            ['ApexLake',          0.80,  0.05],
-            ['CamelotCaps',       1.0,   0],
-            ['DecoratedRoman',    1.0,   0],
-            ['EileenCaps',        0.92, -0.02],
-            ['ElzevierCaps',      1.03,  0],
-            ['FleurCornerCaps',   1.0,   0],
-            ['FlowerInitials',    1.19, -0.03],
-            ['GothicFlourish',    1.0,   0],
-            ['GoudyInitialen',    1.0,   0],
-            ['PaulusFranck',      1.0,   0],
-            ['Romantik',          0.93,  0.02],
-            ['TypographerCaps',   0.79,  0.03],
-            ['VictorianInitials', 0.96,  0],
-            ['WoodcutInitials',   0.82,  0.06],
-            ['ZallmanCaps',       1.04,  0]
+            ['AcornInitials',     1.0,    0.05],
+            ['AngloText',         1.02,   0.03],
+            ['ApexLake',          0.82,   0.19],
+            ['CamelotCaps',       1.02,   0.03],
+            ['DecoratedRoman',    1.02,   0.03],
+            ['EileenCaps',        0.94,   0.03],
+            ['ElzevierCaps',      1.04,   0.01],
+            ['FleurCornerCaps',   1.02,   0.03],
+            ['FlowerInitials',    1.24,  -0.09],
+            ['GothicFlourish',    1.02,   0.03],
+            ['GoudyInitialen',    1.02,   0.03],
+            ['PaulusFranck',      1.02,   0.03],
+            ['Romantik',          0.96,   0.09],
+            ['TypographerCaps',   0.81,   0.03],
+            ['VictorianInitials', 0.96,   0.04],
+            ['WoodcutInitials',   0.85,   0.03],
+            ['ZallmanCaps',       1.06,   0.03]
         ];
         var pick=fonts[Math.floor(Math.random()*fonts.length)];
         d.style.setProperty('--drop-cap-color',colors[Math.floor(Math.random()*colors.length)]);
         d.style.setProperty('--drop-cap-font',pick[0]);
         d.style.setProperty('--drop-cap-scale',pick[1]);
-        if(pick[2])d.style.setProperty('--drop-cap-shift',pick[2]+'em');
+        d.style.setProperty('--drop-cap-shift',pick[2]+'em');
         document.fonts.load('1em '+pick[0]).then(function(){{
             d.classList.remove('drop-cap-loading');
         }}).catch(function(){{
@@ -367,13 +369,18 @@ class BlogBuilder:
 
         log.info(f"Built post: /{slug}")
 
+        # Plain text for search — strip markdown/HTML, keep first 1000 chars
+        search_text = re.sub(r'<[^>]+>', '', html)  # strip HTML tags
+        search_text = re.sub(r'\s+', ' ', search_text).strip()[:1000]
+
         return {
             'slug': slug,
             'title': title,
             'date': date,
             'formatted_date': formatted_date,
             'description': description,
-            'url': f'/{slug}'
+            'url': f'/{slug}',
+            'search_text': search_text
         }
 
     def build_page(self, md_file):
@@ -469,11 +476,12 @@ class BlogBuilder:
         """Generate blog index with search"""
         import json as jsonlib
 
-        # Build posts JSON for search
+        # Build posts JSON for search (title + body text)
         posts_json = jsonlib.dumps([{
             'title': p['title'],
             'url': p['url'],
-            'date': p['formatted_date']
+            'date': p['formatted_date'],
+            'body': p.get('search_text', '')
         } for p in posts])
 
         blog_html = f'''<!DOCTYPE html>
@@ -535,13 +543,32 @@ var posts={posts_json};
 var input=document.getElementById('blogSearch');
 var results=document.getElementById('searchResults');
 function esc(s){{var d=document.createElement('div');d.textContent=s;return d.innerHTML;}}
+function snippet(text,q){{
+var i=text.toLowerCase().indexOf(q);
+if(i===-1)return'';
+var start=Math.max(0,i-40);
+var end=Math.min(text.length,i+q.length+60);
+var s=(start>0?'\u2026':'')+text.slice(start,end).trim()+(end<text.length?'\u2026':'');
+return s;
+}}
 input.addEventListener('input',function(){{
 var q=this.value.toLowerCase().trim();
 if(!q){{results.className='search-results';results.innerHTML='';return;}}
-var m=posts.filter(function(p){{return p.title.toLowerCase().indexOf(q)!==-1;}});
+var m=[];
+for(var i=0;i<posts.length;i++){{
+var p=posts[i];
+var inTitle=p.title.toLowerCase().indexOf(q)!==-1;
+var inBody=p.body.toLowerCase().indexOf(q)!==-1;
+if(inTitle||inBody)m.push({{post:p,inTitle:inTitle,inBody:inBody}});
+}}
 if(!m.length){{results.className='search-results open';results.innerHTML='<div class="search-empty">No posts found</div>';return;}}
 var h='';
-for(var i=0;i<m.length;i++){{h+='<a class="search-result" href="'+m[i].url+'">'+esc(m[i].title)+'<br><em>'+esc(m[i].date)+'</em></a>';}}
+for(var i=0;i<m.length;i++){{
+var r=m[i];
+h+='<a class="search-result" href="'+r.post.url+'">'+esc(r.post.title)+'<br><em>'+esc(r.post.date);
+if(!r.inTitle&&r.inBody){{h+=' \u2014 \u2026'+esc(snippet(r.post.body,q))+'\u2026';}}
+h+='</em></a>';
+}}
 results.className='search-results open';
 results.innerHTML=h;
 }});

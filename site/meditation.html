@@ -212,10 +212,11 @@ footer {
 .drop-cap::first-letter {
     float: left;
     font-family: var(--drop-cap-font, Baskerville), Baskerville, "Times New Roman", Times, serif;
-    font-size: calc(2.1em * var(--drop-cap-scale, 1));
-    line-height: 1;
-    padding: 0 0.18em 0 0;
-    margin-top: 0.05em;
+    font-size: calc(2.2em * var(--drop-cap-scale, 1));
+    line-height: 0.85;
+    padding: 0.02em 0.35em 0 0;
+    margin-top: var(--drop-cap-shift, 0.05em);
+    margin-bottom: -0.15em;
     color: var(--drop-cap-color, rgba(0, 102, 204, 0.5));
     font-weight: normal;
     font-style: normal;
@@ -227,7 +228,8 @@ footer {
         font-size: 1em;
         line-height: normal;
         margin-top: 0;
-        padding: 0 0.18em 0 0;
+        margin-bottom: 0;
+        padding: 0 0.35em 0 0;
     }
 }
 
@@ -369,9 +371,8 @@ footer {
     }
 
     .drop-cap::first-letter {
-        font-size: calc(1.9em * var(--drop-cap-scale, 1));
-        line-height: 1;
-        margin-top: 0.05em;
+        font-size: calc(2em * var(--drop-cap-scale, 1));
+        padding-right: 0.3em;
     }
 
     @supports (initial-letter: 2) {
@@ -380,6 +381,7 @@ footer {
             font-size: 1em;
             line-height: normal;
             margin-top: 0;
+            margin-bottom: 0;
         }
     }
 }</style>
@@ -611,29 +613,29 @@ footer {
             'rgba(140,50,70,0.45)',   'rgba(90,130,100,0.42)',  'rgba(110,100,140,0.45)'
         ];
         var fonts=[
-            ['AcornInitials',     1.0,   0],
-            ['AngloText',         1.0,   0],
-            ['ApexLake',          0.80,  0.05],
-            ['CamelotCaps',       1.0,   0],
-            ['DecoratedRoman',    1.0,   0],
-            ['EileenCaps',        0.92, -0.02],
-            ['ElzevierCaps',      1.03,  0],
-            ['FleurCornerCaps',   1.0,   0],
-            ['FlowerInitials',    1.19, -0.03],
-            ['GothicFlourish',    1.0,   0],
-            ['GoudyInitialen',    1.0,   0],
-            ['PaulusFranck',      1.0,   0],
-            ['Romantik',          0.93,  0.02],
-            ['TypographerCaps',   0.79,  0.03],
-            ['VictorianInitials', 0.96,  0],
-            ['WoodcutInitials',   0.82,  0.06],
-            ['ZallmanCaps',       1.04,  0]
+            ['AcornInitials',     1.0,    0.05],
+            ['AngloText',         1.02,   0.03],
+            ['ApexLake',          0.82,   0.19],
+            ['CamelotCaps',       1.02,   0.03],
+            ['DecoratedRoman',    1.02,   0.03],
+            ['EileenCaps',        0.94,   0.03],
+            ['ElzevierCaps',      1.04,   0.01],
+            ['FleurCornerCaps',   1.02,   0.03],
+            ['FlowerInitials',    1.24,  -0.09],
+            ['GothicFlourish',    1.02,   0.03],
+            ['GoudyInitialen',    1.02,   0.03],
+            ['PaulusFranck',      1.02,   0.03],
+            ['Romantik',          0.96,   0.09],
+            ['TypographerCaps',   0.81,   0.03],
+            ['VictorianInitials', 0.96,   0.04],
+            ['WoodcutInitials',   0.85,   0.03],
+            ['ZallmanCaps',       1.06,   0.03]
         ];
         var pick=fonts[Math.floor(Math.random()*fonts.length)];
         d.style.setProperty('--drop-cap-color',colors[Math.floor(Math.random()*colors.length)]);
         d.style.setProperty('--drop-cap-font',pick[0]);
         d.style.setProperty('--drop-cap-scale',pick[1]);
-        if(pick[2])d.style.setProperty('--drop-cap-shift',pick[2]+'em');
+        d.style.setProperty('--drop-cap-shift',pick[2]+'em');
         document.fonts.load('1em '+pick[0]).then(function(){
             d.classList.remove('drop-cap-loading');
         }).catch(function(){

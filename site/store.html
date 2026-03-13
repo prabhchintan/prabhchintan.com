@@ -202,10 +202,11 @@ footer {
 .drop-cap::first-letter {
     float: left;
     font-family: var(--drop-cap-font, Baskerville), Baskerville, "Times New Roman", Times, serif;
-    font-size: calc(2.1em * var(--drop-cap-scale, 1));
-    line-height: 1;
-    padding: 0 0.18em 0 0;
-    margin-top: 0.05em;
+    font-size: calc(2.2em * var(--drop-cap-scale, 1));
+    line-height: 0.85;
+    padding: 0.02em 0.35em 0 0;
+    margin-top: var(--drop-cap-shift, 0.05em);
+    margin-bottom: -0.15em;
     color: var(--drop-cap-color, rgba(0, 102, 204, 0.5));
     font-weight: normal;
     font-style: normal;
@@ -217,7 +218,8 @@ footer {
         font-size: 1em;
         line-height: normal;
         margin-top: 0;
-        padding: 0 0.18em 0 0;
+        margin-bottom: 0;
+        padding: 0 0.35em 0 0;
     }
 }
 
@@ -359,9 +361,8 @@ footer {
     }
 
     .drop-cap::first-letter {
-        font-size: calc(1.9em * var(--drop-cap-scale, 1));
-        line-height: 1;
-        margin-top: 0.05em;
+        font-size: calc(2em * var(--drop-cap-scale, 1));
+        padding-right: 0.3em;
     }
 
     @supports (initial-letter: 2) {
@@ -370,6 +371,7 @@ footer {
             font-size: 1em;
             line-height: normal;
             margin-top: 0;
+            margin-bottom: 0;
         }
     }
 }</style>
