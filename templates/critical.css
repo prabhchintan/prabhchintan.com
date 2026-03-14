@@ -184,9 +184,9 @@ footer {
 @supports (initial-letter: 2) {
     .drop-cap::first-letter {
         float: left;
-        font-size: calc(1em * var(--drop-cap-scale, 1));
-        margin-top: -0.32em;
-        margin-bottom: -0.38em;
+        font-size: calc(1.1em * var(--drop-cap-scale, 1));
+        margin-top: -0.48em;
+        margin-bottom: -0.48em;
     }
 }
 
@@ -317,9 +317,11 @@ footer {
     }
 
     .drop-cap::first-letter {
-        font-size: calc(2.5em * var(--drop-cap-scale, 1));
+        font-size: calc(2.75em * var(--drop-cap-scale, 1));
         initial-letter: 1 raise;
         padding-right: 0.06em;
+        margin-top: -0.35em;
+        margin-bottom: -0.5em;
     }
 
     @supports (initial-letter: 1) {
