@@ -334,12 +334,16 @@ details summary {
 }
 
 details summary::before {
-    content: '\25B6';
+    content: '';
     display: inline-block;
-    margin-right: 0.4em;
-    font-size: 0.65em;
-    transition: transform 0.2s ease;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0.3em 0 0.3em 0.45em;
+    border-color: transparent transparent transparent currentColor;
+    margin-right: 0.45em;
     vertical-align: middle;
+    transition: transform 0.2s ease;
 }
 
 details[open] > summary::before {
