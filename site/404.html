@@ -374,7 +374,14 @@ details[open] > summary::before {
         margin-top: -0.3em;
         margin-bottom: -0.3em;
     }
-}</style>
+}
+
+.subscribe-link { color: var(--meta-color); cursor: pointer; }
+.subscribe-link:hover { color: var(--text-color); }
+.subscribe-wrap { overflow: hidden; max-height: 0; transition: max-height 0.2s ease; }
+.subscribe-wrap.open { max-height: 3em; }
+.subscribe-wrap input { width: 100%; padding: 0.3em 0; border: none; border-bottom: 1px solid var(--border-color); font-family: var(--font-body); font-size: 0.9em; background: transparent; color: var(--text-color); outline: none; box-sizing: border-box; }
+.subscribe-wrap input:focus { border-bottom-color: var(--text-color); }</style>
 </head>
 <body>
 <h1>404</h1>

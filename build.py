@@ -384,13 +384,17 @@ class BlogBuilder:
         # Generate comments section for this post
         comments_html = self.comments_template.replace('{{slug}}', slug) if self.comments_template else ''
 
+        # Generate subscribe section
+        subscribe_section = '<div class="subscribe-wrap" id="subWrap"><div style="display:flex;align-items:baseline;gap:0.5em"><input type="text" name="url" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" id="subHoney"><input type="email" id="subEmail" placeholder="your@email.com" autocomplete="email" style="flex:1;width:auto"><span id="subBtn" class="subscribe-link" style="white-space:nowrap;font-size:0.85em;cursor:pointer">subscribe</span></div></div>' + "<script>(function(){var subLink=document.getElementById('subLink'),subWrap=document.getElementById('subWrap'),subEmail=document.getElementById('subEmail'),subBtn=document.getElementById('subBtn'),subHoney=document.getElementById('subHoney'),isUnsub=location.hash==='#unsubscribe';if(localStorage.getItem('subscribed')&&!isUnsub){subLink.textContent='subscribed';subLink.style.opacity='0.6';}if(isUnsub){subBtn.textContent='unsubscribe';subEmail.placeholder='your email';subWrap.classList.add('open');}subLink.addEventListener('click',function(){subWrap.classList.toggle('open');if(subWrap.classList.contains('open'))subEmail.focus();});function doSub(){var email=subEmail.value.trim();if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return;var body={email:email,url:subHoney.value};if(isUnsub)body.remove=true;fetch('/api/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(function(r){return r.json();}).then(function(){subWrap.classList.remove('open');subEmail.value='';if(isUnsub){subLink.textContent='unsubscribed';localStorage.removeItem('subscribed');}else{subLink.textContent='subscribed';subLink.style.opacity='0.6';localStorage.setItem('subscribed','1');setTimeout(function(){subLink.textContent='subscribe';subLink.style.opacity='';},2000);}});}subBtn.addEventListener('click',doSub);subEmail.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();doSub();}});})();</script>"
+
         # Replace placeholders (escape description for use in HTML attributes)
         safe_description = html_escape(description, quote=True)
         post_html = (template
             .replace('{{title}}', html_escape(title, quote=True))
             .replace('{{date}}', formatted_date)
             .replace('{{content}}', html_with_date)
-            .replace('{{post_nav}}', '<p><a href="/blog">\u2190 Blog</a></p>')
+            .replace('{{post_nav}}', '<p><a href="/blog">\u2190 Blog</a> \u00b7 <span class="subscribe-link" id="subLink">subscribe</span></p>')
+            .replace('{{subscribe_section}}', subscribe_section)
             .replace('{{comments_section}}', comments_html)
             .replace('{{slug}}', slug)
             .replace('{{description}}', safe_description)
@@ -549,25 +553,31 @@ class BlogBuilder:
 <link rel="alternate" type="application/rss+xml" title="RSS" href="/feed.xml">
 <style>{self.critical_css}</style>
 <style>
-.blog-search{{position:relative;margin:0 0 2em}}
-.blog-search input{{width:100%;padding:0.4em 0;border:none;border-bottom:1px solid var(--border-color);font-family:var(--font-body);font-size:1em;background:transparent;color:var(--text-color);outline:none;box-sizing:border-box}}
-.blog-search input:focus{{border-bottom-color:var(--text-color)}}
-.blog-search input::placeholder{{color:var(--meta-color)}}
+.blog-header{{display:flex;align-items:baseline;justify-content:space-between}}
+.blog-header h1{{margin:0}}
+.search-toggle{{color:var(--meta-color);cursor:pointer;transition:color 0.2s}}
+.search-toggle:hover{{color:var(--text-color)}}
+.blog-nav{{font-size:0.85em;color:var(--meta-color);margin:0 0 1.5em}}
+.blog-nav a{{color:var(--meta-color)}}
+.search-wrap{{overflow:hidden;max-height:0;transition:max-height 0.2s ease;position:relative;margin-bottom:1em}}
+.search-wrap.open{{max-height:3em}}
+.search-wrap input{{width:100%;padding:0.4em 0;border:none;border-bottom:1px solid var(--border-color);font-family:var(--font-body);font-size:1em;background:transparent;color:var(--text-color);outline:none;box-sizing:border-box}}
+.search-wrap input:focus{{border-bottom-color:var(--text-color)}}
+.search-wrap input::placeholder{{color:var(--meta-color)}}
 .search-results{{position:absolute;top:100%;left:0;right:0;background:var(--bg-color);border:1px solid var(--border-color);border-top:none;border-radius:0 0 4px 4px;max-height:300px;overflow-y:auto;z-index:10;display:none}}
 .search-results.open{{display:block}}
 .search-result{{display:block;padding:0.6em 0.8em;color:var(--text-color);text-decoration:none;border-bottom:1px solid var(--border-color);font-size:0.95em;transition:background 0.15s}}
 .search-result:last-child{{border-bottom:none}}
-.search-result:hover{{background:rgba(0,0,0,0.03)}}
+.search-result:hover,.search-result.active{{background:rgba(0,0,0,0.03)}}
 .search-result em{{font-size:0.8em;color:var(--meta-color)}}
 .search-empty{{padding:0.6em 0.8em;color:var(--meta-color);font-size:0.9em;font-style:italic}}
 </style>
 </head>
 <body>
-<h1>Blog</h1>
-<div class="blog-search">
-<input type="text" id="blogSearch" placeholder="Search posts\u2026" autocomplete="off" spellcheck="false">
-<div class="search-results" id="searchResults"></div>
-</div>'''
+<div class="blog-header"><h1>Blog</h1><svg id="searchToggle" class="search-toggle" aria-label="Search posts" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+<p class="blog-nav"><a href="/">\u2190 Home</a> \u00b7 <span class="subscribe-link" id="subLink">subscribe</span></p>
+<div class="search-wrap" id="searchWrap"><input type="text" id="blogSearch" placeholder="Search posts\u2026" autocomplete="off" spellcheck="false"><div class="search-results" id="searchResults"></div></div>
+<div class="subscribe-wrap" id="subWrap"><div style="display:flex;align-items:baseline;gap:0.5em"><input type="text" name="url" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" id="subHoney"><input type="email" id="subEmail" placeholder="your@email.com" autocomplete="email" style="flex:1;width:auto"><span id="subBtn" class="subscribe-link" style="white-space:nowrap;font-size:0.85em;cursor:pointer">subscribe</span></div></div>'''
 
         for post in posts:
             safe_title = html_escape(post['title'])
@@ -581,42 +591,28 @@ class BlogBuilder:
 var posts={posts_json};
 var input=document.getElementById('blogSearch');
 var results=document.getElementById('searchResults');
+var searchWrap=document.getElementById('searchWrap');
+var searchToggle=document.getElementById('searchToggle');
+var activeIdx=-1;
 function esc(s){{var d=document.createElement('div');d.textContent=s;return d.innerHTML;}}
-function snippet(text,q){{
-var i=text.toLowerCase().indexOf(q);
-if(i===-1)return'';
-var start=Math.max(0,i-40);
-var end=Math.min(text.length,i+q.length+60);
-var s=(start>0?'\u2026':'')+text.slice(start,end).trim()+(end<text.length?'\u2026':'');
-return s;
-}}
-input.addEventListener('input',function(){{
-var q=this.value.toLowerCase().trim();
-if(!q){{results.className='search-results';results.innerHTML='';return;}}
-var m=[];
-for(var i=0;i<posts.length;i++){{
-var p=posts[i];
-var inTitle=p.title.toLowerCase().indexOf(q)!==-1;
-var inBody=p.body.toLowerCase().indexOf(q)!==-1;
-if(inTitle||inBody)m.push({{post:p,inTitle:inTitle,inBody:inBody}});
-}}
-if(!m.length){{results.className='search-results open';results.innerHTML='<div class="search-empty">No posts found</div>';return;}}
-var h='';
-for(var i=0;i<m.length;i++){{
-var r=m[i];
-h+='<a class="search-result" href="'+r.post.url+'">'+esc(r.post.title)+'<br><em>'+esc(r.post.date);
-if(!r.inTitle&&r.inBody){{h+=' \u2014 \u2026'+esc(snippet(r.post.body,q))+'\u2026';}}
-h+='</em></a>';
-}}
-results.className='search-results open';
-results.innerHTML=h;
-}});
-document.addEventListener('click',function(e){{if(!e.target.closest('.blog-search'))results.className='search-results';}});
+function hl(text,q){{var i=text.toLowerCase().indexOf(q);if(i===-1)return esc(text);return esc(text.slice(0,i))+'<strong>'+esc(text.slice(i,i+q.length))+'</strong>'+esc(text.slice(i+q.length));}}
+function snippet(text,q){{var i=text.toLowerCase().indexOf(q);if(i===-1)return'';var start=Math.max(0,i-40);var end=Math.min(text.length,i+q.length+60);var s=text.slice(start,end).trim();return(start>0?'\u2026':'')+s+(end<text.length?'\u2026':'');}}
+function updateActive(items){{for(var i=0;i<items.length;i++)items[i].classList.toggle('active',i===activeIdx);if(items[activeIdx])items[activeIdx].scrollIntoView({{block:'nearest'}});}}
+searchToggle.addEventListener('click',function(){{var open=searchWrap.classList.toggle('open');if(open)input.focus();else{{input.value='';results.className='search-results';}}}});
+input.addEventListener('keydown',function(e){{var items=results.querySelectorAll('.search-result');if(e.key==='Escape'){{searchWrap.classList.remove('open');input.value='';results.className='search-results';return;}}if(e.key==='ArrowDown'){{e.preventDefault();activeIdx=Math.min(activeIdx+1,items.length-1);updateActive(items);}}else if(e.key==='ArrowUp'){{e.preventDefault();activeIdx=Math.max(activeIdx-1,0);updateActive(items);}}else if(e.key==='Enter'&&activeIdx>=0&&items[activeIdx]){{e.preventDefault();items[activeIdx].click();}}}});
+input.addEventListener('input',function(){{activeIdx=-1;var q=this.value.toLowerCase().trim();if(!q){{results.className='search-results';results.innerHTML='';return;}}var m=[];for(var i=0;i<posts.length;i++){{var p=posts[i];var inTitle=p.title.toLowerCase().indexOf(q)!==-1;var inBody=p.body.toLowerCase().indexOf(q)!==-1;if(inTitle||inBody)m.push({{post:p,inTitle:inTitle,inBody:inBody}});}}if(!m.length){{results.className='search-results open';results.innerHTML='<div class="search-empty">No posts found</div>';return;}}var h='';for(var i=0;i<m.length;i++){{var r=m[i];h+='<a class="search-result" href="'+r.post.url+'">'+(r.inTitle?hl(r.post.title,q):esc(r.post.title))+'<br><em>'+esc(r.post.date);if(!r.inTitle&&r.inBody){{h+=' \u2014 '+hl(snippet(r.post.body,q),q);}}h+='</em></a>';}}results.className='search-results open';results.innerHTML=h;}});
+document.addEventListener('click',function(e){{if(!e.target.closest('.search-wrap')&&!e.target.closest('.search-toggle'))results.className='search-results';}});
+var subLink=document.getElementById('subLink');var subWrap=document.getElementById('subWrap');var subEmail=document.getElementById('subEmail');var subBtn=document.getElementById('subBtn');var subHoney=document.getElementById('subHoney');var isUnsub=location.hash==='#unsubscribe';
+if(localStorage.getItem('subscribed')&&!isUnsub){{subLink.textContent='subscribed';subLink.style.opacity='0.6';}}
+if(isUnsub){{subBtn.textContent='unsubscribe';subEmail.placeholder='your email';subWrap.classList.add('open');}}
+subLink.addEventListener('click',function(){{subWrap.classList.toggle('open');if(subWrap.classList.contains('open'))subEmail.focus();}});
+function doSub(){{var email=subEmail.value.trim();if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return;var body={{email:email,url:subHoney.value}};if(isUnsub)body.remove=true;fetch('/api/subscribe',{{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify(body)}}).then(function(r){{return r.json();}}).then(function(){{subWrap.classList.remove('open');subEmail.value='';if(isUnsub){{subLink.textContent='unsubscribed';localStorage.removeItem('subscribed');}}else{{subLink.textContent='subscribed';subLink.style.opacity='0.6';localStorage.setItem('subscribed','1');setTimeout(function(){{subLink.textContent='subscribe';subLink.style.opacity='';}},2000);}}}});}}
+subBtn.addEventListener('click',doSub);subEmail.addEventListener('keydown',function(e){{if(e.key==='Enter'){{e.preventDefault();doSub();}}}});
 }})();
 </script>
 '''
 
-        blog_html += '<p><a href="/">← Home</a></p>\n</body>\n</html>'
+        blog_html += '\n</body>\n</html>'
 
         blog_html = self.apply_footer(blog_html, is_post=False)
 

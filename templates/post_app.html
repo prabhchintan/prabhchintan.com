@@ -881,6 +881,31 @@
                 statusDiv.innerHTML = `Published as ${result.filename}<br>Site updates in ~60 seconds.`;
                 statusDiv.className = 'success show';
 
+                try {
+                    const subRes = await fetch(`${API}/subscribe?list=1&password=${encodeURIComponent(password)}`);
+                    const subData = await subRes.json();
+                    if (subData.count > 0) {
+                        const emails = subData.subscribers.map(s => s.email);
+                        const postUrl = `https://prabhchintan.com/${slug}`;
+                        const subj = encodeURIComponent('New post: ' + title);
+                        const emailBody = encodeURIComponent(`New post on the blog:\n\n${title}\n${postUrl}\n\n\u2014\nTo unsubscribe: https://prabhchintan.com/blog#unsubscribe`);
+                        if (emails.length <= 50) {
+                            statusDiv.innerHTML += `<br><a href="mailto:?bcc=${emails.join(',')}&subject=${subj}&body=${emailBody}">notify ${subData.count} subscribers</a>`;
+                        } else {
+                            statusDiv.innerHTML += `<br><a href="#" id="notifyLink">notify ${subData.count} subscribers</a>`;
+                            document.getElementById('notifyLink').addEventListener('click', function(e) {
+                                e.preventDefault();
+                                const panel = document.createElement('div');
+                                panel.style.cssText = 'margin-top:0.5em;font-size:0.9em';
+                                panel.innerHTML = `<textarea style="width:100%;height:3em;font-size:0.85em;margin-bottom:0.3em" readonly>${emails.join(', ')}</textarea><button onclick="this.previousElementSibling.select();document.execCommand('copy');this.textContent='Copied!'">Copy BCC</button><br>Subject: New post: ${title}`;
+                                this.replaceWith(panel);
+                            });
+                        }
+                    } else {
+                        statusDiv.innerHTML += '<br><span style="color:var(--meta-color)">no subscribers yet</span>';
+                    }
+                } catch(e) {}
+
                 document.getElementById('title').value = '';
                 document.getElementById('slug').value = '';
                 document.getElementById('content').value = '';

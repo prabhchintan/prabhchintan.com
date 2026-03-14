@@ -382,27 +382,40 @@ details[open] > summary::before {
         margin-top: -0.3em;
         margin-bottom: -0.3em;
     }
-}</style>
+}
+
+.subscribe-link { color: var(--meta-color); cursor: pointer; }
+.subscribe-link:hover { color: var(--text-color); }
+.subscribe-wrap { overflow: hidden; max-height: 0; transition: max-height 0.2s ease; }
+.subscribe-wrap.open { max-height: 3em; }
+.subscribe-wrap input { width: 100%; padding: 0.3em 0; border: none; border-bottom: 1px solid var(--border-color); font-family: var(--font-body); font-size: 0.9em; background: transparent; color: var(--text-color); outline: none; box-sizing: border-box; }
+.subscribe-wrap input:focus { border-bottom-color: var(--text-color); }</style>
 <style>
-.blog-search{position:relative;margin:0 0 2em}
-.blog-search input{width:100%;padding:0.4em 0;border:none;border-bottom:1px solid var(--border-color);font-family:var(--font-body);font-size:1em;background:transparent;color:var(--text-color);outline:none;box-sizing:border-box}
-.blog-search input:focus{border-bottom-color:var(--text-color)}
-.blog-search input::placeholder{color:var(--meta-color)}
+.blog-header{display:flex;align-items:baseline;justify-content:space-between}
+.blog-header h1{margin:0}
+.search-toggle{color:var(--meta-color);cursor:pointer;transition:color 0.2s}
+.search-toggle:hover{color:var(--text-color)}
+.blog-nav{font-size:0.85em;color:var(--meta-color);margin:0 0 1.5em}
+.blog-nav a{color:var(--meta-color)}
+.search-wrap{overflow:hidden;max-height:0;transition:max-height 0.2s ease;position:relative;margin-bottom:1em}
+.search-wrap.open{max-height:3em}
+.search-wrap input{width:100%;padding:0.4em 0;border:none;border-bottom:1px solid var(--border-color);font-family:var(--font-body);font-size:1em;background:transparent;color:var(--text-color);outline:none;box-sizing:border-box}
+.search-wrap input:focus{border-bottom-color:var(--text-color)}
+.search-wrap input::placeholder{color:var(--meta-color)}
 .search-results{position:absolute;top:100%;left:0;right:0;background:var(--bg-color);border:1px solid var(--border-color);border-top:none;border-radius:0 0 4px 4px;max-height:300px;overflow-y:auto;z-index:10;display:none}
 .search-results.open{display:block}
 .search-result{display:block;padding:0.6em 0.8em;color:var(--text-color);text-decoration:none;border-bottom:1px solid var(--border-color);font-size:0.95em;transition:background 0.15s}
 .search-result:last-child{border-bottom:none}
-.search-result:hover{background:rgba(0,0,0,0.03)}
+.search-result:hover,.search-result.active{background:rgba(0,0,0,0.03)}
 .search-result em{font-size:0.8em;color:var(--meta-color)}
 .search-empty{padding:0.6em 0.8em;color:var(--meta-color);font-size:0.9em;font-style:italic}
 </style>
 </head>
 <body>
-<h1>Blog</h1>
-<div class="blog-search">
-<input type="text" id="blogSearch" placeholder="Search posts…" autocomplete="off" spellcheck="false">
-<div class="search-results" id="searchResults"></div>
-</div>
+<div class="blog-header"><h1>Blog</h1><svg id="searchToggle" class="search-toggle" aria-label="Search posts" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+<p class="blog-nav"><a href="/">← Home</a> · <span class="subscribe-link" id="subLink">subscribe</span></p>
+<div class="search-wrap" id="searchWrap"><input type="text" id="blogSearch" placeholder="Search posts…" autocomplete="off" spellcheck="false"><div class="search-results" id="searchResults"></div></div>
+<div class="subscribe-wrap" id="subWrap"><div style="display:flex;align-items:baseline;gap:0.5em"><input type="text" name="url" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" id="subHoney"><input type="email" id="subEmail" placeholder="your@email.com" autocomplete="email" style="flex:1;width:auto"><span id="subBtn" class="subscribe-link" style="white-space:nowrap;font-size:0.85em;cursor:pointer">subscribe</span></div></div>
 <p><a href="/tinkering">America&#x27;s Next Top Model</a><br>
 <em>March 14, 2026</em></p>
 <p><a href="/mixtape">Buy My Mixtape Fam</a><br>
@@ -428,40 +441,26 @@ details[open] > summary::before {
 var posts=[{"title": "America's Next Top Model", "url": "/tinkering", "date": "March 14, 2026", "body": "America's Next Top Model LLMs are an interesting technology. I'm a self-taught programmer, something that always gave me imposter syndrome. Maybe learning it systematically at school really does have big advantages over tinkered self-learning. But if the script were flipped, the fact that I went to school for supply chain never has me thinking someone who's tinkered repeatedly knows less than I do; and it's quite possible that it's the other way around. If someone does something supply chain related, especially repeatedly, they have no other choice but to learn its intricacies; possibly better than someone who only half-paid attention in school. So the learning is in the doing. With code, LLMs completely change what it means to do. Sure to improve in a variety of ways over the years, LLMs have already in their current state made the barrier to entry miniscule. So what does this do to programming? While talking to a friend, I found myself drawing the analogy to my experience with music "}, {"title": "Buy My Mixtape Fam", "url": "/mixtape", "date": "March 13, 2026", "body": "Buy My Mixtape Fam Just created a little store front for my website. I have been wanting to do this for years, years I tell you. The idea is that people should be able to connect their wallet to a website, pay for the product (in this case, Randhawa EP, a two track mixtape), and be on their way. No banks involved, no 3rd parties, pure peer-to-peer commerce. Love it. I also added a feature to email yourself the links to the files that last 24 hours. Physical products next?"}, {"title": "Meditation is Narcissism", "url": "/meditation", "date": "March 12, 2026", "body": "Meditation is Narcissism Meditation is a way to be narcissistic without hurting anyone. One of the many Taleb aphorisms I like and remember. There's a lot of truth to that, I think. Growing up, I subscribed to the unquestioned assumption that India is a fountainhead of spirituality. A very 1960s era view in retrospect. Steve Jobs goes to India and comes back enlightened, the Beatles visit some place there and play the sitar, Savitri Devi equates Hinduism with German Idealism and claims Adolf Hitler is an avatar of Vishnu, and the list goes on. These are some of the images that flash in my mind off the top of my head, and there is a bottomless pit among academics waiting to lecture me on how I misunderstand it all, it feels like. How I am unaware of xyz school of thought, how I haven't yet read this, that, or the other. Or if I have, how much I misunderstand it. It's all just a big misunderstanding. The solution is to surrender to the idea that I just don't understand, that there is som"}, {"title": "Spam Welcome", "url": "/spam", "date": "March 11, 2026", "body": "Spam Welcome This blog now includes a comments section. But not just any comments section, rather a comment section that may sound silly at first. The idea is to have a cost attached to actions that in large numbers may prove to be junk or spam. This has many benefits, two of my favorites being: I don't have to moderate comments, and I get to gain from any potential spam. The simple rule is: One has to pay 1 USDC to write a comment. \"Pricing via Processing\u201d (or Combatting Junk Mail) was a pivotal paper written in 1992 by Cynthia Dwork and Moni Naor that proved to be an intellectual ancestor to blockchains. In this paper, they describe \"a computational technique for combatting junk mail in particular and controlling access to a shared resource in general.\" https://www.wisdom.weizmann.ac.il/~naor/PAPERS/pvp.pdf Brilliant. All spam welcome."}, {"title": "Americano", "url": "/americano", "date": "March 10, 2026", "body": "Americano I keep realizing the genius of an Americano the older I get. When I moved to America as a teenager, my first job was at a Walmart in Houston. It\u2019s where I first saw the trademark American drip coffee. It neither registered nor made much sense. Then I worked at an oil refinery a few years later, and I saw again people drinking loads of black coffee there. It's where I realized that drip coffee is the American worker\u2019s coffee. An \u201cAmericano\u201d is watered down black coffee. The gentleman-laborer\u2019s drink."}, {"title": "Jalape\u00f1o Ranch Club Sandwich", "url": "/chickfila", "date": "March 09, 2026", "body": "Jalape\u00f1o Ranch Club Sandwich Had the new and seasonal Jalape\u00f1o Ranch Club sandwich at Chick-fil-A today, it was great."}, {"title": "Learn to Cope", "url": "/cope", "date": "March 08, 2026", "body": "Learn to Cope"}, {"title": "What Analytic Philosophy Sounds Like to Continental Philosophers", "url": "/microservices", "date": "March 07, 2026", "body": "What Analytic Philosophy Sounds Like to Continental Philosophers"}, {"title": "\u0a66 to \u0a74: Computational Kh\u0101ls\u0101", "url": "/khalsa", "date": "January 31, 2026", "body": "\u0a66 to \u0a74: Computational Kh\u0101ls\u0101 A letter to my friend, on the occasion of his wedding. Sat \u015ari Ak\u0101l REDACTED, Many congratulations to you and REDACTED! I wanted to take this opportunity to wish you both well and tell you how much I appreciate you, the seemingly infinite things I have learnt from you, and the amazing person I think you are. I truly think you have the gift, and with it the responsibility, to take yourself, REDACTED, and Sikhi forward. I don\u2019t know much about your personal life, but I have deeply cherished our conversations over time, and wanted to note in this letter some ideas for us both to think about. I am a big fan of REDACTED and have deep appreciation for you as its founder. I wish for your efforts to echo through time so future generations may learn and reconstruct knowledge from a Sikh perspective the same way you have made possible for many. The entirety of human knowledge can be classified into three big paradigms: that of fuzzy concepts expressed linguistically "}, {"title": "Randhawa EP", "url": "/randhawa", "date": "February 23, 2025", "body": "Randhawa EP The EP is available for purchase here."}];
 var input=document.getElementById('blogSearch');
 var results=document.getElementById('searchResults');
+var searchWrap=document.getElementById('searchWrap');
+var searchToggle=document.getElementById('searchToggle');
+var activeIdx=-1;
 function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
-function snippet(text,q){
-var i=text.toLowerCase().indexOf(q);
-if(i===-1)return'';
-var start=Math.max(0,i-40);
-var end=Math.min(text.length,i+q.length+60);
-var s=(start>0?'…':'')+text.slice(start,end).trim()+(end<text.length?'…':'');
-return s;
-}
-input.addEventListener('input',function(){
-var q=this.value.toLowerCase().trim();
-if(!q){results.className='search-results';results.innerHTML='';return;}
-var m=[];
-for(var i=0;i<posts.length;i++){
-var p=posts[i];
-var inTitle=p.title.toLowerCase().indexOf(q)!==-1;
-var inBody=p.body.toLowerCase().indexOf(q)!==-1;
-if(inTitle||inBody)m.push({post:p,inTitle:inTitle,inBody:inBody});
-}
-if(!m.length){results.className='search-results open';results.innerHTML='<div class="search-empty">No posts found</div>';return;}
-var h='';
-for(var i=0;i<m.length;i++){
-var r=m[i];
-h+='<a class="search-result" href="'+r.post.url+'">'+esc(r.post.title)+'<br><em>'+esc(r.post.date);
-if(!r.inTitle&&r.inBody){h+=' — …'+esc(snippet(r.post.body,q))+'…';}
-h+='</em></a>';
-}
-results.className='search-results open';
-results.innerHTML=h;
-});
-document.addEventListener('click',function(e){if(!e.target.closest('.blog-search'))results.className='search-results';});
+function hl(text,q){var i=text.toLowerCase().indexOf(q);if(i===-1)return esc(text);return esc(text.slice(0,i))+'<strong>'+esc(text.slice(i,i+q.length))+'</strong>'+esc(text.slice(i+q.length));}
+function snippet(text,q){var i=text.toLowerCase().indexOf(q);if(i===-1)return'';var start=Math.max(0,i-40);var end=Math.min(text.length,i+q.length+60);var s=text.slice(start,end).trim();return(start>0?'…':'')+s+(end<text.length?'…':'');}
+function updateActive(items){for(var i=0;i<items.length;i++)items[i].classList.toggle('active',i===activeIdx);if(items[activeIdx])items[activeIdx].scrollIntoView({block:'nearest'});}
+searchToggle.addEventListener('click',function(){var open=searchWrap.classList.toggle('open');if(open)input.focus();else{input.value='';results.className='search-results';}});
+input.addEventListener('keydown',function(e){var items=results.querySelectorAll('.search-result');if(e.key==='Escape'){searchWrap.classList.remove('open');input.value='';results.className='search-results';return;}if(e.key==='ArrowDown'){e.preventDefault();activeIdx=Math.min(activeIdx+1,items.length-1);updateActive(items);}else if(e.key==='ArrowUp'){e.preventDefault();activeIdx=Math.max(activeIdx-1,0);updateActive(items);}else if(e.key==='Enter'&&activeIdx>=0&&items[activeIdx]){e.preventDefault();items[activeIdx].click();}});
+input.addEventListener('input',function(){activeIdx=-1;var q=this.value.toLowerCase().trim();if(!q){results.className='search-results';results.innerHTML='';return;}var m=[];for(var i=0;i<posts.length;i++){var p=posts[i];var inTitle=p.title.toLowerCase().indexOf(q)!==-1;var inBody=p.body.toLowerCase().indexOf(q)!==-1;if(inTitle||inBody)m.push({post:p,inTitle:inTitle,inBody:inBody});}if(!m.length){results.className='search-results open';results.innerHTML='<div class="search-empty">No posts found</div>';return;}var h='';for(var i=0;i<m.length;i++){var r=m[i];h+='<a class="search-result" href="'+r.post.url+'">'+(r.inTitle?hl(r.post.title,q):esc(r.post.title))+'<br><em>'+esc(r.post.date);if(!r.inTitle&&r.inBody){h+=' — '+hl(snippet(r.post.body,q),q);}h+='</em></a>';}results.className='search-results open';results.innerHTML=h;});
+document.addEventListener('click',function(e){if(!e.target.closest('.search-wrap')&&!e.target.closest('.search-toggle'))results.className='search-results';});
+var subLink=document.getElementById('subLink');var subWrap=document.getElementById('subWrap');var subEmail=document.getElementById('subEmail');var subBtn=document.getElementById('subBtn');var subHoney=document.getElementById('subHoney');var isUnsub=location.hash==='#unsubscribe';
+if(localStorage.getItem('subscribed')&&!isUnsub){subLink.textContent='subscribed';subLink.style.opacity='0.6';}
+if(isUnsub){subBtn.textContent='unsubscribe';subEmail.placeholder='your email';subWrap.classList.add('open');}
+subLink.addEventListener('click',function(){subWrap.classList.toggle('open');if(subWrap.classList.contains('open'))subEmail.focus();});
+function doSub(){var email=subEmail.value.trim();if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return;var body={email:email,url:subHoney.value};if(isUnsub)body.remove=true;fetch('/api/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(function(r){return r.json();}).then(function(){subWrap.classList.remove('open');subEmail.value='';if(isUnsub){subLink.textContent='unsubscribed';localStorage.removeItem('subscribed');}else{subLink.textContent='subscribed';subLink.style.opacity='0.6';localStorage.setItem('subscribed','1');setTimeout(function(){subLink.textContent='subscribe';subLink.style.opacity='';},2000);}});}
+subBtn.addEventListener('click',doSub);subEmail.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();doSub();}});
 })();
 </script>
-<p><a href="/">← Home</a></p>
+
 <footer>Randhawa Inc. 1309 Coffeen Ave Ste 1386 Sheridan, WY</footer>
 </body>
 </html>

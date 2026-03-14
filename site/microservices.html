@@ -391,13 +391,21 @@ details[open] > summary::before {
         margin-top: -0.3em;
         margin-bottom: -0.3em;
     }
-}</style>
+}
+
+.subscribe-link { color: var(--meta-color); cursor: pointer; }
+.subscribe-link:hover { color: var(--text-color); }
+.subscribe-wrap { overflow: hidden; max-height: 0; transition: max-height 0.2s ease; }
+.subscribe-wrap.open { max-height: 3em; }
+.subscribe-wrap input { width: 100%; padding: 0.3em 0; border: none; border-bottom: 1px solid var(--border-color); font-family: var(--font-body); font-size: 0.9em; background: transparent; color: var(--text-color); outline: none; box-sizing: border-box; }
+.subscribe-wrap input:focus { border-bottom-color: var(--text-color); }</style>
 </head>
 
 <body>
     <h1>What Analytic Philosophy Sounds Like to Continental Philosophers</h1><p class="post-date"><em>March 07, 2026</em></p>
 <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;border-radius:8px;margin:2em 0"><iframe width="560" height="315" src="https://www.youtube.com/embed/y8OnoxKotPQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;border:0"></iframe></div>
-    <p><a href="/blog">← Blog</a></p>
+    <p><a href="/blog">← Blog</a> · <span class="subscribe-link" id="subLink">subscribe</span></p>
+    <div class="subscribe-wrap" id="subWrap"><div style="display:flex;align-items:baseline;gap:0.5em"><input type="text" name="url" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" id="subHoney"><input type="email" id="subEmail" placeholder="your@email.com" autocomplete="email" style="flex:1;width:auto"><span id="subBtn" class="subscribe-link" style="white-space:nowrap;font-size:0.85em;cursor:pointer">subscribe</span></div></div><script>(function(){var subLink=document.getElementById('subLink'),subWrap=document.getElementById('subWrap'),subEmail=document.getElementById('subEmail'),subBtn=document.getElementById('subBtn'),subHoney=document.getElementById('subHoney'),isUnsub=location.hash==='#unsubscribe';if(localStorage.getItem('subscribed')&&!isUnsub){subLink.textContent='subscribed';subLink.style.opacity='0.6';}if(isUnsub){subBtn.textContent='unsubscribe';subEmail.placeholder='your email';subWrap.classList.add('open');}subLink.addEventListener('click',function(){subWrap.classList.toggle('open');if(subWrap.classList.contains('open'))subEmail.focus();});function doSub(){var email=subEmail.value.trim();if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return;var body={email:email,url:subHoney.value};if(isUnsub)body.remove=true;fetch('/api/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(function(r){return r.json();}).then(function(){subWrap.classList.remove('open');subEmail.value='';if(isUnsub){subLink.textContent='unsubscribed';localStorage.removeItem('subscribed');}else{subLink.textContent='subscribed';subLink.style.opacity='0.6';localStorage.setItem('subscribed','1');setTimeout(function(){subLink.textContent='subscribe';subLink.style.opacity='';},2000);}});}subBtn.addEventListener('click',doSub);subEmail.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();doSub();}});})();</script>
     <section class="comments-section" id="comments">
 <h2>Comments</h2>
 <div id="comments-list"></div>

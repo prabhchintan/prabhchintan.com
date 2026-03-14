@@ -367,7 +367,14 @@ details[open] > summary::before {
         margin-top: -0.3em;
         margin-bottom: -0.3em;
     }
-}</style>
+}
+
+.subscribe-link { color: var(--meta-color); cursor: pointer; }
+.subscribe-link:hover { color: var(--text-color); }
+.subscribe-wrap { overflow: hidden; max-height: 0; transition: max-height 0.2s ease; }
+.subscribe-wrap.open { max-height: 3em; }
+.subscribe-wrap input { width: 100%; padding: 0.3em 0; border: none; border-bottom: 1px solid var(--border-color); font-family: var(--font-body); font-size: 0.9em; background: transparent; color: var(--text-color); outline: none; box-sizing: border-box; }
+.subscribe-wrap input:focus { border-bottom-color: var(--text-color); }</style>
     <style>
         .form-group {
             margin-bottom: 1.5em
@@ -767,6 +774,7 @@ details[open] > summary::before {
     <ul id="attachedFiles" class="attached-files"></ul>
 
     <button id="saveBtn" style="display:none" disabled>Save Changes</button>
+    <span id="notifyLink" style="display:none;margin-left:1em;font-size:0.9em"></span>
 
     <div id="status"></div>
 
@@ -1171,6 +1179,33 @@ details[open] > summary::before {
                 }
                 saveBtn.style.display = 'block';
                 saveBtn.disabled = false;
+
+                var notifyEl = document.getElementById('notifyLink');
+                notifyEl.style.display = 'none';
+                notifyEl.innerHTML = '';
+                try {
+                    const subRes = await fetch(`${API}/subscribe?list=1&password=${encodeURIComponent(password)}`);
+                    const subData = await subRes.json();
+                    if (subData.count > 0) {
+                        const emails = subData.subscribers.map(s => s.email);
+                        const postSlug = filename.replace(/^\d{4}_\d{2}_\d{2}_/, '').replace(/\.md$/, '');
+                        const postTitle = decoded.split('\n')[0].replace(/^#\s*/, '').trim();
+                        const postUrl = `https://prabhchintan.com/${postSlug}`;
+                        const subj = encodeURIComponent('New post: ' + postTitle);
+                        const emailBody = encodeURIComponent(`New post on the blog:\n\n${postTitle}\n${postUrl}\n\n\u2014\nTo unsubscribe: https://prabhchintan.com/blog#unsubscribe`);
+                        if (emails.length <= 50) {
+                            notifyEl.innerHTML = `<a href="mailto:?bcc=${emails.join(',')}&subject=${subj}&body=${emailBody}">notify ${subData.count} subscribers</a>`;
+                        } else {
+                            notifyEl.innerHTML = `<a href="#" id="notifyAction">notify ${subData.count} subscribers</a>`;
+                            document.getElementById('notifyAction').addEventListener('click', function(e) {
+                                e.preventDefault();
+                                this.outerHTML = `<div style="margin-top:0.5em;font-size:0.9em"><textarea style="width:100%;height:3em;font-size:0.85em;margin-bottom:0.3em" readonly>${emails.join(', ')}</textarea><button onclick="this.previousElementSibling.select();document.execCommand('copy');this.textContent='Copied!'">Copy BCC</button><br>Subject: New post: ${postTitle}</div>`;
+                            });
+                        }
+                        notifyEl.style.display = 'inline';
+                    }
+                } catch(e) {}
+
                 attachedFiles = [];
                 fileMarkdownMap.clear();
                 document.getElementById('attachedFiles').innerHTML = '';
@@ -1286,6 +1321,7 @@ details[open] > summary::before {
                 document.getElementById('mediaUpload').style.display = 'none';
                 document.getElementById('recordSection').style.display = 'none';
                 saveBtn.style.display = 'none';
+                document.getElementById('notifyLink').style.display = 'none';
                 selectedPost = null;
                 attachedFiles = [];
                 fileMarkdownMap.clear();
