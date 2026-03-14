@@ -347,6 +347,14 @@ footer {
     h3 {
         font-size: 1.1em;
     }
+
+    /* Larger drop cap on mobile; compensate margin so second line stays tight */
+    @supports (initial-letter: 2) {
+        .drop-cap::first-letter {
+            font-size: calc(1.55em * var(--drop-cap-scale, 1));
+            margin-bottom: -0.65em;
+        }
+    }
 }</style>
 </head>
 
