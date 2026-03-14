@@ -315,11 +315,12 @@ footer {
         font-size: 1.1em;
     }
 
-    /* ~3.5× larger drop cap on mobile; strong negative margin keeps second line tight */
+    /* ~4.5× larger drop cap on mobile; pull up (margin-top) so bottom doesn't extend down, margin-bottom keeps second line tight */
     @supports (initial-letter: 2) {
         .drop-cap::first-letter {
-            font-size: calc(3.5em * var(--drop-cap-scale, 1));
-            margin-bottom: -2.1em;
+            font-size: calc(5em * var(--drop-cap-scale, 1));
+            margin-top: -2.4em;
+            margin-bottom: -2.8em;
         }
     }
 }
