@@ -315,12 +315,15 @@ footer {
         font-size: 1.1em;
     }
 
-    /* ~4.5× larger drop cap on mobile; pull up (margin-top) so bottom doesn't extend down, margin-bottom keeps second line tight */
-    @supports (initial-letter: 2) {
-        .drop-cap::first-letter {
-            font-size: calc(5em * var(--drop-cap-scale, 1));
-            margin-top: -2.4em;
-            margin-bottom: -2.8em;
-        }
+    /*
+     * Mobile Safari (and many mobile browsers) do not support initial-letter, so
+     * @supports (initial-letter: 2) is false and the desktop drop-cap rules never
+     * apply. Set size and layout here unconditionally so the cap is visible on mobile.
+     */
+    .drop-cap::first-letter {
+        float: left;
+        font-size: calc(5em * var(--drop-cap-scale, 1));
+        margin-top: -2.4em;
+        margin-bottom: -2.8em;
     }
 }
