@@ -25,3 +25,4 @@ __pycache__/
 # Environment
 .env
 .env.local
+.aider*
