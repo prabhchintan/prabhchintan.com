@@ -349,11 +349,12 @@ footer {
     }
 
     .drop-cap::first-letter {
+        float: left;
         font-size: calc(2.75em * var(--drop-cap-scale, 1));
         initial-letter: 1 raise;
         padding-right: 0.06em;
         margin-top: -0.35em;
-        margin-bottom: -1.15em;
+        margin-bottom: -1.75em;
     }
 
     @supports (initial-letter: 1) {
