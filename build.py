@@ -48,7 +48,7 @@ class RichEmbedProcessor:
             return (
                 f'\n\n<div style="margin:2em 0;padding:1.2em 1.5em;background:rgba(0,0,0,0.02);'
                 f'border:1px solid rgba(0,0,0,0.06);border-radius:12px">'
-                f'<audio controls controlslist="nodownload" preload="metadata" '
+                f'<audio controls controlslist="nodownload" preload="none" '
                 f'src="/api/media/{media_id}" '
                 f'style="width:100%;display:block" '
                 f'oncontextmenu="return false">'

@@ -330,6 +330,31 @@ footer {
     min-height: 1.3em;
 }
 
+details summary {
+    cursor: pointer;
+}
+
+details summary::-webkit-details-marker {
+    display: none;
+}
+
+details summary {
+    list-style: none;
+}
+
+details summary::before {
+    content: '\25B6';
+    display: inline-block;
+    margin-right: 0.4em;
+    font-size: 0.65em;
+    transition: transform 0.2s ease;
+    vertical-align: middle;
+}
+
+details[open] > summary::before {
+    transform: rotate(90deg);
+}
+
 @media (max-width: 768px) {
     body {
         padding: 2.5em 1.5em;
@@ -375,7 +400,7 @@ footer {
 <p>Criticisms aren't reasons to quit tinkering; they're pointers at problems to solve.</p>
 </blockquote>
 <p>Fast forward, I tinkered about this morning and added an audio/video upload feature to this blog. It's very cool to me that I can type new features into existence. That's something I could've only dreamed of doing without LLMs. I'm uploading my first ever audio note below as an example, let's see if it works. Play/pause all over again?</p>
-<div style="margin:2em 0;padding:1.2em 1.5em;background:rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.06);border-radius:12px"><audio controls controlslist="nodownload" preload="metadata" src="/api/media/1882a90f-1df9-4f32-b202-8207857ea192" style="width:100%;display:block" oncontextmenu="return false">Your browser does not support audio playback.</audio></div>
+<div style="margin:2em 0;padding:1.2em 1.5em;background:rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.06);border-radius:12px"><audio controls controlslist="nodownload" preload="none" src="/api/media/1882a90f-1df9-4f32-b202-8207857ea192" style="width:100%;display:block" oncontextmenu="return false">Your browser does not support audio playback.</audio></div>
 
 <details><summary><em>Transcript</em></summary>
 
