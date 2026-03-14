@@ -316,15 +316,15 @@ footer {
     }
 
     /*
-     * Mobile Safari (and many mobile browsers) do not support initial-letter, so
-     * @supports (initial-letter: 2) is false and the desktop drop-cap rules never
-     * apply. Set size and layout here unconditionally so the cap is visible on mobile.
-     * No large negative margin-top so the cap stays at the start of the paragraph.
+     * Mobile Safari does not support initial-letter, so we emulate a 2-line
+     * drop cap using the classic float technique. Line-height 1 keeps the cap
+     * tight, and the size (~3.2em) spans roughly 2 lines of body text (1.6 line-height).
      */
     .drop-cap::first-letter {
         float: left;
-        font-size: calc(4.25em * var(--drop-cap-scale, 1));
-        margin-top: 0;
-        margin-bottom: -2.8em;
+        font-size: calc(3.2em * var(--drop-cap-scale, 1));
+        line-height: 1;
+        padding: 0 0.1em 0 0;
+        margin: 0;
     }
 }
