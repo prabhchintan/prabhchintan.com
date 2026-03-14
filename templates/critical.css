@@ -320,7 +320,7 @@ footer {
         initial-letter: 1 raise;
         padding-right: 0.06em;
         margin-top: -0.35em;
-        margin-bottom: -0.5em;
+        margin-bottom: -0.75em;
     }
 
     @supports (initial-letter: 1) {
