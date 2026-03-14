@@ -86,6 +86,122 @@
             cursor: not-allowed
         }
 
+        .record-section {
+            margin: 1.5em 0;
+            padding: 1.5em;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.01)
+        }
+
+        .record-section label {
+            margin-bottom: 0.8em
+        }
+
+        .record-buttons {
+            display: flex;
+            gap: 0.8em
+        }
+
+        .record-btn {
+            width: auto;
+            padding: 0.6em 1.2em;
+            font-size: 0.9em;
+            margin: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4em
+        }
+
+        .record-btn.recording {
+            background: #a33b32;
+            border-color: #a33b32;
+            color: #fff
+        }
+
+        .record-btn.recording:hover {
+            background: #8a2f28;
+            color: #fff
+        }
+
+        .recording-status {
+            margin-top: 1em;
+            display: none;
+            align-items: center;
+            gap: 0.8em;
+            font-size: 0.9em;
+            color: var(--meta-color)
+        }
+
+        .recording-status.active {
+            display: flex
+        }
+
+        .recording-dot {
+            width: 10px;
+            height: 10px;
+            background: #a33b32;
+            border-radius: 50%;
+            animation: pulse 1.2s ease-in-out infinite
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1 }
+            50% { opacity: 0.3 }
+        }
+
+        .recording-preview {
+            margin-top: 1em;
+            display: none
+        }
+
+        .recording-preview.show {
+            display: block
+        }
+
+        .recording-preview audio,
+        .recording-preview video {
+            width: 100%;
+            border-radius: 8px;
+            margin: 0.5em 0
+        }
+
+        .recording-preview-actions {
+            display: flex;
+            gap: 0.6em;
+            margin-top: 0.5em
+        }
+
+        .recording-preview-actions button {
+            width: auto;
+            padding: 0.5em 1em;
+            font-size: 0.85em;
+            margin: 0
+        }
+
+        .btn-accept {
+            background: #2b703e;
+            border-color: #2b703e;
+            color: #fff
+        }
+
+        .btn-accept:hover {
+            background: #1e5a2f;
+            color: #fff
+        }
+
+        .btn-discard {
+            background: transparent;
+            border-color: var(--border-color);
+            color: var(--meta-color)
+        }
+
+        .btn-discard:hover {
+            border-color: #a33b32;
+            color: #a33b32;
+            background: transparent
+        }
+
         .media-upload {
             margin: 1em 0;
             padding: 1.5em;
@@ -253,12 +369,26 @@
             <textarea id="content" required placeholder="Just write..."></textarea>
         </div>
 
+        <div class="record-section" id="recordSection" style="display:none">
+            <label>Record</label>
+            <div class="record-buttons">
+                <button type="button" class="record-btn" id="recordAudioBtn">Microphone</button>
+                <button type="button" class="record-btn" id="recordVideoBtn">Camera</button>
+            </div>
+            <div class="recording-status" id="recordingStatus">
+                <div class="recording-dot"></div>
+                <span id="recordingTimer">0:00</span>
+                <span id="recordingType"></span>
+            </div>
+            <div class="recording-preview" id="recordingPreview"></div>
+        </div>
+
         <div class="media-upload" id="mediaUpload">
             <input type="file" id="mediaFile" style="display:none" multiple>
-            <div class="media-upload-icon">📎</div>
+            <div class="media-upload-icon">+</div>
             <div class="media-upload-text">
                 <strong>Attach Files</strong><br>
-                <small>Click or drag files here</small>
+                <small>Click or drag files here — any format</small>
             </div>
         </div>
 
@@ -274,25 +404,31 @@
 
     <div id="status"></div>
 
-    <p><a href="/blog">← Blog</a></p>
+    <p><a href="/blog">&larr; Blog</a></p>
 
     <script>
         const API = '/api';
         let existingSlugs = new Set();
         let attachedFiles = [];
-        let uploadedMediaUrls = [];
         let fileMarkdownMap = new Map(); // Track which markdown belongs to which file
 
-        // Load all known slugs for global collision detection
+        // --- UUID generation ---
+        function generateUUID() {
+            if (crypto.randomUUID) return crypto.randomUUID();
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+                const r = Math.random() * 16 | 0;
+                return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+            });
+        }
+
+        // --- Slug handling ---
         async function loadExistingSlugs() {
             try {
-                // Fetch static slugs (pages, redirects, reserved names)
                 const staticResp = await fetch('/slugs.json');
                 if (staticResp.ok) {
                     const staticSlugs = await staticResp.json();
                     existingSlugs = new Set(staticSlugs);
                 }
-                // Also fetch dynamic blog post slugs from API (most up-to-date)
                 const response = await fetch(`${API}/posts`);
                 const result = await response.json();
                 if (response.ok && result.posts) {
@@ -329,58 +465,43 @@
 
             if (existingSlugs.has(computedSlug)) {
                 preview.className = 'slug-preview slug-collision';
-                preview.innerHTML = `⚠️ Slug collision: <code>${computedSlug}</code> already exists<br><small>Choose a different title or add a custom slug</small>`;
+                preview.innerHTML = `Slug collision: <code>${computedSlug}</code> already exists<br><small>Choose a different title or add a custom slug</small>`;
                 document.getElementById('submitBtn').disabled = true;
             } else {
                 preview.className = 'slug-preview slug-available';
-                preview.innerHTML = `✓ Will be published as: <code>/${computedSlug}</code>`;
+                preview.innerHTML = `Will be published as: <code>/${computedSlug}</code>`;
                 document.getElementById('submitBtn').disabled = false;
             }
         }
 
+        // --- File helpers ---
         function formatFileSize(bytes) {
             if (bytes < 1024) return bytes + ' B';
             if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
             return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
         }
 
-        function generateMediaFilename(file) {
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-
-            // Extract extension (handle multiple dots, spaces, special chars)
-            const ext = file.name.split('.').pop().toLowerCase().replace(/[^a-z0-9]/g, '');
-
-            // Count existing files to generate index
-            const index = String(attachedFiles.length + 1).padStart(3, '0');
-
-            // Clean format: YYYYMMDD_HHMMSS_001.ext
-            return `${year}${month}${day}_${hours}${minutes}${seconds}_${index}.${ext}`;
+        function getMediaType(file) {
+            if (file.type.startsWith('image/')) return 'image';
+            if (file.type.startsWith('audio/')) return 'audio';
+            if (file.type.startsWith('video/')) return 'video';
+            return 'document';
         }
 
-        function getMarkdownForFile(file, mediaFilename) {
-            const mediaPath = `/media/${mediaFilename}`;
-            // Use clean filename as alt text (without path)
-            const altText = mediaFilename.split('/').pop();
-
-            if (file.type.startsWith('image/')) {
-                return `\n\n![${altText}](${mediaPath})`;
-            } else if (file.type.startsWith('video/')) {
-                return `\n\n<video controls src="${mediaPath}"></video>`;
-            } else if (file.type.startsWith('audio/')) {
-                return `\n\n<audio controls src="${mediaPath}"></audio>`;
+        function getMarkdownForFile(file, mediaId) {
+            const mediaType = getMediaType(file);
+            if (mediaType === 'image') {
+                return `\n\n![${file.name}](/api/media/${mediaId})`;
+            } else if (mediaType === 'audio') {
+                return `\n\n{{audio:${mediaId}}}`;
+            } else if (mediaType === 'video') {
+                return `\n\n{{video:${mediaId}}}`;
             } else {
-                return `\n\n[${altText}](${mediaPath})`;
+                return `\n\n[${file.name}](/api/media/${mediaId}?dl=1)`;
             }
         }
 
         function addFileToList(file) {
-            // Duplicate detection: skip if same name and size already attached
             if (attachedFiles.some(f => f.name === file.name && f.size === file.size)) {
                 return;
             }
@@ -389,26 +510,18 @@
             const filesList = document.getElementById('attachedFiles');
             const contentTextarea = document.getElementById('content');
 
-            // Generate expected filename
-            const mediaFilename = generateMediaFilename(file);
+            const mediaId = generateUUID();
+            const markdown = getMarkdownForFile(file, mediaId);
 
-            // Generate markdown for this file
-            const markdown = getMarkdownForFile(file, mediaFilename);
-
-            // Immediately append markdown to textarea
             contentTextarea.value += markdown;
-
-            // Store mapping
-            fileMarkdownMap.set(file, { markdown, mediaFilename });
+            fileMarkdownMap.set(file, { markdown, mediaId });
 
             const li = document.createElement('li');
             li.className = 'attached-file';
-            li.dataset.filename = file.name;
 
             const info = document.createElement('div');
             info.className = 'attached-file-info';
 
-            // Show image preview if it's an image
             let blobUrl = null;
             if (file.type.startsWith('image/')) {
                 const preview = document.createElement('img');
@@ -433,12 +546,10 @@
 
             const removeBtn = document.createElement('button');
             removeBtn.className = 'remove-file';
-            removeBtn.innerHTML = '×';
+            removeBtn.innerHTML = '&times;';
             removeBtn.type = 'button';
             removeBtn.onclick = () => {
-                // Revoke blob URL to free memory
                 if (blobUrl) URL.revokeObjectURL(blobUrl);
-                // Remove markdown from textarea
                 const fileData = fileMarkdownMap.get(file);
                 if (fileData) {
                     contentTextarea.value = contentTextarea.value.replace(fileData.markdown, '');
@@ -452,7 +563,195 @@
             filesList.appendChild(li);
         }
 
-        // Drag and drop support
+        // --- Recording ---
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let recordingStartTime = null;
+        let recordingTimerInterval = null;
+        let currentRecordingMode = null; // 'audio' or 'video'
+
+        function getSupportedMimeType(mode) {
+            const types = mode === 'video'
+                ? ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm', 'video/mp4']
+                : ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus'];
+            for (const type of types) {
+                if (MediaRecorder.isTypeSupported(type)) return type;
+            }
+            return null;
+        }
+
+        function getExtFromMime(mimeType) {
+            if (mimeType.includes('webm')) return 'webm';
+            if (mimeType.includes('mp4')) return mimeType.startsWith('audio') ? 'm4a' : 'mp4';
+            if (mimeType.includes('ogg')) return 'ogg';
+            return 'bin';
+        }
+
+        function updateRecordingTimer() {
+            if (!recordingStartTime) return;
+            const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
+            const mins = Math.floor(elapsed / 60);
+            const secs = elapsed % 60;
+            document.getElementById('recordingTimer').textContent = `${mins}:${String(secs).padStart(2, '0')}`;
+        }
+
+        async function startRecording(mode) {
+            const mimeType = getSupportedMimeType(mode);
+            if (!mimeType) {
+                alert('Recording is not supported in this browser.');
+                return;
+            }
+
+            try {
+                const constraints = mode === 'video'
+                    ? { audio: true, video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } } }
+                    : { audio: true };
+
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                recordedChunks = [];
+                currentRecordingMode = mode;
+
+                mediaRecorder = new MediaRecorder(stream, { mimeType });
+
+                mediaRecorder.ondataavailable = (e) => {
+                    if (e.data.size > 0) recordedChunks.push(e.data);
+                };
+
+                mediaRecorder.onstop = () => {
+                    stream.getTracks().forEach(t => t.stop());
+                    clearInterval(recordingTimerInterval);
+                    showRecordingPreview(mimeType);
+                };
+
+                mediaRecorder.start(1000); // Collect data every second
+                recordingStartTime = Date.now();
+                recordingTimerInterval = setInterval(updateRecordingTimer, 1000);
+
+                // Update UI
+                const btn = mode === 'video' ? document.getElementById('recordVideoBtn') : document.getElementById('recordAudioBtn');
+                btn.textContent = 'Stop';
+                btn.classList.add('recording');
+                // Disable the other button
+                const otherBtn = mode === 'video' ? document.getElementById('recordAudioBtn') : document.getElementById('recordVideoBtn');
+                otherBtn.disabled = true;
+
+                const status = document.getElementById('recordingStatus');
+                status.classList.add('active');
+                document.getElementById('recordingType').textContent = mode === 'video' ? '(video)' : '(audio)';
+            } catch (err) {
+                if (err.name === 'NotAllowedError') {
+                    alert('Permission denied. Please allow microphone' + (mode === 'video' ? '/camera' : '') + ' access.');
+                } else {
+                    alert('Could not start recording: ' + err.message);
+                }
+            }
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+            }
+        }
+
+        function showRecordingPreview(mimeType) {
+            const blob = new Blob(recordedChunks, { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const previewDiv = document.getElementById('recordingPreview');
+            const isVideo = currentRecordingMode === 'video';
+
+            previewDiv.innerHTML = '';
+
+            const player = document.createElement(isVideo ? 'video' : 'audio');
+            player.src = url;
+            player.controls = true;
+            if (isVideo) player.setAttribute('playsinline', '');
+            previewDiv.appendChild(player);
+
+            const actions = document.createElement('div');
+            actions.className = 'recording-preview-actions';
+
+            const acceptBtn = document.createElement('button');
+            acceptBtn.type = 'button';
+            acceptBtn.className = 'btn-accept';
+            acceptBtn.textContent = 'Accept';
+            acceptBtn.onclick = () => {
+                const ext = getExtFromMime(mimeType);
+                const now = new Date();
+                const pad = n => String(n).padStart(2, '0');
+                const filename = `recording_${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}.${ext}`;
+                const file = new File([blob], filename, { type: mimeType });
+                addFileToList(file);
+                resetRecordingUI();
+                URL.revokeObjectURL(url);
+            };
+
+            const reRecordBtn = document.createElement('button');
+            reRecordBtn.type = 'button';
+            reRecordBtn.className = 'btn-discard';
+            reRecordBtn.textContent = 'Re-record';
+            reRecordBtn.onclick = () => {
+                URL.revokeObjectURL(url);
+                resetRecordingUI();
+                startRecording(currentRecordingMode);
+            };
+
+            const discardBtn = document.createElement('button');
+            discardBtn.type = 'button';
+            discardBtn.className = 'btn-discard';
+            discardBtn.textContent = 'Discard';
+            discardBtn.onclick = () => {
+                URL.revokeObjectURL(url);
+                resetRecordingUI();
+            };
+
+            actions.appendChild(acceptBtn);
+            actions.appendChild(reRecordBtn);
+            actions.appendChild(discardBtn);
+            previewDiv.appendChild(actions);
+            previewDiv.classList.add('show');
+        }
+
+        function resetRecordingUI() {
+            const audioBtn = document.getElementById('recordAudioBtn');
+            const videoBtn = document.getElementById('recordVideoBtn');
+            audioBtn.textContent = 'Microphone';
+            videoBtn.textContent = 'Camera';
+            audioBtn.classList.remove('recording');
+            videoBtn.classList.remove('recording');
+            audioBtn.disabled = false;
+            videoBtn.disabled = false;
+            document.getElementById('recordingStatus').classList.remove('active');
+            document.getElementById('recordingPreview').classList.remove('show');
+            document.getElementById('recordingPreview').innerHTML = '';
+            recordingStartTime = null;
+            currentRecordingMode = null;
+            mediaRecorder = null;
+            recordedChunks = [];
+        }
+
+        // Recording button handlers
+        document.getElementById('recordAudioBtn').addEventListener('click', () => {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                stopRecording();
+            } else {
+                startRecording('audio');
+            }
+        });
+
+        document.getElementById('recordVideoBtn').addEventListener('click', () => {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                stopRecording();
+            } else {
+                startRecording('video');
+            }
+        });
+
+        // Show record section if MediaRecorder is available
+        if (typeof MediaRecorder !== 'undefined') {
+            document.getElementById('recordSection').style.display = 'block';
+        }
+
+        // --- Drag and drop ---
         const uploadArea = document.getElementById('mediaUpload');
 
         uploadArea.addEventListener('dragover', (e) => {
@@ -476,15 +775,15 @@
 
         document.getElementById('mediaFile').addEventListener('change', (e) => {
             Array.from(e.target.files).forEach(file => addFileToList(file));
-            e.target.value = ''; // Reset so re-selecting same file triggers change
+            e.target.value = '';
         });
 
-        // Initialize
+        // --- Initialize ---
         loadExistingSlugs();
         document.getElementById('title').addEventListener('input', checkSlugCollision);
         document.getElementById('slug').addEventListener('input', checkSlugCollision);
 
-        // Post form handler
+        // --- Form submission ---
         document.getElementById('postForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -501,41 +800,35 @@
             statusDiv.style.display = 'none';
 
             try {
-                // Content already has markdown references from when files were attached
                 let finalContent = content;
 
                 if (attachedFiles.length > 0) {
                     statusDiv.innerHTML = `Uploading ${attachedFiles.length} file(s)...`;
                     statusDiv.className = 'info show';
 
-                    const uploadedIndices = [];
-
                     for (let i = 0; i < attachedFiles.length; i++) {
                         const file = attachedFiles[i];
 
-                        // Check file size (100MB GitHub limit, but warn at 25MB for Cloudflare)
-                        if (file.size > 25 * 1024 * 1024) {
-                            // Roll back: strip markdown for all unuploaded files
+                        if (file.size > 100 * 1024 * 1024) {
                             for (let j = i; j < attachedFiles.length; j++) {
                                 const fd = fileMarkdownMap.get(attachedFiles[j]);
                                 if (fd) finalContent = finalContent.replace(fd.markdown, '');
                             }
-                            throw new Error(`${file.name} is too large (${formatFileSize(file.size)}). Maximum size: 25MB. For larger files, use external hosting.`);
+                            throw new Error(`${file.name} is too large (${formatFileSize(file.size)}). Maximum: 100MB.`);
                         }
 
-                        statusDiv.innerHTML = `Uploading ${i + 1}/${attachedFiles.length}: ${file.name}...`;
-
-                        // Get the pre-determined filename for this file
                         const fileData = fileMarkdownMap.get(file);
-                        const expectedFilename = fileData ? fileData.mediaFilename : generateMediaFilename(file);
+                        const mediaId = fileData ? fileData.mediaId : generateUUID();
+
+                        statusDiv.innerHTML = `Uploading ${i + 1}/${attachedFiles.length}: ${file.name}...`;
 
                         const formData = new FormData();
                         formData.append('password', password);
                         formData.append('file', file);
-                        formData.append('filename', expectedFilename); // Tell server what filename to use
+                        formData.append('mediaId', mediaId);
 
                         try {
-                            const uploadResponse = await fetch(`${API}/upload`, {
+                            const uploadResponse = await fetch(`${API}/upload-media`, {
                                 method: 'POST',
                                 body: formData
                             });
@@ -543,7 +836,6 @@
                             const uploadResult = await uploadResponse.json();
 
                             if (!uploadResponse.ok) {
-                                // Roll back: strip markdown for this and all remaining unuploaded files
                                 for (let j = i; j < attachedFiles.length; j++) {
                                     const fd = fileMarkdownMap.get(attachedFiles[j]);
                                     if (fd) finalContent = finalContent.replace(fd.markdown, '');
@@ -551,14 +843,18 @@
                                 throw new Error(`Failed to upload ${file.name}: ${uploadResult.error}`);
                             }
 
-                            uploadedMediaUrls.push(uploadResult.url);
-                            uploadedIndices.push(i);
+                            // If transcription was returned, insert it below the audio embed
+                            if (uploadResult.transcription && fileData) {
+                                const transcriptBlock = `\n\n<details><summary><em>Transcript</em></summary>\n\n${uploadResult.transcription}\n\n</details>`;
+                                finalContent = finalContent.replace(
+                                    fileData.markdown,
+                                    fileData.markdown + transcriptBlock
+                                );
+                            }
                         } catch (uploadErr) {
-                            // If this is our own rethrown error, propagate it
                             if (uploadErr.message.startsWith('Failed to upload')) {
                                 throw uploadErr;
                             }
-                            // Network error: roll back remaining
                             for (let j = i; j < attachedFiles.length; j++) {
                                 const fd = fileMarkdownMap.get(attachedFiles[j]);
                                 if (fd) finalContent = finalContent.replace(fd.markdown, '');
@@ -568,7 +864,6 @@
                     }
                 }
 
-                // Now publish the post
                 statusDiv.innerHTML = 'Publishing post...';
 
                 const response = await fetch(`${API}/publish`, {
@@ -583,10 +878,9 @@
                     throw new Error(result.error || 'Publish failed');
                 }
 
-                statusDiv.innerHTML = `✓ Published as ${result.filename}<br>Site updates in ~60 seconds.`;
+                statusDiv.innerHTML = `Published as ${result.filename}<br>Site updates in ~60 seconds.`;
                 statusDiv.className = 'success show';
 
-                // Clear form
                 document.getElementById('title').value = '';
                 document.getElementById('slug').value = '';
                 document.getElementById('content').value = '';
@@ -597,7 +891,7 @@
                 document.getElementById('slugPreview').style.display = 'none';
 
             } catch (error) {
-                statusDiv.innerHTML = '✗ ' + error.message;
+                statusDiv.innerHTML = error.message;
                 statusDiv.className = 'error show';
             } finally {
                 submitBtn.disabled = false;

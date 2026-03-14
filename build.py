@@ -31,9 +31,51 @@ class RichEmbedProcessor:
         content = RichEmbedProcessor._youtube_embed(content)
         # X/Twitter embed
         content = RichEmbedProcessor._twitter_embed(content)
+        # Audio/video media embeds
+        content = RichEmbedProcessor._audio_embed(content)
+        content = RichEmbedProcessor._video_embed(content)
         # Generic auto-linking (but preserve markdown links)
         content = RichEmbedProcessor._auto_link(content)
         return content
+
+    @staticmethod
+    def _audio_embed(text):
+        """Convert {{audio:ID}} to styled audio player"""
+        pattern = r'\{\{audio:([a-zA-Z0-9-]+)\}\}'
+
+        def replace(match):
+            media_id = match.group(1)
+            return (
+                f'\n\n<div style="margin:2em 0;padding:1.2em 1.5em;background:rgba(0,0,0,0.02);'
+                f'border:1px solid rgba(0,0,0,0.06);border-radius:12px">'
+                f'<audio controls controlslist="nodownload" preload="metadata" '
+                f'src="/api/media/{media_id}" '
+                f'style="width:100%;display:block" '
+                f'oncontextmenu="return false">'
+                f'Your browser does not support audio playback.</audio></div>\n\n'
+            )
+
+        return re.sub(pattern, replace, text)
+
+    @staticmethod
+    def _video_embed(text):
+        """Convert {{video:ID}} to responsive video player (same technique as YouTube embeds)"""
+        pattern = r'\{\{video:([a-zA-Z0-9-]+)\}\}'
+
+        def replace(match):
+            media_id = match.group(1)
+            return (
+                f'\n\n<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;'
+                f'max-width:100%;border-radius:8px;margin:2em 0;background:#000">'
+                f'<video controls controlslist="nodownload noremoteplayback" '
+                f'playsinline preload="metadata" '
+                f'src="/api/media/{media_id}" '
+                f'style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;border-radius:8px" '
+                f'oncontextmenu="return false">'
+                f'Your browser does not support video playback.</video></div>\n\n'
+            )
+
+        return re.sub(pattern, replace, text)
 
     @staticmethod
     def _fix_old_youtube_iframes(text):
