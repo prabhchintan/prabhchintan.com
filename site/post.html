@@ -186,18 +186,19 @@ footer {
 
 .drop-cap::first-letter {
     font-family: var(--drop-cap-font, Baskerville), Baskerville, "Times New Roman", Times, serif;
-    padding: 0 0.15em 0 0;
+    padding: 0 0.1em 0 0;
+    initial-letter: 3.2 raise;
     color: var(--drop-cap-color, rgba(0, 102, 204, 0.5));
 }
 
 @supports (initial-letter: 2) {
     .drop-cap::first-letter {
         float: left;
-        font-size: calc(2.2em * var(--drop-cap-scale, 1));
+        font-size: calc(2.7em * var(--drop-cap-scale, 1));
         line-height: 0.85;
         padding: 0 0.15em 0 0;
-        margin-top: -0.05em;
-        margin-bottom: -0.15em;
+        margin-top: -0.12em;
+        margin-bottom: -0.18em;
     }
 }
 
@@ -339,13 +340,15 @@ footer {
     }
 
     .drop-cap::first-letter {
-        initial-letter: 2 raise;
+        initial-letter: 3.8 raise;
+        padding-right: 0.13em;
     }
 
     @supports (initial-letter: 2) {
         .drop-cap::first-letter {
-            font-size: calc(2em * var(--drop-cap-scale, 1));
+            font-size: calc(3.5em * var(--drop-cap-scale, 1));
             padding: 0 0.13em 0 0;
+            margin-top: -0.08em;
             margin-bottom: -0.18em;
         }
     }
