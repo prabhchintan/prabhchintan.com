@@ -203,7 +203,6 @@ class BlogBuilder:
             ['EileenCaps',        0.94,   0.03],
             ['ElzevierCaps',      1.04,   0.01],
             ['FleurCornerCaps',   1.02,   0.03],
-            ['FlowerInitials',    1.24,  -0.09],
             ['GothicFlourish',    1.02,   0.03],
             ['Romantik',          0.96,   0.09],
             ['TypographerCaps',   0.81,   0.03],
