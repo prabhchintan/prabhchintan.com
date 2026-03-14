@@ -319,11 +319,12 @@ footer {
      * Mobile Safari (and many mobile browsers) do not support initial-letter, so
      * @supports (initial-letter: 2) is false and the desktop drop-cap rules never
      * apply. Set size and layout here unconditionally so the cap is visible on mobile.
+     * No large negative margin-top so the cap stays at the start of the paragraph.
      */
     .drop-cap::first-letter {
         float: left;
-        font-size: calc(5em * var(--drop-cap-scale, 1));
-        margin-top: -2.4em;
+        font-size: calc(4.25em * var(--drop-cap-scale, 1));
+        margin-top: 0;
         margin-bottom: -2.8em;
     }
 }
