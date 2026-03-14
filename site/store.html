@@ -208,7 +208,7 @@ footer {
 @supports (initial-letter: 2) {
     .drop-cap::first-letter {
         float: left;
-        font-size: calc(2.7em * var(--drop-cap-scale, 1));
+        font-size: calc(2em * var(--drop-cap-scale, 1));
         line-height: 0.85;
         padding: 0 0.15em 0 0;
         margin-top: -0.12em;
@@ -354,13 +354,14 @@ footer {
     }
 
     .drop-cap::first-letter {
+        font-size: calc(3.5em * var(--drop-cap-scale, 3));
         initial-letter: 3.8 raise;
         padding-right: 0.13em;
     }
 
     @supports (initial-letter: 2) {
         .drop-cap::first-letter {
-            font-size: calc(3.5em * var(--drop-cap-scale, 1));
+            font-size: calc(3.5em * var(--drop-cap-scale, 3));
             padding: 0 0.13em 0 0;
             margin-top: -0.08em;
             margin-bottom: -0.18em;
