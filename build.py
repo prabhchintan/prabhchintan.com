@@ -48,7 +48,7 @@ class RichEmbedProcessor:
             return (
                 f'\n\n<div style="margin:2em 0;padding:1.2em 1.5em;background:rgba(0,0,0,0.02);'
                 f'border:1px solid rgba(0,0,0,0.06);border-radius:12px">'
-                f'<audio controls controlslist="nodownload" preload="none" '
+                f'<audio controls controlslist="nodownload" preload="metadata" '
                 f'src="/api/media/{media_id}" '
                 f'style="width:100%;display:block" '
                 f'oncontextmenu="return false">'
@@ -574,6 +574,7 @@ class BlogBuilder:
 .search-result em{{font-size:0.8em;color:var(--meta-color)}}
 .search-empty{{padding:0.5em 0;color:var(--meta-color);font-size:0.9em;font-style:italic}}
 .sub-actions{{margin-top:0.4em;font-size:0.85em}}
+.blog-date{{font-size:0.85em;color:var(--meta-color)}}
 </style>
 </head>
 <body>
@@ -586,7 +587,7 @@ class BlogBuilder:
             safe_title = html_escape(post['title'])
             blog_html += f'''
 <p><a href="{post['url']}">{safe_title}</a><br>
-<em>{post['formatted_date']}</em></p>'''
+<em class="blog-date">{post['formatted_date']}</em></p>'''
 
         blog_html += f'''
 <script>

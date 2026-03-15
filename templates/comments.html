@@ -5,7 +5,7 @@
 <input type="text" id="comment-name" placeholder="Your name" maxlength="50" autocomplete="off" spellcheck="false">
 <textarea id="comment-text" placeholder="Your thoughts..." maxlength="2000"></textarea>
 <div class="comment-form-actions" id="comment-actions">
-<a id="comment-btn" href="javascript:void(0)">connect wallet</a><span class="comment-sep"> &middot; </span><span class="comment-cost">1 USDC</span>
+<span class="comment-cost">1 USDC/comment</span><span class="comment-sep"> &middot; </span><a id="comment-btn" href="javascript:void(0)">connect wallet</a>
 </div>
 <p class="comment-status" id="comment-status"></p>
 </div>
@@ -71,11 +71,11 @@
         var pageUrl=encodeURIComponent(window.location.href);
         var dappPath=window.location.host+window.location.pathname;
         actionsEl.innerHTML=
-            '<a href="https://metamask.app.link/dapp/'+dappPath+'">open in MetaMask</a>'
+            '<span class="comment-cost">1 USDC/comment</span>'
             +'<span class="comment-sep"> \u00b7 </span>'
-            +'<a href="https://go.cb-w.com/dapp?cb_url='+pageUrl+'">Coinbase Wallet</a>'
+            +'<a href="https://metamask.app.link/dapp/'+dappPath+'">open in MetaMask</a>'
             +'<span class="comment-sep"> \u00b7 </span>'
-            +'<span class="comment-cost">1 USDC</span>';
+            +'<a href="https://go.cb-w.com/dapp?cb_url='+pageUrl+'">Coinbase Wallet</a>';
     } else {
         ethereum.on('chainChanged',function(c){chainHex=c;if(addr)showConnected();});
         ethereum.on('accountsChanged',function(a){
@@ -89,9 +89,9 @@
     }
 
     function showDisconnected(){
-        actionsEl.innerHTML='<a id="comment-btn" href="javascript:void(0)">connect wallet</a>'
+        actionsEl.innerHTML='<span class="comment-cost">1 USDC/comment</span>'
             +'<span class="comment-sep"> \u00b7 </span>'
-            +'<span class="comment-cost">1 USDC</span>';
+            +'<a id="comment-btn" href="javascript:void(0)">connect wallet</a>';
         document.getElementById('comment-btn').onclick=function(e){e.preventDefault();connectWallet();};
     }
 
@@ -99,13 +99,13 @@
         var chain=CHAINS[chainHex];
         var chainName=chain?chain.name:'unsupported network';
         var supported=!!chain;
-        actionsEl.innerHTML='<span class="comment-addr">'+short(addr)+' on '+chainName+'</span>'
+        actionsEl.innerHTML='<span class="comment-cost">1 USDC/comment</span>'
+            +'<span class="comment-sep"> \u00b7 </span>'
+            +'<span class="comment-addr">'+short(addr)+' on '+chainName+'</span>'
             +'<span class="comment-sep"> \u00b7 </span>'
             +(supported
                 ?'<a id="comment-btn" href="javascript:void(0)">post comment</a>'
-                :'<span class="comment-cost">switch to a supported network</span>')
-            +'<span class="comment-sep"> \u00b7 </span>'
-            +'<span class="comment-cost">1 USDC</span>';
+                :'<span class="comment-cost">switch to a supported network</span>');
         if(supported){
             document.getElementById('comment-btn').onclick=function(e){e.preventDefault();submitComment();};
         }
