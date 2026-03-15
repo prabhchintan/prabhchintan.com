@@ -48,7 +48,7 @@ class RichEmbedProcessor:
             return (
                 f'\n\n<div style="margin:2em 0;padding:1.2em 1.5em;background:rgba(0,0,0,0.02);'
                 f'border:1px solid rgba(0,0,0,0.06);border-radius:12px">'
-                f'<audio controls controlslist="nodownload" preload="metadata" '
+                f'<audio controls controlslist="nodownload" preload="none" '
                 f'src="/api/media/{media_id}" '
                 f'style="width:100%;display:block" '
                 f'oncontextmenu="return false">'
@@ -412,9 +412,8 @@ class BlogBuilder:
 
         log.info(f"Built post: /{slug}")
 
-        # Plain text for search — strip markdown/HTML, keep first 1000 chars
-        search_text = re.sub(r'<[^>]+>', '', html)  # strip HTML tags
-        search_text = re.sub(r'\s+', ' ', search_text).strip()[:1000]
+        search_text = re.sub(r'<[^>]+>', '', html)
+        search_text = re.sub(r'\s+', ' ', search_text).strip()
 
         return {
             'slug': slug,
@@ -574,7 +573,9 @@ class BlogBuilder:
 .search-result em{{font-size:0.8em;color:var(--meta-color)}}
 .search-empty{{padding:0.5em 0;color:var(--meta-color);font-size:0.9em;font-style:italic}}
 .sub-actions{{margin-top:0.4em;font-size:0.85em}}
-.blog-date{{font-size:0.85em;color:var(--meta-color)}}
+.blog-month{{font-size:0.85em;color:var(--meta-color);font-weight:normal;margin:1.8em 0 0.4em;letter-spacing:0.02em}}
+.blog-month:first-of-type{{margin-top:0}}
+.blog-day{{font-size:0.85em;color:var(--meta-color)}}
 </style>
 </head>
 <body>
@@ -583,11 +584,15 @@ class BlogBuilder:
 <div class="search-panel" id="searchPanel"><input type="text" id="blogSearch" placeholder="Search posts…" autocomplete="off" spellcheck="false"><div class="search-results" id="searchResults"></div></div>
 <div class="subscribe-panel" id="subPanel"><input type="text" name="url" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" id="subHoney"><input type="email" id="subEmail" placeholder="your@email.com" autocomplete="email"><div class="sub-actions"><span id="subBtn" style="cursor:pointer;color:var(--link-color)">subscribe</span></div></div>'''
 
+        current_month = None
         for post in posts:
+            month_key = post['date'].strftime('%B %Y')
+            if month_key != current_month:
+                current_month = month_key
+                blog_html += f'\n<h2 class="blog-month">{month_key}</h2>'
             safe_title = html_escape(post['title'])
-            blog_html += f'''
-<p><a href="{post['url']}">{safe_title}</a><br>
-<em class="blog-date">{post['formatted_date']}</em></p>'''
+            day = post['date'].day
+            blog_html += f'\n<p><a href="{post["url"]}">{safe_title}</a> <span class="blog-day">{day}</span></p>'
 
         blog_html += f'''
 <script>
