@@ -573,8 +573,8 @@ class BlogBuilder:
 .search-result em{{font-size:0.8em;color:var(--meta-color)}}
 .search-empty{{padding:0.5em 0;color:var(--meta-color);font-size:0.9em;font-style:italic}}
 .sub-actions{{margin-top:0.4em;font-size:0.85em}}
-.blog-month{{font-size:0.85em;color:var(--meta-color);font-weight:normal;margin:1.8em 0 0.4em;letter-spacing:0.02em}}
-.blog-month:first-of-type{{margin-top:0}}
+.blog-group{{margin:1.8em 0 0}}.blog-group:first-of-type{{margin-top:0}}
+.blog-month{{font-size:0.85em;color:var(--meta-color);font-weight:normal;margin:0 0 0.4em;letter-spacing:0.02em}}
 .blog-day{{font-size:0.85em;color:var(--meta-color)}}
 </style>
 </head>
@@ -585,14 +585,21 @@ class BlogBuilder:
 <div class="subscribe-panel" id="subPanel"><input type="text" name="url" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" id="subHoney"><input type="email" id="subEmail" placeholder="your@email.com" autocomplete="email"><div class="sub-actions"><span id="subBtn" style="cursor:pointer;color:var(--link-color)">subscribe</span></div></div>'''
 
         current_month = None
+        first_month = True
         for post in posts:
             month_key = post['date'].strftime('%B %Y')
             if month_key != current_month:
+                if current_month is not None:
+                    blog_html += '\n</details>'
                 current_month = month_key
-                blog_html += f'\n<h2 class="blog-month">{month_key}</h2>'
+                open_attr = ' open' if first_month else ''
+                blog_html += f'\n<details class="blog-group"{open_attr}>\n<summary class="blog-month">{month_key}</summary>'
+                first_month = False
             safe_title = html_escape(post['title'])
             day = post['date'].day
             blog_html += f'\n<p><a href="{post["url"]}">{safe_title}</a> <span class="blog-day">{day}</span></p>'
+        if current_month is not None:
+            blog_html += '\n</details>'
 
         blog_html += f'''
 <script>
