@@ -29,7 +29,7 @@
     --meta-color: #666666;
     --border-color: #eeeeee;
     --footer-color: #a9a9a9ad;
-    --font-body: Baskerville, "Times New Roman", Times, serif;
+    --font-body: Baskerville, "Baskerville Old Face", "Times New Roman", Times, Georgia, serif;
 }
 
 @font-face { font-family: 'AcornInitials'; src: url('/fonts/AcornInitials.woff2') format('woff2'); font-display: swap; }
@@ -57,6 +57,9 @@ body {
     color: var(--text-color);
     background-color: var(--bg-color);
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-variant-ligatures: common-ligatures;
 }
 
 .profile-pic {
@@ -109,6 +112,15 @@ h2 {
 h3 {
     font-size: 1.15em;
     margin: 1.6em 0 0.5em 0;
+}
+
+strong, b {
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+em, i {
+    letter-spacing: 0.015em;
 }
 
 p {
