@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Randhawa: 404</title>
+<title>Randhawa: Subscribe</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<meta property="og:title" content="Randhawa">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/favicon.svg">
+<meta name="description" content="Get notified when new posts are published.">
+<meta property="og:title" content="Randhawa: Subscribe">
+<meta property="og:description" content="Get notified when new posts are published.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://prabhchintan.com/subscribe">
 <meta property="og:site_name" content="Randhawa">
 <meta property="og:image" content="https://prabhchintan.com/social.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="2400">
 <meta property="og:image:height" content="1260">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Randhawa">
-<meta name="twitter:image" content="https://prabhchintan.com/social.jpg">
-<link rel="canonical" href="https://prabhchintan.com/404">
+<link rel="canonical" href="https://prabhchintan.com/subscribe">
 <style>:root {
     --bg-color: #ffffff;
     --text-color: #1a1a1a;
@@ -384,8 +386,44 @@ details[open] > summary::before {
 .subscribe-wrap input:focus { border-bottom-color: var(--text-color); }</style>
 </head>
 <body>
-<h1>404</h1>
-<p>Page not found. <a href="/">Go home</a> or check out the <a href="/blog">blog</a>.</p>
+<h1>Subscribe</h1>
+<p>Get notified when new posts are published.</p>
+<div style="margin:2em 0">
+<input type="text" name="url" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" id="honey">
+<input type="email" id="email" placeholder="your@email.com" autocomplete="email" style="width:100%;padding:0.4em 0;border:none;border-bottom:1px solid var(--border-color);font-family:var(--font-body);font-size:1em;background:transparent;color:var(--text-color);outline:none;box-sizing:border-box">
+<p id="status" style="font-size:0.9em;color:var(--meta-color);min-height:1.4em;margin:0.5em 0"></p>
+<p><a href="#" id="submitBtn" style="color:var(--link-color)">subscribe</a></p>
+</div>
+<p><a href="/blog">← Blog</a></p>
+<script>
+(function(){
+var emailInput=document.getElementById('email');
+var honey=document.getElementById('honey');
+var statusEl=document.getElementById('status');
+var btn=document.getElementById('submitBtn');
+var remove=false;
+if(!remove&&localStorage.getItem('subscribed')){
+statusEl.textContent='You are already subscribed. Enter your email again to re-subscribe or visit /unsubscribe.';
+}
+btn.addEventListener('click',function(e){
+e.preventDefault();
+var email=emailInput.value.trim();
+if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){statusEl.textContent='Please enter a valid email.';return;}
+statusEl.textContent='One moment…';
+var body={email:email,url:honey.value};
+if(remove)body.remove=true;
+fetch('/api/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+.then(function(r){return r.json();})
+.then(function(d){
+emailInput.value='';
+if(remove){statusEl.textContent='You have been unsubscribed.';localStorage.removeItem('subscribed');}
+else{statusEl.textContent='You are now subscribed!';localStorage.setItem('subscribed','1');}
+}).catch(function(){statusEl.textContent='Something went wrong. Please try again.';});
+});
+emailInput.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();btn.click();}});
+})();
+</script>
+<p><a href="/">← Home</a></p>
 <footer>Randhawa Inc. 1309 Coffeen Ave Ste 1386 Sheridan, WY</footer>
 </body>
 </html>
